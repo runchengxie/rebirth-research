@@ -41,24 +41,36 @@ export function PixiStage({ activeCharacter }: PixiStageProps) {
     const overlay = new Graphics();
     const sparkles = new Container();
     const sparkleItems: Sparkle[] = [];
+    hostElement.classList.add("pixi-stage-fallback");
 
     async function boot() {
-      await app.init({
-        backgroundAlpha: 0,
-        resizeTo: hostElement,
-        antialias: true,
-        autoDensity: true,
-        resolution: Math.min(window.devicePixelRatio || 1, 2),
-      });
+      try {
+        await app.init({
+          backgroundAlpha: 0,
+          antialias: true,
+          autoDensity: true,
+          failIfMajorPerformanceCaveat: true,
+          powerPreference: "low-power",
+          preference: "webgl",
+          resolution: Math.min(window.devicePixelRatio || 1, 2),
+        });
+      } catch {
+        return;
+      }
       initialized = true;
       if (disposed) {
-        app.destroy(true);
+        safelyDestroy(app);
         return;
       }
 
       hostElement.appendChild(app.canvas);
 
-      const texture = await Assets.load<Texture>(heroArt);
+      let texture: Texture;
+      try {
+        texture = await Assets.load<Texture>(heroArt);
+      } catch {
+        return;
+      }
       if (disposed) return;
 
       const sprite = new Sprite(texture);
@@ -89,6 +101,7 @@ export function PixiStage({ activeCharacter }: PixiStageProps) {
       const draw = () => {
         const width = Math.max(1, hostElement.clientWidth);
         const height = Math.max(1, hostElement.clientHeight);
+        app.renderer.resize(width, height);
         layoutCover(sprite, texture, width, height);
 
         overlay.clear();
@@ -98,6 +111,7 @@ export function PixiStage({ activeCharacter }: PixiStageProps) {
       };
 
       draw();
+      hostElement.classList.remove("pixi-stage-fallback");
       const resizeObserver = new ResizeObserver(draw);
       resizeObserver.observe(hostElement);
 
@@ -133,11 +147,20 @@ export function PixiStage({ activeCharacter }: PixiStageProps) {
       disposed = true;
       cleanup?.();
       if (initialized) {
-        app.destroy(true);
+        safelyDestroy(app);
       }
+      hostElement.classList.add("pixi-stage-fallback");
       hostElement.replaceChildren();
     };
   }, [activeCharacter.color]);
 
   return <div className="pixi-stage" ref={hostRef} aria-hidden="true" />;
+}
+
+function safelyDestroy(app: Application) {
+  try {
+    app.destroy(true);
+  } catch {
+    // Pixi can throw during dev-server HMR if a renderer plugin is already torn down.
+  }
 }

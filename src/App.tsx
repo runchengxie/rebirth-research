@@ -25,6 +25,39 @@ const PixiStage = lazy(() =>
   import("./components/PixiStage").then((module) => ({ default: module.PixiStage })),
 );
 
+function canUsePixiStage(): boolean {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("pixi") === "0" || params.get("staticStage") === "1") return false;
+  if (params.get("pixi") === "1") return true;
+
+  try {
+    const canvas = document.createElement("canvas");
+    const contextOptions: WebGLContextAttributes = {
+      antialias: false,
+      failIfMajorPerformanceCaveat: true,
+      powerPreference: "low-power",
+    };
+    const gl = canvas.getContext("webgl2", contextOptions) ?? canvas.getContext("webgl", contextOptions);
+    if (!gl) return false;
+
+    const debugInfo = gl.getExtension("WEBGL_debug_renderer_info") as {
+      UNMASKED_RENDERER_WEBGL: number;
+      UNMASKED_VENDOR_WEBGL: number;
+    } | null;
+    const renderer = debugInfo ? String(gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)) : "";
+    const vendor = debugInfo ? String(gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL)) : "";
+    gl.getExtension("WEBGL_lose_context")?.loseContext();
+
+    return !`${vendor} ${renderer}`.toLowerCase().includes("nouveau");
+  } catch {
+    return false;
+  }
+}
+
+function StaticStageArt() {
+  return <div className="pixi-stage pixi-stage-fallback" aria-hidden="true" />;
+}
+
 function readTheme(): "light" | "dark" {
   return document.documentElement.dataset.theme === "dark" ? "dark" : "light";
 }
@@ -364,6 +397,7 @@ export default function App() {
   const [theme, setTheme] = useState<"light" | "dark">(readTheme());
   const [musicOn, setMusicOn] = useState(false);
   const [volume, setVolume] = useState(0.22);
+  const [usePixiStage] = useState(canUsePixiStage);
   const bgmRef = useRef<ProceduralBgm | null>(null);
   const [initialCapitalInput, setInitialCapitalInput] = useState(() => String(GAME_DATA[bestInitialYear()].initialCapital || 10000));
   const [state, setState] = useState<GameState>(() => createState());
@@ -480,9 +514,13 @@ export default function App() {
       <StatusBar state={state} />
 
       <section className={`vn-stage character-${activeCharacter.color}`} aria-label="剧情舞台">
-        <Suspense fallback={<div className="pixi-stage pixi-stage-fallback" aria-hidden="true" />}>
-          <PixiStage activeCharacter={activeCharacter} />
-        </Suspense>
+        {usePixiStage ? (
+          <Suspense fallback={<StaticStageArt />}>
+            <PixiStage activeCharacter={activeCharacter} />
+          </Suspense>
+        ) : (
+          <StaticStageArt />
+        )}
         <div className="vn-stage-content">
           <div className="moe-badges">
             <span>{activeCharacter.name} ROUTE</span>

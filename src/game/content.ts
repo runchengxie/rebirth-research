@@ -57,7 +57,7 @@ export const STORY_ARCS: StoryArc[] = [
   },
   {
     characterId: "rina",
-    title: "第三话：雨夜加班CG",
+    title: "第三话：雨夜加班图",
     speaker: "璃奈",
     role: "投研部前辈",
     mood: "温柔",
@@ -71,7 +71,7 @@ export const STORY_ARCS: StoryArc[] = [
     role: "宏观策略师",
     mood: "沉着",
     line: "部门路演就要开始了。芽衣推了推眼镜：能把市场讲清楚的人，才配站在聚光灯下。",
-    mission: "收益不是唯一指标，但收益会决定大家愿不愿意听完你的台词。",
+    mission: "收益会影响大家愿不愿意听完你的台词，复盘理由也会留下记录。",
   },
   {
     characterId: "rina",
@@ -98,7 +98,7 @@ export const STORY_ARCS: StoryArc[] = [
     role: "宏观策略师",
     mood: "观察",
     line: "发表会的灯亮起来。芽衣把你的账户曲线标上记号：这条线，开始有主角感了。",
-    mission: "选对了，你从边缘座位进入主线；选错了，明天继续改 PPT。",
+    mission: "选对了，你从边缘座位进入主线。选错了，明天继续改演示稿。",
   },
   {
     characterId: "rina",
@@ -124,7 +124,7 @@ export const STORY_ARCS: StoryArc[] = [
     speaker: "芽衣",
     role: "宏观策略师",
     mood: "紧张",
-    line: "年末排名开始倒计时。芽衣难得露出笑意：有人求稳，有人梭哈，而你还没有解锁最终 CG。",
+    line: "年末排名开始倒计时。芽衣难得露出笑意：有人求稳，有人梭哈，而你还没有解锁最终图鉴。",
     mission: "这次选择会决定结局基调：闪耀研究员、可靠打工人，还是疲劳值爆表。",
   },
   {
@@ -155,7 +155,7 @@ export const SCENE_SCRIPTS: SceneScript[] = [
         bg: "research-room",
         bgm: "morning-loop",
         text: "你原本是现实世界的股票研究员，凌晨还在复盘历史行情。再睁眼时，自己已经坐在二次元投研部的工位前。",
-        prompt: "点击继续，确认这不是普通梦境。",
+        prompt: "点击继续，确认这场重生的开端。",
       },
       {
         type: "line",
@@ -166,7 +166,7 @@ export const SCENE_SCRIPTS: SceneScript[] = [
         pose: "soft",
         bg: "research-room",
         bgm: "morning-loop",
-        text: "璃奈站在你桌边，像早就等着你醒来：欢迎回到行情开始之前。这里不是交易所，也不是梦，是会把历史重新演给你看的投研部。",
+        text: "璃奈站在你桌边，像早就等着你醒来：欢迎回到行情开始之前。这里会把历史行情重新排到你面前，像一间只为复盘存在的投研部。",
       },
       {
         type: "line",
@@ -177,7 +177,7 @@ export const SCENE_SCRIPTS: SceneScript[] = [
         pose: "thinking",
         bg: "research-room",
         bgm: "morning-loop",
-        text: "她把一杯热咖啡推到你手边：你记得一些历史大方向，但如果只背答案，世界线会开始偏移。我们需要的是研究逻辑，不是作弊。",
+        text: "她把一杯热咖啡推到你手边：你记得一些历史大方向，但只背答案会让世界线偏移。把记忆整理成研究逻辑，路线才会稳定。",
       },
       {
         type: "line",
@@ -210,7 +210,7 @@ export const SCENE_SCRIPTS: SceneScript[] = [
         pose: "serious",
         bg: "briefing-room",
         bgm: "morning-loop",
-        text: "芽衣在会议室白板上圈出月初和月末两个日期：这是历史切片，不是预言。价格会复现，但你介入之后，情绪和路径未必完全一样。",
+        text: "芽衣在会议室白板上圈出月初和月末两个日期：这是历史切片。价格会复现，你的介入也会改变市场情绪和中间路径。",
       },
       {
         type: "line",
@@ -254,7 +254,7 @@ export const SCENE_SCRIPTS: SceneScript[] = [
         pose: "serious",
         bg: "briefing-room",
         bgm: "morning-loop",
-        text: "芽衣轻轻敲了敲杯沿：我负责周期和风险。上涨不是理由，能解释上涨为什么发生，才是研究员的入场券。",
+        text: "芽衣轻轻敲了敲杯沿：我负责周期和风险。别只盯涨幅，能说清上涨原因，才有资格入场。",
       },
       {
         type: "line",
@@ -286,7 +286,7 @@ export const SCENE_SCRIPTS: SceneScript[] = [
           },
           {
             characterId: "mei",
-            label: "宏观/风控",
+            label: "宏观风控",
             text: "如果逻辑只在月初成立，月末兑现前就可能被风险反噬。",
           },
         ],
@@ -300,7 +300,7 @@ export const SCENE_SCRIPTS: SceneScript[] = [
         pose: "excited",
         bg: "night-cafe",
         bgm: "result-loop",
-        text: "夜里的咖啡店还亮着灯。美咲把结算曲线投到平板上：看，这就是你的第一条存档分支！收益只是结果，真正有用的是你刚才选择那条线索的理由。",
+        text: "夜里的咖啡店还亮着灯。美咲把结算曲线投到平板上：看，这就是你的第一条存档分支！收益会留下数字，选择理由更值得复盘。",
       },
       {
         type: "line",
@@ -311,7 +311,7 @@ export const SCENE_SCRIPTS: SceneScript[] = [
         pose: "focused",
         bg: "night-cafe",
         bgm: "result-loop",
-        text: "她把成交活跃排名和涨幅排名并排放着：如果你选对了，说明信号和主线共振；如果没选对，也能知道是哪一层假设先断掉。",
+        text: "她把成交活跃排名和涨幅排名并排放着：选对了，说明信号和主线共振。没选对，也能知道是哪一层假设先断掉。",
       },
       {
         type: "line",
@@ -322,7 +322,7 @@ export const SCENE_SCRIPTS: SceneScript[] = [
         pose: "serious",
         bg: "night-cafe",
         bgm: "result-loop",
-        text: "芽衣低头记录：收益、疲劳、好感都已经变化。下一话开始，我们会把每个月当成一段金融事件，而不是一场只看最终净值的抽卡。",
+        text: "芽衣低头记录：收益、疲劳、好感都已经变化。下一话开始，每个月都会变成一段金融事件，有行情、有判断，也有代价。",
       },
       {
         type: "line",
@@ -333,7 +333,7 @@ export const SCENE_SCRIPTS: SceneScript[] = [
         pose: "soft",
         bg: "night-cafe",
         bgm: "result-loop",
-        text: "她推来一张新的表格：还要记录世界线偏移。你越依赖未来记忆，偏移越快；你越能自洽地解释市场，偏移越慢。",
+        text: "她推来一张新的表格：还要记录世界线偏移。你越依赖未来记忆，偏移越快。你越能自洽地解释市场，偏移越慢。",
       },
       {
         type: "line",
@@ -368,7 +368,7 @@ export const FOCUS_ACTIONS: FocusAction[] = [
     label: "熬夜研报",
     icon: "✦",
     short: "收益修正 +1.5%",
-    detail: "把所有线索重新建模。更容易打出高收益，但疲劳值会上升。",
+    detail: "重新整理线索和假设。收益有额外修正，疲劳值会上升。",
     returnBonus: 0.015,
     reputationDelta: 4,
     fatigueDelta: 8,
@@ -376,10 +376,10 @@ export const FOCUS_ACTIONS: FocusAction[] = [
   },
   {
     id: "date",
-    label: "角色约会",
+    label: "茶歇复盘",
     icon: "♡",
     short: "好感 +7",
-    detail: "把晚上的复盘变成甜点作战会。收益不加成，但当前角色会更在意你。",
+    detail: "把晚上的复盘放到咖啡店里聊。收益没有加成，当前角色会更信任你。",
     returnBonus: 0,
     reputationDelta: 1,
     fatigueDelta: -3,
@@ -390,7 +390,7 @@ export const FOCUS_ACTIONS: FocusAction[] = [
     label: "仓位纪律",
     icon: "◇",
     short: "疲劳 -9",
-    detail: "少做一页 PPT，多睡一小时。执行更稳，但放弃一部分激进收益。",
+    detail: "少做一页演示稿，多睡一小时。执行更稳，但会放弃一部分激进收益。",
     returnBonus: -0.005,
     reputationDelta: 2,
     fatigueDelta: -9,
@@ -398,4 +398,4 @@ export const FOCUS_ACTIONS: FocusAction[] = [
   },
 ];
 
-export const SIGNAL_TYPES = ["事件驱动", "业绩反转", "资金抱团", "政策风口", "产业链暗线", "高波动赌局"];
+export const SIGNAL_TYPES = ["事件驱动", "业绩反转", "资金抱团", "政策风口", "产业链暗线", "高波动机会"];

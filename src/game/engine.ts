@@ -103,7 +103,7 @@ export function riskLabel(option: StockOption): string {
 export function analysisNote(option: StockOption, revealed = false): string {
   const liquidity =
     option.activeRank <= 50
-      ? "成交活跃度极高，容易成为资金合力的战场"
+      ? "成交活跃度极高，资金关注度很高"
       : option.activeRank <= 200
         ? "成交活跃度靠前，说明当月已经被资金反复确认"
         : "成交活跃度仍在题库前列，但需要更重视逻辑兑现";
@@ -113,9 +113,9 @@ export function analysisNote(option: StockOption, revealed = false): string {
   }
   const review =
     option.returnRate >= 0.2
-      ? "复盘结果显示这条线索兑现度很高"
+      ? "复盘结果显示这条线索兑现得很充分"
       : option.returnRate >= 0
-        ? "复盘结果偏稳，但不是最强主线"
+        ? "复盘结果偏稳，强度低于主线"
         : "复盘结果为负，说明当时的风险释放快于逻辑兑现";
   return `历史复盘：${setup}，涨幅排名 #${option.returnRank}。${review}。`;
 }
@@ -164,7 +164,7 @@ export function buildOutcome(
   if (option.returnRate >= 0.2) {
     return {
       title: "支线也有甜甜收益",
-      dialogue: `${story.speaker}看了一眼涨幅，露出笑容：不是隐藏主线，但这张卡也很会营业呢。`,
+      dialogue: `${story.speaker}看了一眼涨幅，露出笑容：这条支线也有不错收益，选得很细心。`,
       detail: `小金库 ${formatMoneyFull(before)} → ${formatMoneyFull(after)}，${focusText}。`,
       reputationDelta: 5,
       fatigueDelta: 2,
@@ -174,7 +174,7 @@ export function buildOutcome(
   if (option.returnRate >= 0) {
     return {
       title: "普通支线通过",
-      dialogue: `${story.speaker}提醒你：能小赚就已经很棒了，但想进好结局，还要更勇敢一点。`,
+      dialogue: `${story.speaker}提醒你：能小赚已经很棒了，想进好结局，下次可以再大胆一点。`,
       detail: `小金库 ${formatMoneyFull(before)} → ${formatMoneyFull(after)}，${focusText}。`,
       reputationDelta: 2,
       fatigueDelta: 5,
@@ -182,8 +182,8 @@ export function buildOutcome(
     };
   }
   return {
-    title: "坏结局预警",
-    dialogue: `${story.speaker}没有责怪你，只把复盘模板发了过来：没关系，失败 CG 也会变成经验值。`,
+    title: "风险复盘",
+    dialogue: `${story.speaker}没有责怪你，只把复盘模板发了过来：没关系，失败记录也会变成经验值。`,
     detail: `小金库 ${formatMoneyFull(before)} → ${formatMoneyFull(after)}，${focusText}。`,
     reputationDelta: -6,
     fatigueDelta: 12,

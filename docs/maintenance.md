@@ -40,30 +40,31 @@
 
 - `index.html` 是否是 Vite 入口。
 - `package.json` 是否包含 Vite、React、TypeScript 和 PixiJS。
-- `src/` 是否包含 React 应用、Pixi 舞台、玩法引擎、程序化 BGM 和数据入口。
+- `src/` 是否包含 React 应用、Pixi 舞台、玩法引擎、程序化背景音乐和数据入口。
+- `assets/vn/` 下的场景背景和角色立绘是否存在。
 - `assets/galgame-key-art.png` 是否存在。
 - 内联脚本和 `game-data.js` 是否能通过基础语法检查。
 
 前端质量检查包括：
 
-- `npm run lint`：ESLint 检查 TypeScript/React。
+- `npm run lint`：ESLint 检查 TypeScript 与 React。
 - `npm run typecheck`：TypeScript 类型检查。
 - `npm run test:run`：Vitest 单元测试。
 - `npm run build`：Vite 生产构建。
 
 ## 音乐策略
 
-首版 BGM 使用浏览器 Web Audio 程序化合成，不提交第三方音频文件，避免授权不清。后续如果替换为音频素材，只接受自制、CC0、公有领域或明确允许商用分发的 loop，并在 README 中记录来源和授权。
+当前背景音乐由浏览器音频接口生成，仓库不提交第三方音频文件，避免授权不清。后续如果替换为音频素材，只接受自制、CC0、公有领域或明确允许商用分发的循环音频，并在 README 中记录来源和授权。
 
 ## GitHub Pages
 
-仓库通过 GitHub Pages 发布，`.github/workflows/pages.yml` 会在 `main` 分支构建 `dist/` 并上传 Pages artifact。
+仓库通过 GitHub Pages 发布。`.github/workflows/pages.yml` 会在 `main` 分支构建 `dist/`，并上传 Pages 发布产物。
 
 线上地址：
 
 <https://runchengxie.github.io/rebirth-game/>
 
-推送到 `main` 后，GitHub 会运行 CI 和 Pages 发布流程。CI 成功后，再确认线上页面和 `dist/assets/` 静态资源返回 200。
+推送到 `main` 后，GitHub 会运行持续集成和 Pages 发布流程。持续集成成功后，再确认线上页面和 `dist/assets/` 静态资源返回 200。
 
 ## 离线分享包
 

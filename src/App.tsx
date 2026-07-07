@@ -194,7 +194,7 @@ function OptionCard({
         <span className="rank-badge">{riskLabel(option)}</span>
       </div>
       <div className="meta">
-        {option.industry} · {option.market || option.board || "A股"} · 活跃 #{option.activeRank}
+        {option.industry} · {option.market || option.board || "A 股"} · 活跃 #{option.activeRank}
       </div>
       <p className="analysis-note">{analysisNote(option, locked)}</p>
       <div className="option-bottom">
@@ -321,10 +321,10 @@ function EndingPanel({ state }: { state: GameState }) {
   const multiple = state.capital / state.initialCapital;
   const heroine = CHARACTERS[bestRoute(state)];
   let title = "普通结局：可靠投研部员线";
-  let copy = "你没有解锁传说 CG，但每一次复盘都在让下一周目更接近好结局。";
+  let copy = "你还没有解锁传说图鉴，但每一次复盘都在让下一周目更接近好结局。";
 
   if (state.capital >= data.targetCapital) {
-    title = `真结局：${heroine.name}的亿级心动K线`;
+    title = `真结局：${heroine.name}的亿级心动 K 线`;
     copy = `一年时间，你把小金库推到亿级目标。${heroine.name}说，这条路线一定要存档。`;
   } else if (multiple >= 20 && state.reputation >= 60) {
     title = `好结局：${heroine.name}的闪耀研究员线`;
@@ -340,7 +340,7 @@ function EndingPanel({ state }: { state: GameState }) {
   return (
     <section className="ending-panel">
       <div>
-        <span className="panel-kicker">Ending</span>
+        <span className="panel-kicker">结局</span>
         <h2>{title}</h2>
         <p>{copy}</p>
       </div>
@@ -356,9 +356,9 @@ function EndingPanel({ state }: { state: GameState }) {
           </dd>
         </div>
         <div>
-          <dt>璃奈/美咲/芽衣</dt>
+          <dt>璃奈、美咲、芽衣</dt>
           <dd>
-            {state.affection.rina}/{state.affection.misaki}/{state.affection.mei}
+            {state.affection.rina}、{state.affection.misaki}、{state.affection.mei}
           </dd>
         </div>
       </dl>
@@ -380,7 +380,7 @@ function HistoryPanel({ history }: { history: RoundResult[] }) {
             <tr>
               <th>章节</th>
               <th>情报卡</th>
-              <th>市场/执行</th>
+              <th>市场与执行</th>
               <th>闪光路线</th>
               <th>结算</th>
             </tr>
@@ -543,9 +543,9 @@ export default function App() {
     <main className="app">
       <header className="topbar">
         <div className="brand">
-          <span className="brand-kicker">Moe Galgame · PixiJS Stage · A 股实盘题库</span>
-          <h1>心动K线：重生投研部</h1>
-          <p>被三位投研部女主捡回年初工位，用真实行情、日程安排和小金库改写新周目。</p>
+          <span className="brand-kicker">重生投研部 · 剧情舞台 · A 股月度题库</span>
+          <h1>心动 K 线：重生投研部</h1>
+          <p>你回到年初投研部工位，和三位研究员一起用真实行情、日程安排和研究判断改写新周目。</p>
         </div>
         <div className="controls">
           <div className="segmented" aria-label="年份">
@@ -601,11 +601,11 @@ export default function App() {
         )}
         <div className="vn-stage-content">
           <div className="moe-badges">
-            <span>{activeCharacter.name} ROUTE</span>
+            <span>{activeCharacter.name}路线</span>
             <span>好感 {state.affection[activeCharacter.id]}</span>
           </div>
           <div className="chapter-card">
-            <span>Episode {String(state.monthIndex + 1).padStart(2, "0")}</span>
+            <span>第 {String(state.monthIndex + 1).padStart(2, "0")} 话</span>
             <h2>{scene.title}</h2>
             <p>
               {month.label} · {sceneMood} · 剧情 {sceneProgress} · 当前日程：{activeFocus.label}
@@ -640,7 +640,7 @@ export default function App() {
               <h2>{month.label} 心动情报会</h2>
             </div>
             <div className="dates">
-              {compactDate(month.marketStart)} / {compactDate(month.marketEnd)}
+              {compactDate(month.marketStart)} 至 {compactDate(month.marketEnd)}
             </div>
           </div>
           <p className="scene-brief">{isStockRound ? story.mission : "剧情演出中。继续对话后，会进入本月心动情报会。"}</p>
@@ -717,8 +717,8 @@ export default function App() {
       <footer className="rules-note" aria-labelledby="rulesTitle">
         <h2 id="rulesTitle">企划与机制</h2>
         <p>
-          这是 Vite + TypeScript + React + PixiJS 版本：PixiJS 负责萌系视觉舞台，React 负责日程、心动卡、角色路线和存档回放。股票收益仍来自真实 A
-          股月度题库，日程行动提供额外执行修正和角色状态变化。当前 BGM 是 Web Audio 程序化合成循环，不依赖外部版权音频。
+          本页面是静态网页游戏。股票收益来自真实 A
+          股月度题库，日程行动会影响执行修正、角色状态和好感。当前背景音乐由浏览器生成，暂不使用外部音频素材。
         </p>
       </footer>
     </main>

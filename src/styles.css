@@ -289,7 +289,7 @@ button:disabled {
 
 .vn-stage {
   position: relative;
-  min-height: 500px;
+  min-height: clamp(640px, 68vh, 760px);
   margin-top: 18px;
   overflow: hidden;
   border: 1px solid var(--line);
@@ -322,8 +322,8 @@ button:disabled {
   display: grid;
   grid-template-rows: 1fr auto;
   gap: 18px;
-  min-height: 500px;
-  padding: 28px;
+  min-height: clamp(640px, 68vh, 760px);
+  padding: 22px 24px 26px;
   pointer-events: none;
 }
 
@@ -353,36 +353,44 @@ button:disabled {
 }
 
 .chapter-card {
-  width: min(450px, 100%);
+  width: min(620px, calc(100% - 330px));
   align-self: start;
-  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 9px 12px;
   border: 1px solid var(--glass-line);
   border-radius: 8px;
-  background: var(--glass);
+  background: rgba(255, 255, 255, 0.76);
   backdrop-filter: blur(10px);
 }
 
 .chapter-card span {
+  flex: 0 0 auto;
   color: var(--pink);
   font-size: 12px;
   font-weight: 900;
 }
 
 .chapter-card h2 {
-  margin: 6px 0;
-  font-size: clamp(28px, 4vw, 44px);
-  line-height: 1.08;
+  min-width: 0;
+  margin: 0;
+  font-size: clamp(17px, 1.8vw, 22px);
+  line-height: 1.18;
   overflow-wrap: anywhere;
 }
 
 .chapter-card p {
+  flex: 0 1 auto;
   margin: 0;
   color: var(--stage-muted);
-  font-size: 13px;
+  font-size: 12px;
+  line-height: 1.45;
 }
 
 .dialogue-box {
-  width: min(780px, 100%);
+  width: min(880px, 100%);
   padding: 18px 20px;
   border: 1px solid var(--glass-line);
   border-radius: 8px;
@@ -1268,6 +1276,12 @@ tr:last-child td {
   .chapter-card,
   .dialogue-box {
     width: 100%;
+  }
+
+  .chapter-card {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
   }
 
   .focus-grid,

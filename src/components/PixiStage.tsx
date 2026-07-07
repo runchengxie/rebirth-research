@@ -153,7 +153,7 @@ function renderScene(scene: StageScene, props: StagePropsSnapshot): void {
 
   scene.overlay.clear();
   scene.overlay.rect(0, 0, width, height).fill({ color: 0x140a1b, alpha: 0.18 });
-  scene.overlay.rect(0, 0, width * 0.44, height).fill({ color: 0xffffff, alpha: 0.58 });
+  scene.overlay.rect(0, 0, width * 0.34, height).fill({ color: 0xffffff, alpha: 0.5 });
   scene.overlay.rect(0, height * 0.58, width, height * 0.42).fill({ color: tint, alpha: 0.16 });
 
   const mobile = width < 700;

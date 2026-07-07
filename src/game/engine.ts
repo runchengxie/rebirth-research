@@ -1,10 +1,12 @@
-import { FOCUS_ACTIONS, SIGNAL_TYPES, STORY_ARCS } from "./content";
+import { FOCUS_ACTIONS, SCENE_SCRIPTS, SIGNAL_TYPES, STORY_ARCS } from "./content";
 import type {
   CharacterId,
   FocusAction,
   GameDataYear,
   GameState,
   RoundOutcome,
+  SceneNode,
+  SceneScript,
   StockOption,
   StoryArc,
 } from "../types";
@@ -47,6 +49,40 @@ export function storyForMonth(index: number): StoryArc {
   return STORY_ARCS[index % STORY_ARCS.length];
 }
 
+export function sceneForMonth(index: number): SceneScript {
+  const explicitScene = SCENE_SCRIPTS.find((scene) => scene.monthIndex === index);
+  if (explicitScene) return explicitScene;
+
+  const story = storyForMonth(index);
+  return {
+    id: `month-${index + 1}`,
+    monthIndex: index,
+    title: story.title,
+    defaultCharacterId: story.characterId,
+    nodes: [
+      {
+        type: "line",
+        characterId: story.characterId,
+        speaker: story.speaker,
+        role: story.role,
+        mood: story.mood,
+        text: story.line,
+        prompt: "点击继续，进入本月情报会。",
+      },
+      {
+        type: "stockRound",
+        prompt: story.mission,
+        bg: "briefing-room",
+      },
+    ],
+  };
+}
+
+export function currentSceneNode(state: GameState): SceneNode {
+  const scene = sceneForMonth(state.monthIndex);
+  return scene.nodes[state.sceneNodeIndex] || scene.nodes[scene.nodes.length - 1];
+}
+
 export function focusById(id: string): FocusAction {
   return FOCUS_ACTIONS.find((item) => item.id === id) || FOCUS_ACTIONS[0];
 }
@@ -64,6 +100,26 @@ export function riskLabel(option: StockOption): string {
   return "观察中";
 }
 
+export function analysisNote(option: StockOption, revealed = false): string {
+  const liquidity =
+    option.activeRank <= 50
+      ? "成交活跃度极高，容易成为资金合力的战场"
+      : option.activeRank <= 200
+        ? "成交活跃度靠前，说明当月已经被资金反复确认"
+        : "成交活跃度仍在题库前列，但需要更重视逻辑兑现";
+  const setup = `${option.industry || "未知行业"} · ${signalType(option)}。${liquidity}`;
+  if (!revealed) {
+    return `研究假设：${setup}。先判断逻辑能否从月初延续到月末。`;
+  }
+  const review =
+    option.returnRate >= 0.2
+      ? "复盘结果显示这条线索兑现度很高"
+      : option.returnRate >= 0
+        ? "复盘结果偏稳，但不是最强主线"
+        : "复盘结果为负，说明当时的风险释放快于逻辑兑现";
+  return `历史复盘：${setup}，涨幅排名 #${option.returnRank}。${review}。`;
+}
+
 export function createInitialState(year: string, data: GameDataYear, initialCapital?: number): GameState {
   const capital = initialCapital && initialCapital > 0 ? initialCapital : data.initialCapital || 10000;
   return {
@@ -73,6 +129,7 @@ export function createInitialState(year: string, data: GameDataYear, initialCapi
     monthIndex: 0,
     focusId: "research",
     selectedId: null,
+    sceneNodeIndex: 0,
     locked: false,
     finished: false,
     reputation: 18,
@@ -199,9 +256,28 @@ export function nextMonth(state: GameState, data: GameDataYear): GameState {
     ...state,
     monthIndex: Math.min(state.monthIndex + 1, data.months.length - 1),
     selectedId: null,
+    sceneNodeIndex: 0,
     locked: false,
     focusId: "research",
   };
+}
+
+export function canAdvanceScene(state: GameState): boolean {
+  const node = currentSceneNode(state);
+  return node.type === "line" || state.locked;
+}
+
+export function advanceScene(state: GameState, data: GameDataYear): GameState {
+  const scene = sceneForMonth(state.monthIndex);
+  const node = currentSceneNode(state);
+  if (node.type === "stockRound" && !state.locked) return state;
+  if (state.sceneNodeIndex < scene.nodes.length - 1) {
+    return {
+      ...state,
+      sceneNodeIndex: state.sceneNodeIndex + 1,
+    };
+  }
+  return nextMonth(state, data);
 }
 
 export function totalAffection(state: GameState): number {

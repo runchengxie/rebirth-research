@@ -3,23 +3,27 @@ import { GAME_DATA, GAME_YEARS } from "./data/gameData";
 import { ProceduralBgm } from "./audio/bgm";
 import { CHARACTERS, FOCUS_ACTIONS } from "./game/content";
 import {
+  advanceScene,
+  analysisNote,
   bestRoute,
+  canAdvanceScene,
   chooseOption,
   compactDate,
   createInitialState,
+  currentSceneNode,
   focusById,
   formatDelta,
   formatMoney,
   formatMoneyFull,
   formatPct,
-  nextMonth,
   riskLabel,
+  sceneForMonth,
   selectFocus,
   signalType,
   storyForMonth,
   totalAffection,
 } from "./game/engine";
-import type { CharacterId, GameState, RoundResult, StockOption } from "./types";
+import type { CharacterId, GameState, ResearchBrief, RoundResult, StockOption } from "./types";
 
 const PixiStage = lazy(() =>
   import("./components/PixiStage").then((module) => ({ default: module.PixiStage })),
@@ -124,6 +128,36 @@ function FocusSelector({
   );
 }
 
+function ResearchBriefPanel({
+  title,
+  briefs,
+}: {
+  title: string;
+  briefs: ResearchBrief[];
+}) {
+  if (briefs.length === 0) return null;
+  return (
+    <div className="research-briefs" aria-label="研究会纪要">
+      <div className="research-briefs-head">
+        <span>研究会纪要</span>
+        <strong>{title}</strong>
+      </div>
+      <div className="research-brief-grid">
+        {briefs.map((brief) => {
+          const character = CHARACTERS[brief.characterId];
+          return (
+            <div className={`research-brief ${character.color}`} key={`${brief.characterId}-${brief.label}`}>
+              <span>{character.name}</span>
+              <strong>{brief.label}</strong>
+              <p>{brief.text}</p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function OptionCard({
   option,
   index,
@@ -162,6 +196,7 @@ function OptionCard({
       <div className="meta">
         {option.industry} · {option.market || option.board || "A股"} · 活跃 #{option.activeRank}
       </div>
+      <p className="analysis-note">{analysisNote(option, locked)}</p>
       <div className="option-bottom">
         <span className={locked ? `return ${option.returnRate >= 0 ? "up" : "down"}` : "hidden-return"}>
           {locked ? formatPct(option.returnRate) : "本话结局待揭晓"}
@@ -404,16 +439,59 @@ export default function App() {
   const data = GAME_DATA[state.year];
   const month = data.months[state.monthIndex];
   const story = storyForMonth(state.monthIndex);
-  const activeCharacter = CHARACTERS[story.characterId];
+  const scene = sceneForMonth(state.monthIndex);
+  const sceneNode = currentSceneNode(state);
+  const stockRoundNode = sceneNode.type === "stockRound" ? sceneNode : null;
+  const isStockRound = Boolean(stockRoundNode);
+  const lineCharacterId = sceneNode.type === "line" ? sceneNode.characterId : story.characterId;
+  const activeCharacter = CHARACTERS[lineCharacterId];
+  const sceneBackground = sceneNode.type === "line" ? sceneNode.bg || "research-room" : stockRoundNode?.bg || "briefing-room";
+  const scenePose = sceneNode.type === "line" ? sceneNode.pose || "neutral" : "thinking";
   const last = state.history[state.history.length - 1];
   const activeFocus = focusById(state.focusId);
+  const sceneCanAdvance = canAdvanceScene(state);
+  const sceneProgress = `${Math.min(state.sceneNodeIndex + 1, scene.nodes.length)}/${scene.nodes.length}`;
+  const isLastSceneNode = state.sceneNodeIndex >= scene.nodes.length - 1;
 
-  const resultText = state.locked ? last.outcome.title : "选择心动情报卡";
-  const resultDetail = state.locked
-    ? `${last.outcome.detail} 隐藏闪光路线为 ${month.best.name} ${formatPct(month.best.returnRate)}。`
-    : `${compactDate(month.marketStart)} 至 ${compactDate(month.marketEnd)}，候选池 ${month.candidateCount} 只。`;
-  const dialogue = state.locked ? last.outcome.dialogue : story.line;
-  const prompt = state.locked ? "点击下一话推进剧情。" : story.mission;
+  const speakerName = state.locked && isStockRound && last ? story.speaker : sceneNode.type === "line" ? sceneNode.speaker : story.speaker;
+  const speakerRole = state.locked && isStockRound && last ? story.role : sceneNode.type === "line" ? sceneNode.role : story.role;
+  const sceneMood = sceneNode.type === "line" ? sceneNode.mood : story.mood;
+  const resultText = isStockRound
+    ? state.locked && last
+      ? last.outcome.title
+      : "选择心动情报卡"
+    : state.locked && last
+      ? "结算后剧情"
+      : "剧情推进中";
+  const resultDetail = isStockRound
+    ? state.locked && last
+      ? `${last.outcome.detail} 隐藏闪光路线为 ${month.best.name} ${formatPct(month.best.returnRate)}。`
+      : `${compactDate(month.marketStart)} 至 ${compactDate(month.marketEnd)}，候选池 ${month.candidateCount} 只。`
+    : state.locked && last
+      ? `${last.outcome.title} · 剧情节点 ${sceneProgress}，${isLastSceneNode ? "继续后会进入下一话。" : "继续后会推进结算后剧情。"}`
+      : `${scene.title} · 剧情节点 ${sceneProgress}，继续后会进入本月情报会。`;
+  const dialogue = stockRoundNode
+    ? state.locked && last
+      ? last.outcome.dialogue
+      : "四张心动情报卡已经摆在桌上。先安排本话日程，再选出你要负责的路线。"
+    : sceneNode.type === "line"
+      ? sceneNode.text
+      : "";
+  const prompt = stockRoundNode
+    ? state.locked
+      ? "结算完成，点击继续剧情。"
+      : stockRoundNode?.prompt || story.mission
+    : sceneNode.prompt || "点击继续剧情。";
+  const advanceLabel =
+    isStockRound && !state.locked
+      ? "先选择情报卡"
+      : state.finished && isLastSceneNode
+        ? "开启新周目"
+        : state.locked && isLastSceneNode
+          ? "下一话"
+        : isStockRound && state.locked
+          ? "继续剧情"
+          : "继续";
 
   const topOptions = useMemo(() => month.options, [month]);
 
@@ -516,7 +594,7 @@ export default function App() {
       <section className={`vn-stage character-${activeCharacter.color}`} aria-label="剧情舞台">
         {usePixiStage ? (
           <Suspense fallback={<StaticStageArt />}>
-            <PixiStage activeCharacter={activeCharacter} />
+            <PixiStage activeCharacter={activeCharacter} activePose={scenePose} backgroundId={sceneBackground} />
           </Suspense>
         ) : (
           <StaticStageArt />
@@ -528,20 +606,28 @@ export default function App() {
           </div>
           <div className="chapter-card">
             <span>Episode {String(state.monthIndex + 1).padStart(2, "0")}</span>
-            <h2>{story.title}</h2>
+            <h2>{scene.title}</h2>
             <p>
-              {month.label} · {story.mood} · 当前日程：{activeFocus.label}
+              {month.label} · {sceneMood} · 剧情 {sceneProgress} · 当前日程：{activeFocus.label}
             </p>
           </div>
           <div className="dialogue-box">
             <div className="speaker-row">
-              <span className="speaker-name">{story.speaker}</span>
+              <span className="speaker-name">{speakerName}</span>
               <span className="speaker-role">
-                {story.role} · {activeCharacter.tag}
+                {speakerRole} · {activeCharacter.tag}
               </span>
             </div>
             <p>{dialogue}</p>
             <small>{prompt}</small>
+            <button
+              className="story-next-button"
+              disabled={!sceneCanAdvance}
+              type="button"
+              onClick={() => setState((current) => advanceScene(current, data))}
+            >
+              {advanceLabel}
+            </button>
           </div>
         </div>
       </section>
@@ -557,26 +643,45 @@ export default function App() {
               {compactDate(month.marketStart)} / {compactDate(month.marketEnd)}
             </div>
           </div>
-          <p className="scene-brief">{story.mission}</p>
-          <FocusSelector state={state} onSelect={(focusId) => setState((current) => selectFocus(current, focusId))} />
-          <div className="options">
-            {topOptions.map((option, index) => (
-              <OptionCard
-                index={index}
-                key={option.id}
-                option={option}
-                state={state}
-                onChoose={(selected) => setState((current) => chooseOption(current, data, selected))}
+          <p className="scene-brief">{isStockRound ? story.mission : "剧情演出中。继续对话后，会进入本月心动情报会。"}</p>
+          {isStockRound ? (
+            <>
+              <ResearchBriefPanel
+                briefs={stockRoundNode?.briefs || []}
+                title={stockRoundNode?.briefTitle || `${month.label} 研究会`}
               />
-            ))}
-          </div>
+              <FocusSelector state={state} onSelect={(focusId) => setState((current) => selectFocus(current, focusId))} />
+              <div className="options">
+                {topOptions.map((option, index) => (
+                  <OptionCard
+                    index={index}
+                    key={option.id}
+                    option={option}
+                    state={state}
+                    onChoose={(selected) => setState((current) => chooseOption(current, data, selected))}
+                  />
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="script-preview">
+              <span>剧情节点</span>
+              <strong>{scene.title}</strong>
+              <p>当前节点 {sceneProgress}。继续完成对白后，本月心动情报会会开放。</p>
+            </div>
+          )}
           <div className="result-band">
             <div className="result-copy">
               <strong>{resultText}</strong>
               <span>{resultDetail}</span>
             </div>
-            <button className="primary-button" disabled={!state.locked} type="button" onClick={() => setState((current) => nextMonth(current, data))}>
-              {state.finished ? "开启新周目" : "下一话"}
+            <button
+              className="primary-button"
+              disabled={!sceneCanAdvance}
+              type="button"
+              onClick={() => setState((current) => advanceScene(current, data))}
+            >
+              {advanceLabel}
             </button>
           </div>
         </div>

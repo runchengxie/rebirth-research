@@ -53,6 +53,43 @@ export interface StoryArc {
   mission: string;
 }
 
+export interface DialogueNode {
+  type: "line";
+  characterId: CharacterId;
+  speaker: string;
+  role: string;
+  mood: string;
+  text: string;
+  prompt?: string;
+  pose?: string;
+  bg?: string;
+  bgm?: string;
+}
+
+export interface StockRoundNode {
+  type: "stockRound";
+  prompt: string;
+  bg?: string;
+  briefTitle?: string;
+  briefs?: ResearchBrief[];
+}
+
+export type SceneNode = DialogueNode | StockRoundNode;
+
+export interface ResearchBrief {
+  characterId: CharacterId;
+  label: string;
+  text: string;
+}
+
+export interface SceneScript {
+  id: string;
+  monthIndex: number;
+  title: string;
+  defaultCharacterId: CharacterId;
+  nodes: SceneNode[];
+}
+
 export interface FocusAction {
   id: string;
   label: string;
@@ -72,6 +109,7 @@ export interface GameState {
   monthIndex: number;
   focusId: string;
   selectedId: string | null;
+  sceneNodeIndex: number;
   locked: boolean;
   finished: boolean;
   reputation: number;

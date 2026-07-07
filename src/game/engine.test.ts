@@ -1,6 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { FOCUS_ACTIONS } from "./content";
-import { chooseOption, createInitialState, nextMonth, selectFocus } from "./engine";
+import {
+  advanceScene,
+  chooseOption,
+  createInitialState,
+  currentSceneNode,
+  nextMonth,
+  sceneForMonth,
+  selectFocus,
+} from "./engine";
 import type { GameDataYear, StockOption } from "../types";
 
 const best: StockOption = {
@@ -96,5 +104,36 @@ describe("game engine", () => {
     expect(advanced.monthIndex).toBe(1);
     expect(advanced.locked).toBe(false);
     expect(advanced.selectedId).toBeNull();
+  });
+
+  it("walks scripted dialogue into the stock round node", () => {
+    const scene = sceneForMonth(0);
+    const stockRoundIndex = scene.nodes.findIndex((node) => node.type === "stockRound");
+    let state = createInitialState("2025", fixture);
+
+    expect(currentSceneNode(state).type).toBe("line");
+    for (let index = 0; index < stockRoundIndex; index += 1) {
+      state = advanceScene(state, fixture);
+    }
+
+    expect(currentSceneNode(state).type).toBe("stockRound");
+    expect(advanceScene(state, fixture).sceneNodeIndex).toBe(state.sceneNodeIndex);
+  });
+
+  it("continues post-choice dialogue before moving to the next month", () => {
+    const scene = sceneForMonth(0);
+    const stockRoundIndex = scene.nodes.findIndex((node) => node.type === "stockRound");
+    let state = createInitialState("2025", fixture);
+
+    for (let index = 0; index < stockRoundIndex; index += 1) {
+      state = advanceScene(state, fixture);
+    }
+
+    const locked = chooseOption(state, fixture, best);
+    const postChoice = advanceScene(locked, fixture);
+
+    expect(currentSceneNode(postChoice).type).toBe("line");
+    expect(postChoice.monthIndex).toBe(0);
+    expect(postChoice.sceneNodeIndex).toBe(stockRoundIndex + 1);
   });
 });

@@ -38,6 +38,18 @@ for (const file of [
   "tsconfig.json",
   "tsconfig.app.json",
   "assets/galgame-key-art.png",
+  "assets/vn/backgrounds/research-room.png",
+  "assets/vn/backgrounds/briefing-room.png",
+  "assets/vn/backgrounds/night-cafe.png",
+  "assets/vn/characters/rina-smile.png",
+  "assets/vn/characters/rina-thinking.png",
+  "assets/vn/characters/rina-soft.png",
+  "assets/vn/characters/misaki-neutral.png",
+  "assets/vn/characters/misaki-excited.png",
+  "assets/vn/characters/misaki-focused.png",
+  "assets/vn/characters/mei-neutral.png",
+  "assets/vn/characters/mei-serious.png",
+  "assets/vn/characters/mei-soft.png",
 ]) {
   if (!fs.existsSync(file)) {
     fail(`missing ${file}`);
@@ -50,8 +62,8 @@ if (!app.includes("PixiStage") || !app.includes("FocusSelector") || !app.include
 }
 
 const pixiStage = fs.readFileSync("src/components/PixiStage.tsx", "utf8");
-if (!pixiStage.includes("pixi.js") || !pixiStage.includes("galgame-key-art.png")) {
-  fail("Pixi stage should use pixi.js and the generated key art");
+if (!pixiStage.includes("pixi.js") || !pixiStage.includes("backgroundAssets") || !pixiStage.includes("characterAssets")) {
+  fail("Pixi stage should use pixi.js and VN background/character assets");
 }
 
 const sandbox = { window: {} };

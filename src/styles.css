@@ -225,7 +225,8 @@ button:disabled {
 }
 
 .icon-button,
-.primary-button {
+.primary-button,
+.story-next-button {
   height: 42px;
   border: 1px solid var(--button-bg);
   border-radius: 8px;
@@ -235,6 +236,12 @@ button:disabled {
   font-weight: 900;
   white-space: nowrap;
   box-shadow: 0 10px 26px rgba(255, 111, 175, 0.22);
+}
+
+.primary-button:disabled,
+.story-next-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
 }
 
 .icon-button {
@@ -306,7 +313,7 @@ button:disabled {
 .pixi-stage-fallback {
   background:
     linear-gradient(90deg, rgba(255, 247, 252, 0.92), rgba(255, 247, 252, 0.28)),
-    url("../assets/galgame-key-art.png") center / cover;
+    url("../assets/vn/backgrounds/research-room.png") center / cover;
 }
 
 .vn-stage-content {
@@ -382,6 +389,7 @@ button:disabled {
   background: var(--glass);
   backdrop-filter: blur(12px);
   box-shadow: 0 18px 42px rgba(226, 88, 151, 0.22);
+  pointer-events: auto;
 }
 
 .speaker-row {
@@ -422,6 +430,14 @@ button:disabled {
   font-size: 13px;
   line-height: 1.6;
   overflow-wrap: anywhere;
+}
+
+.story-next-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 118px;
+  margin-top: 14px;
 }
 
 .play {
@@ -476,6 +492,111 @@ button:disabled {
   color: var(--muted);
   font-size: 14px;
   line-height: 1.7;
+}
+
+.script-preview {
+  min-height: 176px;
+  display: grid;
+  align-content: center;
+  gap: 8px;
+  padding: 18px;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  background: var(--surface-strong);
+}
+
+.script-preview span {
+  color: var(--pink);
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.script-preview strong {
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.script-preview p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.research-briefs {
+  margin-bottom: 14px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-strong);
+}
+
+.research-briefs-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.research-briefs-head span {
+  color: var(--pink);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.research-briefs-head strong {
+  min-width: 0;
+  color: var(--ink);
+  font-size: 15px;
+  overflow-wrap: anywhere;
+}
+
+.research-brief-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.research-brief {
+  min-height: 118px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.research-brief.pink {
+  border-color: rgba(255, 142, 195, 0.56);
+}
+
+.research-brief.blue {
+  border-color: rgba(143, 199, 255, 0.62);
+}
+
+.research-brief.lavender {
+  border-color: rgba(198, 167, 255, 0.62);
+}
+
+.research-brief span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.research-brief strong {
+  display: block;
+  margin-top: 4px;
+  color: var(--ink);
+  font-size: 15px;
+}
+
+.research-brief p {
+  margin: 7px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
 }
 
 .focus-grid {
@@ -542,10 +663,10 @@ button:disabled {
 }
 
 .option {
-  min-height: 176px;
+  min-height: 218px;
   width: 100%;
   display: grid;
-  grid-template-rows: auto auto 1fr auto;
+  grid-template-rows: auto auto auto 1fr auto;
   gap: 10px;
   padding: 15px;
   border: 1px solid var(--line);
@@ -645,6 +766,14 @@ button:disabled {
   color: var(--muted);
   font-size: 13px;
   font-weight: 700;
+}
+
+.analysis-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
 }
 
 .result-band {
@@ -1142,6 +1271,7 @@ tr:last-child td {
   }
 
   .focus-grid,
+  .research-brief-grid,
   .options {
     grid-template-columns: 1fr;
   }

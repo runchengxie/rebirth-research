@@ -52,9 +52,9 @@ export const MARKET_THEMES: MarketTheme[] = [
     period: "一月",
     title: "流动性冲击与雪球敲入链",
     publicContext:
-      "年初市场连续下跌，雪球产品集中敲入区被反复试探，两融预警和质押风险同时发酵。公开信息能看到的是指数跌幅和跌停家数，看不到的是杠杆盘的连锁反应还在水面以下。",
+      "年初市场连续下跌，雪球产品集中敲入区被反复试探，两融预警和质押风险同时发酵。公开信息能看到指数跌幅和跌停家数，杠杆盘的连锁反应还在水面以下。",
     protagonistMemory:
-      "你知道这次流动性冲击会触发政策响应，但节奏不是直线。把'要反弹'拆成三问：杠杆出清到什么程度、政策工具箱何时打开、哪些行业最先恢复成交。",
+      "你知道这次流动性冲击会触发政策响应，但节奏不是直线。把「要反弹」拆成三问：杠杆出清到什么程度、政策工具箱何时打开、哪些行业最先恢复成交。",
     gameHook: "在恐慌里保持研究纪律：是盯着跌幅抄底，还是先搞清楚谁在卖、谁在接。",
     historicalPrototype: "2024年1月市场急跌，雪球产品集中敲入、两融余额快速下降、中证500/1000加速下跌。",
   },
@@ -74,9 +74,9 @@ export const MARKET_THEMES: MarketTheme[] = [
     period: "三月",
     title: "政策窗口与设备更新链",
     publicContext:
-      "产业政策和财政方向成为研报关键词。一份文件里某几个词的出现频次比去年翻了三倍，市场开始押注受益产业链——但文件到订单的传导需要时间。",
+      "产业政策和财政方向成为研报关键词。一份文件里某几个词的出现频次比去年翻了三倍，市场开始押注受益产业链，但文件到订单的传导需要时间。",
     protagonistMemory:
-      "你知道政策脉冲常常先涨概念再验订单。真正重要的不是你读懂了文件，而是你能区分哪些环节有真实需求增量，哪些只是文件里的高频词。",
+      "你知道政策脉冲常常先涨概念再验订单。真正重要的是你能区分哪些环节有真实需求增量、哪些只是文件里的高频词，而不是你有没有读懂文件。",
     gameHook: "把政策文件拆成：关键词频次变化、受益环节先后、业绩验证时点。",
     historicalPrototype: "2024年3月两会提出大规模设备更新和消费品以旧换新，相关产业链快速反应。",
   },
@@ -87,7 +87,7 @@ export const MARKET_THEMES: MarketTheme[] = [
     publicContext:
       "一季报密集披露，前期概念股进入业绩验证。新监管文件重塑分红和退市预期，市场从主题炒作转向对基本面的重新定价。",
     protagonistMemory:
-      "你知道一季报会是分水岭：能兑现业绩的方向会获得第二波资金，不能兑现的会迅速冷却。但兑现不是简单的同比增速，要拆结构——毛利率、现金流、在手订单。",
+      "你知道一季报会是分水岭：能兑现业绩的方向会获得第二波资金，不能兑现的会迅速冷却。但兑现不是简单的同比增速，要拆结构：毛利率、现金流、在手订单。",
     gameHook: "同事们在讨论谁是财报季的黑马，你需要在概念和业绩之间搭建验证框架。",
     historicalPrototype: "2024年4月一季报披露期+新国九条发布，市场从微盘炒作转向业绩驱动。",
   },
@@ -98,7 +98,7 @@ export const MARKET_THEMES: MarketTheme[] = [
     publicContext:
       "地产政策出台引发金融地产链快速反弹，高股息与成长的资金争夺白热化。指数不低，但行业间的估值差到了极端位置。",
     protagonistMemory:
-      "你知道风格切换常常在共识最强的时候反转。决定胜负的不是你站在哪一边，而是你有没有在切换前识别出拥挤度的信号。",
+      "你知道风格切换常常在共识最强的时候反转。决定胜负的，是你有没有在切换前识别出拥挤度的信号。",
     gameHook: "陈星禾盯因子拥挤度，周明昭看估值分位数，林若宁关心业绩持续期。三种框架打架的时候，你的判断会被加倍验证。",
     historicalPrototype: "2024年5月517地产新政，地产链快速反弹后分化，红利与成长风格剧烈切换。",
   },
@@ -120,7 +120,7 @@ export const MARKET_THEMES: MarketTheme[] = [
     publicContext:
       "自动驾驶商业化落地新闻引发产业链扩散行情，从整车到激光雷达到高精地图，支线题材大量涌现。但扩散意味着鱼龙混杂，真正的龙头和跟风补涨需要仔细分辨。",
     protagonistMemory:
-      "你知道扩散行情最大的陷阱是把补涨当主线。真正的信号不是涨幅，是成交额排名能不能在产业链里稳定下来。",
+      "你知道扩散行情最大的陷阱是把补涨当主线。真正的信号是成交额排名能不能在产业链里稳定下来。",
     gameHook: "三个角色从不同维度拆解主题质量，你的选择决定团队的研究方向。",
     historicalPrototype: "2024年7月萝卜快跑引爆自动驾驶主题，产业链从整车向传感器、高精地图扩散。",
   },
@@ -131,7 +131,7 @@ export const MARKET_THEMES: MarketTheme[] = [
     publicContext:
       "中报披露让市场重新审视订单和利润率。部分前期热门的产业链出现业绩miss，估值面临修正压力。成交缩量，市场进入等待模式。",
     protagonistMemory:
-      "你知道兑现后的分歧才是最考验研究框架的地方。业绩miss不一定是坏事——如果miss的原因是可逆的，反而是研究机会。",
+      "你知道兑现后的分歧才是最考验研究框架的地方。业绩miss不一定是坏事。如果miss的原因是可逆的，反而是研究机会。",
     gameHook: "复盘会看你的观点命中率，更看你在偏差面前能不能诚实记录假设错在哪里。",
     historicalPrototype: "2024年8月中报密集披露，部分AI应用方向业绩不及预期，市场整体缩量筑底。",
   },
@@ -142,7 +142,7 @@ export const MARKET_THEMES: MarketTheme[] = [
     publicContext:
       "密集政策信号出现：货币政策、资本市场、房地产三条线同时发力。成交量在两周内从地量冲到天量，券商和金融IT成为情绪放大器。",
     protagonistMemory:
-      "你知道这种级别的政策转向极其罕见，但真正的考验不是敢不敢追——是能不能在暴涨中保持风控框架，不被情绪裹挟。",
+      "你知道这种级别的政策转向极其罕见，但真正的考验是在暴涨中保持风控框架，不被情绪裹挟，不被情绪裹挟。",
     gameHook: "陈星禾盯成交量和资金结构，周明昭评估政策力度是否超过历史极值，林若宁提醒你别忘记基本面验证的滞后性。",
     historicalPrototype: "2024年9月24日国新办发布会后政策组合拳，上证单日涨幅超4%，成交额破万亿。",
   },
@@ -175,7 +175,7 @@ export const MARKET_THEMES: MarketTheme[] = [
     publicContext:
       "全年主线进入结算期，债券牛市延续，股票市场在跨年配置和兑现压力之间摇摆。投委会开始制定下一年策略框架。",
     protagonistMemory:
-      "你知道收官不是结束，是下一周目研究档案的开头。今年做对的和做错的，都会被写进明年的假设起点。",
+      "你知道收官是下一轮研究档案的开头，不是结束。今年做对的和做错的，都会被写进明年的假设起点。",
     gameHook: "最终选择结算全年研究可信度、团队信任、生活平衡，决定你的研究员结局线。",
     historicalPrototype: "2024年12月债市延续牛市，股市震荡整理，机构跨年配置推动红利和消费方向。",
   },
@@ -203,7 +203,7 @@ export const STORY_ARCS: StoryArc[] = [
     role: "基本面研究员",
     mood: "认真",
     line: "房租、通勤和咖啡预算同时报警。林若宁敲了敲你的桌面：模型改对了，才有资格想房租的事。",
-    mission: "本话选择会影响你的研究可信度——你拿不拿得出可以被验证的判断。",
+    mission: "本话选择会影响你的研究可信度，看你拿不拿得出可以被验证的判断。",
     theme: MARKET_THEMES[1],
   },
   {
@@ -242,7 +242,7 @@ export const STORY_ARCS: StoryArc[] = [
     speaker: "林若宁",
     role: "基本面研究员",
     mood: "害羞",
-    line: "末班车里很安静。林若宁望着窗外：你上一次怀疑自己的判断是什么时候？不是怀疑结果，是怀疑你的分析框架有没有漏掉关键变量。",
+    line: "末班车里很安静。林若宁望着窗外：你上一次怀疑自己的判断是什么时候？我在想你的分析框架有没有漏掉关键变量，而不是在怀疑结果。",
     mission: "本话会拉开分歧：你相信估值终将回归、相信资金流向不可逆、还是相信你自己亲手验证过的数据？",
     theme: MARKET_THEMES[5],
   },
@@ -252,7 +252,7 @@ export const STORY_ARCS: StoryArc[] = [
     speaker: "陈星禾",
     role: "量化/资金信号研究员",
     mood: "兴奋",
-    line: "半年过去，很多人从自信变成了沉默。陈星禾调出一张因子收益热力图：你看，这几个月动量因子和波动率因子的相关性在飙升。市场在同时追涨和避险——这是教科书级的矛盾信号。",
+    line: "半年过去，很多人从自信变成了沉默。陈星禾调出一张因子收益热力图：你看，这几个月动量因子和波动率因子的相关性在飙升。市场在同时追涨和避险，这是教科书级的矛盾信号。",
     mission: "用一笔选择回答她：你的判断到底是靠框架验证出来的，还是靠直觉撑过来的。",
     theme: MARKET_THEMES[6],
   },
@@ -272,7 +272,7 @@ export const STORY_ARCS: StoryArc[] = [
     speaker: "林若宁",
     role: "基本面研究员",
     mood: "在意",
-    line: "电话那头停顿了很久。林若宁说：这次我不替你选——三个同事有三种框架，我的基本面、陈星禾的量化信号、周明昭的风控——你决定跟谁站在一起，就会走进谁的叙事。",
+    line: "电话那头停顿了很久。林若宁说：这次我不替你选。三个同事有三种框架，我的基本面、陈星禾的量化信号、周明昭的风控。你决定跟谁站在一起，就会走进谁的叙事，就会走进谁的叙事。",
     mission: "四个选项背后是四种研究路线，结果会反馈在各个维度上。",
     theme: MARKET_THEMES[8],
   },
@@ -389,7 +389,7 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "用Barra因子模型拆解AI概念股的收益来源，看是动量驱动还是基本面因子在贡献。",
         effects: { researchCredibility: 10, committeeAdoption: 5, portfolioNav: 0.01, viewAccuracy: 8, clientFeedback: 3, teamTrust: 4, fatigue: 8, lifeBalance: -4, characterRelations: [{ characterId: "chen_xinghe", value: 10 }] },
         evidenceLevel: 16, clarityLevel: 14, riskAwareness: 14, reflectionValue: 6,
-        backgroundNote: "Barra归因显示动量因子贡献超过60%，基本面因子贡献不足20%——这是典型的事件驱动行情。",
+        backgroundNote: "Barra归因显示动量因子贡献超过60%，基本面因子贡献不足20%，这是典型的事件驱动行情。",
       },
       {
         id: "feb-roadshow",
@@ -437,7 +437,7 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "拆解文件关键词频次变化，按受益先后排序产业链环节，标出每个环节的业绩验证时点。",
         effects: { researchCredibility: 15, committeeAdoption: 10, portfolioNav: 0.02, viewAccuracy: 8, clientFeedback: 5, teamTrust: 6, fatigue: 11, lifeBalance: -7, characterRelations: [{ characterId: "lin_ruoning", value: 8 }] },
         evidenceLevel: 18, clarityLevel: 17, riskAwareness: 10, reflectionValue: 6,
-        backgroundNote: "政策文件的频次变化本身就是一个可量化的信号——比经验判断靠谱。",
+        backgroundNote: "政策文件的频次变化本身就是一个可量化的信号，比经验判断靠谱。",
       },
       {
         id: "mar-field",
@@ -455,7 +455,7 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "紧盯受益板块的每日大单流向、盘口深度和成交集中度。",
         effects: { researchCredibility: 8, committeeAdoption: 5, portfolioNav: 0.01, viewAccuracy: 7, clientFeedback: 3, teamTrust: 4, fatigue: 7, lifeBalance: -3, characterRelations: [{ characterId: "chen_xinghe", value: 8 }] },
         evidenceLevel: 14, clarityLevel: 10, riskAwareness: 12, reflectionValue: 4,
-        backgroundNote: "订单流显示机构资金在逐步进入但散户还在观望——这是典型的早期信号。",
+        backgroundNote: "订单流显示机构资金在逐步进入但散户还在观望，这是典型的早期信号。",
       },
       {
         id: "mar-hype",
@@ -464,7 +464,7 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "第一时间覆盖所有文件里提到的高频词相关公司。",
         effects: { researchCredibility: -4, committeeAdoption: 4, portfolioNav: 0.005, viewAccuracy: -6, clientFeedback: 5, teamTrust: -2, fatigue: 10, lifeBalance: -5, characterRelations: [{ characterId: "lin_ruoning", value: -4 }] },
         evidenceLevel: 2, clarityLevel: 2, riskAwareness: 2, reflectionValue: 2,
-        backgroundNote: "热点追逐在短期获得了关注，但后复盘发现多处逻辑跳跃和事实错误。",
+        backgroundNote: "热点追逐在短期获得了关注，但复盘后发现多处逻辑跳跃和事实错误。",
       },
       {
         id: "mar-defense",
@@ -473,7 +473,7 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "把你的政策分析框架拿到投委会上过一遍，接受交叉提问。",
         effects: { researchCredibility: 8, committeeAdoption: 14, portfolioNav: 0.005, viewAccuracy: 6, clientFeedback: 6, teamTrust: 8, fatigue: 6, lifeBalance: -3, characterRelations: [{ characterId: "zhou_mingzhao", value: 8 }] },
         evidenceLevel: 10, clarityLevel: 16, riskAwareness: 12, reflectionValue: 6,
-        backgroundNote: "投委会对你的政策拆解框架表示认可，但追问了三个验证节点——这恰好是你最有价值的收获。",
+        backgroundNote: "投委会对你的政策拆解框架表示认可，但追问了三个验证节点，这恰好是你最有价值的收获。",
       },
       {
         id: "mar-rest",
@@ -503,7 +503,7 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "按新监管文件的标准筛选可能受影响的标的，做出分红可持续性评估模型。",
         effects: { researchCredibility: 12, committeeAdoption: 10, portfolioNav: 0.01, viewAccuracy: 7, clientFeedback: 6, teamTrust: 5, fatigue: 8, lifeBalance: -4, characterRelations: [{ characterId: "zhou_mingzhao", value: 7 }] },
         evidenceLevel: 16, clarityLevel: 14, riskAwareness: 14, reflectionValue: 6,
-        backgroundNote: "新规重塑的不只是退市规则，更是市场对'好公司'的定义。",
+        backgroundNote: "新规重塑的不只是退市规则，更是市场对「好公司」的定义。",
       },
       {
         id: "apr-present",
@@ -521,7 +521,7 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "一季报太细碎了，先看净利润增速排名再说。",
         effects: { researchCredibility: -6, committeeAdoption: 2, portfolioNav: -0.01, viewAccuracy: -10, clientFeedback: -2, teamTrust: -3, fatigue: -2, lifeBalance: 2, characterRelations: [{ characterId: "lin_ruoning", value: -6 }] },
         evidenceLevel: 2, clarityLevel: 2, riskAwareness: 2, reflectionValue: 2,
-        backgroundNote: "只看净利润增速漏掉了毛利率下滑和现金流恶化——这是最典型的韭菜式研究。",
+        backgroundNote: "只看净利润增速漏掉了毛利率下滑和现金流恶化，这是最典型的韭菜式研究。",
       },
       {
         id: "apr-help",
@@ -569,7 +569,7 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "邀请基本面、量化和宏观三个视角的同事碰撞观点。",
         effects: { researchCredibility: 6, committeeAdoption: 8, portfolioNav: 0.005, viewAccuracy: 6, clientFeedback: 4, teamTrust: 12, fatigue: 4, lifeBalance: -2, characterRelations: [{ characterId: "chen_xinghe", value: 6 }] },
         evidenceLevel: 10, clarityLevel: 12, riskAwareness: 10, reflectionValue: 6,
-        backgroundNote: "三个框架碰撞出的共识比任何单个框架都更可靠——但共识本身也可能是拥挤的信号。",
+        backgroundNote: "三个框架碰撞出的共识比任何单个框架都更可靠，但共识本身也可能是拥挤的信号。",
       },
       {
         id: "may-fomo",
@@ -618,7 +618,7 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "从设备商订单到晶圆厂利用率到芯片出货量，逐层穿透。",
         effects: { researchCredibility: 10, committeeAdoption: 6, portfolioNav: 0.01, viewAccuracy: 8, clientFeedback: 3, teamTrust: 5, fatigue: 8, lifeBalance: -4, characterRelations: [{ characterId: "chen_xinghe", value: 9 }] },
         evidenceLevel: 16, clarityLevel: 12, riskAwareness: 12, reflectionValue: 4,
-        backgroundNote: "订单流穿透是最直接的产业验证手段——订单不会说谎。",
+        backgroundNote: "订单流穿透是最直接的产业验证手段，订单不会说谎。",
       },
       {
         id: "jun-client",
@@ -636,7 +636,7 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "觉得自己看准了半导体周期底部，把推荐集中在一个方向。",
         effects: { researchCredibility: -4, committeeAdoption: 0, portfolioNav: -0.015, viewAccuracy: -6, clientFeedback: -4, teamTrust: -5, fatigue: 6, lifeBalance: -4, characterRelations: [{ characterId: "lin_ruoning", value: -5 }] },
         evidenceLevel: 2, clarityLevel: 2, riskAwareness: 2, reflectionValue: 4,
-        backgroundNote: "集中推荐在验证不通过时的损失会被放大。分散不是不自信，是尊重不确定性。",
+        backgroundNote: "集中推荐在验证不通过时的损失会被放大。分散是对不确定性的尊重。",
       },
       {
         id: "jun-defense",
@@ -645,7 +645,7 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "把你的半导体周期分析框架拿到投委会，接受交叉提问。",
         effects: { researchCredibility: 8, committeeAdoption: 12, portfolioNav: 0.005, viewAccuracy: 6, clientFeedback: 5, teamTrust: 7, fatigue: 6, lifeBalance: -3, characterRelations: [{ characterId: "zhou_mingzhao", value: 8 }] },
         evidenceLevel: 10, clarityLevel: 16, riskAwareness: 12, reflectionValue: 8,
-        backgroundNote: "投委会认可了你的框架逻辑，但要求补充下游订单验证数据——这是有价值的反馈。",
+        backgroundNote: "投委会认可了你的框架逻辑，但要求补充下游订单验证数据，这是有价值的反馈。",
       },
       {
         id: "jun-life",
@@ -654,7 +654,7 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "半年过去了，陪陪家人。",
         effects: { researchCredibility: 0, committeeAdoption: 0, portfolioNav: 0, viewAccuracy: 2, clientFeedback: 0, teamTrust: 0, fatigue: -12, lifeBalance: 14, characterRelations: [{ characterId: "lin_ruoning", value: 4 }] },
         evidenceLevel: 2, clarityLevel: 4, riskAwareness: 6, reflectionValue: 12,
-        backgroundNote: "半年复盘比多熬一个夜更有价值。家人的一句'你最近看起来好累'本身就是信号。",
+        backgroundNote: "半年复盘比多熬一个夜更有价值。家人的一句「你最近看起来好累」本身就是信号。",
       },
     ],
     // 七月：自动驾驶与暑期主题扩散
@@ -702,7 +702,7 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "去一线了解自动驾驶的商业化进度、单车成本和运营效率。",
         effects: { researchCredibility: 7, committeeAdoption: 5, portfolioNav: 0.005, viewAccuracy: 10, clientFeedback: 6, teamTrust: 5, fatigue: 5, lifeBalance: -2, characterRelations: [{ characterId: "lin_ruoning", value: 6 }] },
         evidenceLevel: 14, clarityLevel: 10, riskAwareness: 10, reflectionValue: 4,
-        backgroundNote: "一线调研发现运营成本比市场预期的要高30%——这是公开信息不会告诉你的。",
+        backgroundNote: "一线调研发现运营成本比市场预期的要高30%，这是公开信息不会告诉你的。",
       },
       {
         id: "jul-life",
@@ -724,7 +724,7 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "逐条对照预期和实际，诚实记录每一个判断偏差和偏差的原因。",
         effects: { researchCredibility: 16, committeeAdoption: 8, portfolioNav: 0.01, viewAccuracy: 14, clientFeedback: 5, teamTrust: 7, fatigue: 8, lifeBalance: -4, characterRelations: [{ characterId: "lin_ruoning", value: 10 }] },
         evidenceLevel: 18, clarityLevel: 18, riskAwareness: 14, reflectionValue: 14,
-        backgroundNote: "复盘不是为了自责，是为了把今年的偏差变成明年的假设起点。",
+        backgroundNote: "复盘的意义是把今年的偏差变成明年的假设起点，而不是自责。",
       },
       {
         id: "aug-bargain",
@@ -733,7 +733,7 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "在中报miss的公司里，筛选出miss原因可逆、长期逻辑未破的标的。",
         effects: { researchCredibility: 12, committeeAdoption: 6, portfolioNav: 0.015, viewAccuracy: 9, clientFeedback: 4, teamTrust: 5, fatigue: 8, lifeBalance: -4, characterRelations: [{ characterId: "chen_xinghe", value: 7 }] },
         evidenceLevel: 16, clarityLevel: 14, riskAwareness: 12, reflectionValue: 6,
-        backgroundNote: "错杀是研究员最好的朋友——但前提是你能证明它被错杀而不是该杀。",
+        backgroundNote: "错杀是研究员最好的朋友，但前提是你能证明它被错杀而不是该杀。",
       },
       {
         id: "aug-present",
@@ -742,7 +742,7 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "把你的复盘结论呈现给决策者，接受交叉提问。",
         effects: { researchCredibility: 9, committeeAdoption: 14, portfolioNav: 0.005, viewAccuracy: 7, clientFeedback: 7, teamTrust: 8, fatigue: 5, lifeBalance: -3, characterRelations: [{ characterId: "zhou_mingzhao", value: 8 }] },
         evidenceLevel: 10, clarityLevel: 16, riskAwareness: 12, reflectionValue: 10,
-        backgroundNote: "投委会对你的复盘框架表示认可——'诚实比正确更重要'让你在团队中赢得了尊重。",
+        backgroundNote: "投委会对你的复盘框架表示认可，「诚实比正确更重要」让你在团队中赢得了尊重。",
       },
       {
         id: "aug-blame",
@@ -760,7 +760,7 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "中报后很多公司的估值假设需要更新，帮前辈把核心覆盖标的的模型跑一遍。",
         effects: { researchCredibility: 5, committeeAdoption: 3, portfolioNav: 0.005, viewAccuracy: 5, clientFeedback: 3, teamTrust: 12, fatigue: 5, lifeBalance: -2, characterRelations: [{ characterId: "lin_ruoning", value: 12 }] },
         evidenceLevel: 8, clarityLevel: 8, riskAwareness: 6, reflectionValue: 6,
-        backgroundNote: "帮她改模型的过程，也是你在学习她的估值框架——这是最好的在职培训。",
+        backgroundNote: "帮她改模型的过程，也是你在学习她的估值框架，这是最好的在职培训。",
       },
       {
         id: "aug-life",
@@ -769,7 +769,7 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "中报季结束了，给自己一个真正的休息。",
         effects: { researchCredibility: 0, committeeAdoption: 0, portfolioNav: 0, viewAccuracy: 3, clientFeedback: 0, teamTrust: 0, fatigue: -10, lifeBalance: 12, characterRelations: [{ characterId: "zhou_mingzhao", value: 3 }] },
         evidenceLevel: 2, clarityLevel: 4, riskAwareness: 6, reflectionValue: 12,
-        backgroundNote: "中报季后如果不休息，疲劳会一路带到四季度——那时候才是真正的马拉松。",
+        backgroundNote: "中报季后如果不休息，疲劳会一路带到四季度，那时候才是真正的马拉松。",
       },
     ],
     // 九月：政策转向与史诗级反弹
@@ -781,7 +781,7 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "把货币、资本市场、地产三条线的政策拆开，量化评估力度是否超过历史极值，模拟传导路径和时间。",
         effects: { researchCredibility: 15, committeeAdoption: 12, portfolioNav: 0.03, viewAccuracy: 8, clientFeedback: 5, teamTrust: 7, fatigue: 12, lifeBalance: -7, characterRelations: [{ characterId: "zhou_mingzhao", value: 10 }] },
         evidenceLevel: 18, clarityLevel: 18, riskAwareness: 14, reflectionValue: 8,
-        backgroundNote: "这次政策的力度和密度都是历史级别的——真正的考验不是解读，而是在亢奋中保持冷静。",
+        backgroundNote: "这次政策的力度和密度都是历史级别的。真正的考验是在亢奋中保持冷静。",
       },
       {
         id: "sep-orderflow",
@@ -790,13 +790,13 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "把天量成交拆成机构、游资、散户和北向，看谁在主导这波反弹。",
         effects: { researchCredibility: 10, committeeAdoption: 7, portfolioNav: 0.02, viewAccuracy: 9, clientFeedback: 4, teamTrust: 5, fatigue: 8, lifeBalance: -4, characterRelations: [{ characterId: "chen_xinghe", value: 10 }] },
         evidenceLevel: 16, clarityLevel: 12, riskAwareness: 14, reflectionValue: 6,
-        backgroundNote: "天量成交结构显示游资和散户是主力，机构在第二周才开始加仓——这是风险信号，也是机会信号。",
+        backgroundNote: "天量成交结构显示游资和散户是主力，机构在第二周才开始加仓，这既是风险信号，也是机会信号。",
       },
       {
         id: "sep-roadshow",
         label: "紧急准备客户沟通：反弹框架和风险边界",
         category: "roadshow",
-        description: "客户在暴涨中情绪分裂——有人狂喜有人恐慌，你需要给出冷静的框架。",
+        description: "客户在暴涨中情绪分裂，有人狂喜有人恐慌，你需要给出冷静的框架。",
         effects: { researchCredibility: 7, committeeAdoption: 8, portfolioNav: 0.01, viewAccuracy: 6, clientFeedback: 14, teamTrust: 8, fatigue: 7, lifeBalance: -4, characterRelations: [{ characterId: "lin_ruoning", value: 6 }] },
         evidenceLevel: 8, clarityLevel: 14, riskAwareness: 12, reflectionValue: 6,
         backgroundNote: "在你最需要冷静的时候，客户最需要框架。给出框架的人，最终会被记住。",
@@ -838,7 +838,7 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "分析机构持仓结构、排名压力和可能的抱团推升方向。",
         effects: { researchCredibility: 11, committeeAdoption: 8, portfolioNav: 0.015, viewAccuracy: 7, clientFeedback: 6, teamTrust: 5, fatigue: 9, lifeBalance: -5, characterRelations: [{ characterId: "zhou_mingzhao", value: 7 }] },
         evidenceLevel: 16, clarityLevel: 14, riskAwareness: 12, reflectionValue: 6,
-        backgroundNote: "排名行情是A股最可靠的短期规律之一——但也是最容易被反噬的规律。",
+        backgroundNote: "排名行情是A股最可靠的短期规律之一，但也是最容易被反噬的规律。",
       },
       {
         id: "oct-crowding",
@@ -847,7 +847,7 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "用持仓集中度、换手率趋势和估值分位三个指标，评估抱团方向的风险收益比。",
         effects: { researchCredibility: 10, committeeAdoption: 7, portfolioNav: 0.01, viewAccuracy: 9, clientFeedback: 4, teamTrust: 5, fatigue: 7, lifeBalance: -3, characterRelations: [{ characterId: "chen_xinghe", value: 9 }] },
         evidenceLevel: 16, clarityLevel: 12, riskAwareness: 16, reflectionValue: 4,
-        backgroundNote: "因子拥挤度显示两个最热方向已经接近历史极值——不是说要马上卖，但要知道风险在哪。",
+        backgroundNote: "因子拥挤度显示两个最热方向已经接近历史极值。不是说要马上卖，但要知道风险在哪。",
       },
       {
         id: "oct-align",
@@ -895,7 +895,7 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "把估值切换到明年，重新假设三个变量的合理范围。",
         effects: { researchCredibility: 14, committeeAdoption: 10, portfolioNav: 0.02, viewAccuracy: 8, clientFeedback: 7, teamTrust: 7, fatigue: 10, lifeBalance: -6, characterRelations: [{ characterId: "lin_ruoning", value: 8 }] },
         evidenceLevel: 18, clarityLevel: 18, riskAwareness: 12, reflectionValue: 8,
-        backgroundNote: "估值切换的本质是重新假设未来——而假设的质量决定了结论的质量。",
+        backgroundNote: "估值切换的本质是重新假设未来，而假设的质量决定了结论的质量。",
       },
       {
         id: "nov-tariff",
@@ -904,7 +904,7 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "量化评估关税变化对出口链各环节的利润影响，做情景分析。",
         effects: { researchCredibility: 12, committeeAdoption: 8, portfolioNav: 0.01, viewAccuracy: 10, clientFeedback: 6, teamTrust: 6, fatigue: 9, lifeBalance: -5, characterRelations: [{ characterId: "zhou_mingzhao", value: 8 }] },
         evidenceLevel: 16, clarityLevel: 14, riskAwareness: 16, reflectionValue: 6,
-        backgroundNote: "关税冲击不是非黑即白——有些环节受益于国产替代，有些环节确实会被直接冲击。",
+        backgroundNote: "关税冲击不是非黑即白。有些环节受益于国产替代，有些环节确实会被直接冲击。",
       },
       {
         id: "nov-strategy",
@@ -913,7 +913,7 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "把你的研究框架写成正式的年度策略建议。",
         effects: { researchCredibility: 10, committeeAdoption: 16, portfolioNav: 0.01, viewAccuracy: 7, clientFeedback: 8, teamTrust: 8, fatigue: 6, lifeBalance: -3, characterRelations: [{ characterId: "zhou_mingzhao", value: 8 }] },
         evidenceLevel: 12, clarityLevel: 18, riskAwareness: 14, reflectionValue: 10,
-        backgroundNote: "年度策略是研究员一年中最重要的输出之一——它会被收入档案，明年此时会被拿出来对照。",
+        backgroundNote: "年度策略是研究员一年中最重要的输出之一，它会被收入档案，明年此时会被拿出来对照。",
       },
       {
         id: "nov-extrapolate",
@@ -922,7 +922,7 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "不做深度研究，直接把今年涨幅线性外推。",
         effects: { researchCredibility: -8, committeeAdoption: -3, portfolioNav: -0.01, viewAccuracy: -10, clientFeedback: -4, teamTrust: -4, fatigue: -1, lifeBalance: 1, characterRelations: [{ characterId: "lin_ruoning", value: -6 }] },
         evidenceLevel: 2, clarityLevel: 2, riskAwareness: 2, reflectionValue: 2,
-        backgroundNote: "线性外推是研究员最容易踩的坑——今年的冠军行业，明年大概率不是冠军。",
+        backgroundNote: "线性外推是研究员最容易踩的坑。今年的冠军行业，明年大概率不是冠军。",
       },
       {
         id: "nov-field",
@@ -931,7 +931,7 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "去一线了解出口企业在关税变化下的真实应对。",
         effects: { researchCredibility: 7, committeeAdoption: 5, portfolioNav: 0.005, viewAccuracy: 10, clientFeedback: 6, teamTrust: 5, fatigue: 5, lifeBalance: -3, characterRelations: [{ characterId: "lin_ruoning", value: 7 }] },
         evidenceLevel: 14, clarityLevel: 10, riskAwareness: 12, reflectionValue: 4,
-        backgroundNote: "一线调研发现头部出口企业的海外产能布局进度比市场预期的快——这改变了关税冲击的严重程度。",
+        backgroundNote: "一线调研发现头部出口企业的海外产能布局进度比市场预期的快，这改变了关税冲击的严重程度。",
       },
       {
         id: "nov-life",
@@ -952,7 +952,7 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "把全年的研究记录整合成一份完整的年度报告，标注每一个假设的验证结果和偏差原因。",
         effects: { researchCredibility: 18, committeeAdoption: 10, portfolioNav: 0.015, viewAccuracy: 12, clientFeedback: 10, teamTrust: 8, fatigue: 8, lifeBalance: -4, characterRelations: [{ characterId: "lin_ruoning", value: 12 }] },
         evidenceLevel: 18, clarityLevel: 18, riskAwareness: 14, reflectionValue: 14,
-        backgroundNote: "年度报告是你一年研究的最好答卷——林若宁会在上面贴一张新的便签。",
+        backgroundNote: "年度报告是你一年研究的最好答卷。林若宁会在上面贴一张新的便签。",
       },
       {
         id: "dec-annual",
@@ -961,7 +961,7 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "站在全部门面前，分享你的研究框架和年度复盘。",
         effects: { researchCredibility: 12, committeeAdoption: 18, portfolioNav: 0.01, viewAccuracy: 8, clientFeedback: 12, teamTrust: 12, fatigue: 6, lifeBalance: -3, characterRelations: [{ characterId: "zhou_mingzhao", value: 10 }] },
         evidenceLevel: 12, clarityLevel: 18, riskAwareness: 14, reflectionValue: 12,
-        backgroundNote: "站在全部门面前演讲的那一刻，你发现今年最大的收获不是哪个判断对了，而是你知道自己为什么对、为什么错。",
+        backgroundNote: "站在全部门面前演讲的那一刻，你发现今年最大的收获是你知道每个判断为什么对、为什么错。",
       },
       {
         id: "dec-help",
@@ -988,7 +988,7 @@ function makeResearchDecisions(monthIndex: number): ResearchDecision[] {
         description: "一年结束了，和团队一起庆祝。",
         effects: { researchCredibility: 3, committeeAdoption: 3, portfolioNav: 0, viewAccuracy: 3, clientFeedback: 6, teamTrust: 18, fatigue: -8, lifeBalance: 12, characterRelations: [{ characterId: "lin_ruoning", value: 8 }, { characterId: "chen_xinghe", value: 8 }, { characterId: "zhou_mingzhao", value: 8 }] },
         evidenceLevel: 2, clarityLevel: 4, riskAwareness: 6, reflectionValue: 10,
-        backgroundNote: "年末聚餐上每个人都说了自己今年最大的判断失误——这一刻你发现，诚实比正确更有力量。",
+        backgroundNote: "年末聚餐上每个人都说了自己今年最大的判断失误。这一刻你发现，诚实比正确更有力量。",
       },
     ],
   ];
@@ -1060,7 +1060,7 @@ export function buildMonthScene(monthIndex: number, year?: string): MonthScene {
       briefTitle: `${theme.period}：${theme.title}`,
       briefs: [
         { characterId: "lin_ruoning", label: "基本面视角", text: theme.publicContext.split("。")[0] + "。" },
-        { characterId: "chen_xinghe", label: "量化信号", text: "成交结构和大单流向会先于价格给出方向确认——量比价诚实。" },
+        { characterId: "chen_xinghe", label: "量化信号", text: "成交结构和大单流向会先于价格给出方向确认，量比价诚实。" },
         { characterId: "zhou_mingzhao", label: "宏观风控", text: "别只盯机会。能说清楚风险边界、估值分位和反身性，才有资格入场。" },
       ],
     },
@@ -1079,7 +1079,7 @@ function build2025Prologue(month: string, label: string, theme: MarketTheme): Mo
       speaker: "内心独白",
       role: "只有你知道",
       mood: "警觉",
-      text: "我知道 2025 年 1 月会很不平静。某国产低成本推理模型发布后，市场会重新讨论 AI 应用、推理成本和国产算力的关系。但我不能直接说'要涨'，只能把它拆成可验证的假设。",
+      text: "我知道 2025 年 1 月会很不平静。某国产低成本推理模型发布后，市场会重新讨论 AI 应用、推理成本和国产算力的关系。但我不能直接说「要涨」，只能把它拆成可验证的假设。",
       prompt: "点击继续，把未来记忆压成可以说出口的研究假设。",
       pose: "thinking",
       bg: "research-room",
@@ -1131,7 +1131,7 @@ function build2025Prologue(month: string, label: string, theme: MarketTheme): Mo
       speaker: "陈星禾",
       role: "资金信号研究员",
       mood: "高涨",
-      text: "她点开大单流向分布：我只信成交量和订单簿。AI方向的盘口厚度在收窄但大单净买还在流入——这是典型的'量在价先、但供给也在积聚'的信号。短期内动量还能跑，但Alpha衰减速度比上周快了一倍。如果你要做研究推荐，最好等成交结构重新确认。",
+      text: "她点开大单流向分布：我只信成交量和订单簿。AI方向的盘口厚度在收窄但大单净买还在流入，这是典型的「量在价先、但供给也在积聚」的信号。短期内动量还能跑，但Alpha衰减速度比上周快了一倍。如果你要做研究推荐，最好等成交结构重新确认。",
       pose: "focused",
       bg: "research-room",
       bgm: "morning-loop",
@@ -1143,7 +1143,7 @@ function build2025Prologue(month: string, label: string, theme: MarketTheme): Mo
       speaker: "周明昭",
       role: "宏观策略师",
       mood: "沉着",
-      text: "周明昭在会议室白板上圈出两个日期：技术突破和交易方向之间隔着三层东西——风险偏好能不能持续、估值有没有安全边际、兑现节奏会不会被流动性打断。你们现在讨论的都是'事件是不是利好'，但真正的问题是'这个利好已经被定价了多少'。",
+      text: "周明昭在会议室白板上圈出两个日期：技术突破和交易方向之间隔着三层东西：风险偏好能不能持续、估值有没有安全边际、兑现节奏会不会被流动性打断。你们现在讨论的都是「事件是不是利好」，但真正的问题是「这个利好已经被定价了多少」。",
       pose: "serious",
       bg: "briefing-room",
       bgm: "morning-loop",
@@ -1168,7 +1168,7 @@ function build2025Prologue(month: string, label: string, theme: MarketTheme): Mo
       speaker: "林若宁",
       role: "基本面研究员",
       mood: "认真",
-      text: "林若宁翻开笔记：好，三个框架都摆出来了。我的基本面验证、陈星禾的量化信号、周明昭的风控——没有哪个框架是完美的，但三个框架重叠的地方就是你最该出手的方向。",
+      text: "林若宁翻开笔记：好，三个框架都摆出来了。我的基本面验证、陈星禾的量化信号、周明昭的风控。没有哪个框架是完美的，但三个框架重叠的地方就是你最该出手的方向。",
       pose: "thinking",
       bg: "briefing-room",
       bgm: "morning-loop",
@@ -1180,7 +1180,7 @@ function build2025Prologue(month: string, label: string, theme: MarketTheme): Mo
       speaker: "陈星禾",
       role: "资金信号研究员",
       mood: "俏皮",
-      text: "陈星禾把平板转向你：我负责盯信号。大单流向、因子拥挤度、Alpha衰减速度——这三个指标如果同时变脸，我就拉警报。在那之前，你只管做你的研究。量比价诚实，信我。",
+      text: "陈星禾把平板转向你：我负责盯信号。大单流向、因子拥挤度、Alpha衰减速度，这三个指标如果同时变脸，我就拉警报。在那之前，你只管做你的研究。量比价诚实，信我。",
       pose: "excited",
       bg: "briefing-room",
       bgm: "morning-loop",
@@ -1192,7 +1192,7 @@ function build2025Prologue(month: string, label: string, theme: MarketTheme): Mo
       speaker: "周明昭",
       role: "宏观策略师",
       mood: "沉着",
-      text: "周明昭轻轻敲了敲杯沿：我负责风控边界。别只盯着收益率，想想你的研究推荐如果错了，错在哪一层——是假设错了、变量漏了、还是反身性没算进去。把错误的位置标出来，比把方向猜对更重要。",
+      text: "周明昭轻轻敲了敲杯沿：我负责风控边界。别只盯着收益率，想想你的研究推荐如果错了，错在哪一层：是假设错了、变量漏了、还是反身性没算进去。把错误的位置标出来，比把方向猜对更重要。",
       pose: "serious",
       bg: "briefing-room",
       bgm: "morning-loop",
@@ -1282,20 +1282,20 @@ export const GRADE_REVIEWS: Record<CharacterId, Record<string, string[]>> = {
     A: ["逻辑扎实，证据链完整。下次可以考虑更早在分歧点入场。", "这次研究做到了交叉验证，只是还差一点超额认知。继续打磨框架。"],
     B: ["方向对了，但有几处逻辑跳跃。下次先问一句：这个变量有没有被交叉验证过。", "结果不差，但你没有把判断依据完全写清楚。研究笔记再仔细一点。"],
     C: ["勉强及格。直觉不能代替证据，下次把假设写下来再去验证。", "这次更多是靠运气。复盘的时候要诚实记录：哪些判断有数据支撑，哪些只是感觉。"],
-    D: ["失败了也没关系。失败的研究笔记有时候比成功的更有价值——因为它标出了你的盲区。", "这次需要老老实实复盘。先写清楚风险从哪冒出来的，再从框架里找偏差。"],
+    D: ["失败了也没关系。失败的研究笔记有时候比成功的更有价值，因为它标出了你的盲区。", "这次需要老老实实复盘。先写清楚风险从哪冒出来的，再从框架里找偏差。"],
   },
   chen_xinghe: {
-    S: ["量价信号和基本面共振！这就是我一直在说的——当大单流向和产业链逻辑指向同一个方向，Alpha的持续性最强。", "你这次同时盯对了因子拥挤度和订单流结构。Barra归因不会说谎，你的判断也不会。"],
-    A: ["方向对了，但信号的持续性还需要更长时间窗口来确认。Alpha衰减速度在下周会是关键。", "不错的结果！下次可以再看一眼因子正交化——排除掉那个动量因子的干扰，你的净Alpha会更纯。"],
+    S: ["量价信号和基本面共振！这就是我一直在说的：当大单流向和产业链逻辑指向同一个方向，Alpha的持续性最强。", "你这次同时盯对了因子拥挤度和订单流结构。Barra归因不会说谎，你的判断也不会。"],
+    A: ["方向对了，但信号的持续性还需要更长时间窗口来确认。Alpha衰减速度在下周会是关键。", "不错的结果！下次可以再看一眼因子正交化，排除掉那个动量因子的干扰，你的净Alpha会更纯。"],
     B: ["成交量结构看起来还行，但大单净买的分布不够集中。下次等成交结构重新收敛再下判断。", "因子暴露对了一次，但你没有把各种因子的贡献度拆开。拆开才知道是运气还是框架。"],
-    C: ["这次信号的噪音比太高了。信噪比掉到接近于1的时候，任何判断都只是抛硬币。", "我信你下次会更好。这次的订单流复盘留给我——我想看看信号在哪一层走偏了。"],
-    D: ["因子收益全错了，但这种'全错'的样本比侥幸正确更能训练模型。", "没关系！每一次错误都在为下一次alpha发现做数据标注。只要别犯同样的错。"],
+    C: ["这次信号的噪音比太高了。信噪比掉到接近于1的时候，任何判断都只是抛硬币。", "我信你下次会更好。这次的订单流复盘留给我，我想看看信号在哪一层走偏了。"],
+    D: ["因子收益全错了，但这种「全错」的样本比侥幸正确更能训练模型。", "没关系！每一次错误都在为下一次alpha发现做数据标注。只要别犯同样的错。"],
   },
   zhou_mingzhao: {
     S: ["方向正确，风控到位，而且在最拥挤的时候保持了逆向思维的勇气。这就是职业判断的标杆。", "你不仅选对了，还守住了风险边界。能在高回报里不放弃风控框架的人，才有长期生存权。"],
-    A: ["结果不错，但我更想知道：这次判断里有没有你在无意中冒险的环节。把风险日志补上。", "收益和风控还算均衡。下次试着更早判断拐点——拐点前的赔率往往最高。"],
-    B: ["中规中矩。但'中规中矩'在风控上是对的，在判断上还需要更主动。", "这次偏离了你的方法论。回头看看是哪个变量让你改了主意——那个变量值得写进研究日志。"],
-    C: ["风险释放比逻辑兑现快，这次你被市场推着走了。下次入场前先写好：最多承受多少判断错误。", "把今天的结果记下来，标注'被波动率反噬'。下一次波动率飙升的时候，你会感谢今天的记录。"],
-    D: ["这次没有守住底线。别自责——市场不会因为你没判断对就否定你。把失误写下来，它会变成下一次的起点。", "回头看的时候你会发现，这次是某个关键假设出了问题。找到那个假设，修好它。"],
+    A: ["结果不错，但我更想知道：这次判断里有没有你在无意中冒险的环节。把风险日志补上。", "收益和风控还算均衡。下次试着更早判断拐点，拐点前的赔率往往最高。"],
+    B: ["中规中矩。但「中规中矩」在风控上是对的，在判断上还需要更主动。", "这次偏离了你的方法论。回头看看是哪个变量让你改了主意，那个变量值得写进研究日志。"],
+    C: ["风险释放比逻辑兑现快，这次你被市场推着走了。下次入场前先写好：最多承受多少判断错误。", "把今天的结果记下来，标注「被波动率反噬」。下一次波动率飙升的时候，你会感谢今天的记录。"],
+    D: ["这次没有守住底线。别自责。市场不会因为你没判断对就否定你。把失误写下来，它会变成下一次的起点。", "回头看的时候你会发现，这次是某个关键假设出了问题。找到那个假设，修好它。"],
   },
 };

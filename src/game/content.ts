@@ -32,8 +32,8 @@ const DEFAULT_MARKET_EVENTS: HistoricalEvent[] = [
     title: "年初风险偏好重启",
     period: "一月",
     publicContext: "资金从年报预告、政策预期和高景气赛道里寻找新主线，市场还没有形成统一答案。",
-    protagonistMemory: "男主知道年初往往不是简单开局，而是全年叙事第一次定价的窗口。",
-    gameHook: "先判断哪条事件线能被资金反复确认，再进入情报卡实战。",
+    protagonistMemory: "男主知道年初常常会给全年叙事第一次定价。",
+    gameHook: "先判断哪条事件线能被资金反复确认，再进入实战小游戏。",
   },
   {
     title: "春节后流动性回流",
@@ -54,14 +54,14 @@ const DEFAULT_MARKET_EVENTS: HistoricalEvent[] = [
     period: "四月",
     publicContext: "财报开始验证前期逻辑，资金会重新给业绩、订单和现金流排序。",
     protagonistMemory: "男主知道一季报会把很多概念线从主线里筛出去。",
-    gameHook: "女主们只看当下数据，你要把未来记忆翻译成财报假设。",
+    gameHook: "女主们只看当下数据，你要把未来记忆翻译成能落到财报里的假设。",
   },
   {
     title: "风格再平衡",
     period: "五月",
     publicContext: "成长、周期、红利和主题资金来回拉扯，市场进入选择方向的阶段。",
     protagonistMemory: "男主知道五月的错觉很多，真正重要的是资金愿意停留在哪。",
-    gameHook: "选股小游戏会惩罚只追热词、不看交易拥挤度的选择。",
+    gameHook: "实战小游戏会惩罚只追热词、忽略交易拥挤度的选择。",
   },
   {
     title: "中报预期交易",
@@ -75,20 +75,20 @@ const DEFAULT_MARKET_EVENTS: HistoricalEvent[] = [
     period: "七月",
     publicContext: "产业催化和政策细则让题材从龙头向支线扩散，但质量差异开始变大。",
     protagonistMemory: "男主知道扩散行情里最容易把主线和补涨混在一起。",
-    gameHook: "研究会先拆主题层级，再进入本月四张心动卡。",
+    gameHook: "角色们先拆主题层级，再进入本月四张实战卡。",
   },
   {
     title: "中报落地复盘",
     period: "八月",
     publicContext: "中报披露让市场重新审视订单、利润率和景气持续性。",
     protagonistMemory: "男主知道兑现后的分歧，才是真正考验研究框架的地方。",
-    gameHook: "结算不只看收益，也会看你有没有说清楚选股理由。",
+    gameHook: "结算会看收益，也会看你有没有说清楚选择理由。",
   },
   {
     title: "三季度风格切换",
     period: "九月",
     publicContext: "资金在防守和进攻之间摇摆，成交结构会比指数更早透露方向。",
-    protagonistMemory: "男主知道有些行情不是突然出现，而是先在成交额里留下痕迹。",
+    protagonistMemory: "男主知道很多行情会先在成交额里留下痕迹。",
     gameHook: "美咲会盯资金信号，芽衣会提醒你别忽略宏观风险。",
   },
   {
@@ -109,7 +109,7 @@ const DEFAULT_MARKET_EVENTS: HistoricalEvent[] = [
     title: "年度收官与复盘",
     period: "十二月",
     publicContext: "全年主线进入结算，资金会在兑现、调仓和跨年预期之间选择。",
-    protagonistMemory: "男主知道收官不是终点，而是下一周目研究档案的开头。",
+    protagonistMemory: "男主知道收官会成为下一周目研究档案的开头。",
     gameHook: "最终选择会结算资金、好感、疲劳，也会决定你的研究员结局。",
   },
 ];
@@ -122,7 +122,7 @@ export const STORY_ARCS: StoryArc[] = [
     role: "投研部前辈",
     mood: "元气",
     line: "你在年初的投研部工位醒来，屏幕旁贴着一张粉色便利贴：这次的小金库，由我来监督你哦。",
-    mission: "璃奈把四张心动情报卡排在桌上。选一张，再安排本话日程，开始本月实战。",
+    mission: "璃奈把四张实战卡排在桌上。选一张，再安排本话日程，开始本月实战。",
     event: DEFAULT_MARKET_EVENTS[0],
   },
   {
@@ -142,7 +142,7 @@ export const STORY_ARCS: StoryArc[] = [
     role: "买方研究员",
     mood: "俏皮",
     line: "午休的咖啡还没凉，美咲就把一叠研报推过来：猜对本月主线的话，我请你吃甜点。",
-    mission: "四张卡都很可爱，但真正的闪光路线藏在成交额和涨幅排名后面。",
+    mission: "四张卡都很可爱，参考路线藏在成交额和涨幅排名后面。",
     event: DEFAULT_MARKET_EVENTS[2],
   },
   {
@@ -172,7 +172,7 @@ export const STORY_ARCS: StoryArc[] = [
     role: "投研部前辈",
     mood: "害羞",
     line: "末班车里很安静。璃奈望着窗外，小声问：如果这次研究真的能改变结果，你会记得今天的约定吗？",
-    mission: "本话情报会拉开分歧：追热点、看基本面，还是相信那条心跳加速的线索。",
+    mission: "本话实战会拉开分歧：追热点、看基本面，还是相信那条心跳加速的线索。",
     event: DEFAULT_MARKET_EVENTS[5],
   },
   {
@@ -242,13 +242,13 @@ export const YEAR_STORY_OVERRIDES: Record<string, Record<number, StoryArcOverrid
     0: {
       title: "序章：低成本推理的第一张便签",
       line: "年初的投研部还没从假期节奏里醒来，AI 应用和国产算力已经在研报标题里反复出现。",
-      mission: "先读懂 DeepSeek-R1 改写 AI 叙事的历史事件，再用四张情报卡完成本月选股实战。",
+    mission: "先读懂 DeepSeek-R1 如何改变 AI 叙事，再用四张实战卡完成本月小游戏。",
       event: {
         title: "DeepSeek-R1 发布前后，AI 叙事被重新定价",
         period: "2025年1月下旬",
         publicContext: "公开信息层面，市场能看到的是 AI 应用热度、低成本推理模型、国产算力适配和节前节后风险偏好的变化。",
         protagonistMemory: "男主知道 DeepSeek-R1 在 2025-01-20 发布，随后会影响全球 AI 资产定价，也会让 A 股重新讨论国产 AI 应用和推理算力。",
-        gameHook: "主线先讲事件如何改变市场叙事，小游戏再让玩家从四张情报卡里选择资金真正确认的路线。",
+        gameHook: "主线讲事件如何改变市场叙事，小游戏让玩家从四张实战卡里选择资金确认过的路线。",
       },
     },
   },
@@ -271,7 +271,7 @@ export const SCENE_SCRIPTS: SceneScript[] = [
         pose: "smile",
         bg: "research-room",
         bgm: "morning-loop",
-        text: "我知道 2025 年 1 月不会只是普通开局。DeepSeek-R1 的发布，会让市场重新思考 AI 应用、推理成本和国产算力的关系。",
+        text: "我知道 2025 年 1 月会很不平静。DeepSeek-R1 发布后，市场会重新思考 AI 应用、推理成本和国产算力的关系。",
         prompt: "点击继续，把未来记忆压成可以说出口的研究假设。",
         voiceCue: "silent",
       },
@@ -284,7 +284,7 @@ export const SCENE_SCRIPTS: SceneScript[] = [
         pose: "soft",
         bg: "research-room",
         bgm: "morning-loop",
-        text: "璃奈站在你桌边，把一张粉色便利贴贴到显示器边缘：你今天来得好早。AI 这条线，你昨晚是不是又看到凌晨？",
+        text: "璃奈站在你桌边，把一张粉色便利贴贴到显示器边缘：你今天来得好早。AI 这条线，你昨晚又看到凌晨了吗？",
         voiceCue: "key",
       },
       {
@@ -296,7 +296,7 @@ export const SCENE_SCRIPTS: SceneScript[] = [
         pose: "thinking",
         bg: "research-room",
         bgm: "morning-loop",
-        text: "她把一杯热咖啡推到你手边：如果你想说服大家，就别只说“我有预感”。低成本推理、应用扩散、算力适配，至少要拆成三条可验证假设。",
+        text: "她把一杯热咖啡推到你手边：如果你想说服大家，预感还不够。低成本推理、应用扩散、算力适配，至少要拆成三条可验证假设。",
       },
       {
         type: "line",
@@ -307,7 +307,7 @@ export const SCENE_SCRIPTS: SceneScript[] = [
         pose: "excited",
         bg: "research-room",
         bgm: "morning-loop",
-        text: "美咲抱着平板冲进会议室：早盘信号来了！AI 软件、机器人、光模块都在抢注意力。你这次盯得这么早，是不是抓到什么先行指标？",
+        text: "美咲抱着平板冲进会议室：早盘信号来了！AI 软件、机器人、光模块都在抢注意力。你这次盯得这么早，抓到什么先行指标了吗？",
         voiceCue: "key",
       },
       {
@@ -319,7 +319,7 @@ export const SCENE_SCRIPTS: SceneScript[] = [
         pose: "focused",
         bg: "research-room",
         bgm: "morning-loop",
-        text: "她点开四条候选线索：我只相信成交额和持续性。要是市场真的在重估 AI 叙事，资金不会只在一个早盘留下痕迹。",
+        text: "她点开四条候选线索：我只相信成交额和持续性。市场如果真的在重估 AI 叙事，资金会反复留下痕迹。",
       },
       {
         type: "line",
@@ -342,7 +342,7 @@ export const SCENE_SCRIPTS: SceneScript[] = [
         pose: "neutral",
         bg: "briefing-room",
         bgm: "morning-loop",
-        text: "她补上一行小字：公开信息只能证明事件发生，不能证明交易方向。你如果想提前布局，就要解释为什么这次不是短暂新闻热度。",
+        text: "她补上一行小字：公开信息只能证明事件发生，不能证明交易方向。你如果想提前布局，就要解释这次热度能持续多久。",
       },
       {
         type: "line",
@@ -386,15 +386,15 @@ export const SCENE_SCRIPTS: SceneScript[] = [
         pose: "smile",
         bg: "briefing-room",
         bgm: "morning-loop",
-        text: "璃奈把四张情报卡排成一列：先决定今天怎么安排，再选一张你愿意负责到底的卡。收益会结算，研究札记也会留下。",
-        prompt: "下一步会进入本月情报会。",
+        text: "璃奈把四张实战卡排成一列：先决定今天怎么安排，再选一张你愿意负责到底的卡。收益会结算，研究札记也会留下。",
+        prompt: "下一步会进入本月实战小游戏。",
         voiceCue: "key",
       },
       {
         type: "stockRound",
-        prompt: "安排本话日程，然后选择一张心动情报卡。",
+        prompt: "安排本话日程，然后选择一张实战卡。",
         bg: "briefing-room",
-        briefTitle: "第一次研究会：AI 叙事的四条线索",
+        briefTitle: "第一次实战会：AI 叙事的四条线索",
         briefs: [
           {
             characterId: "rina",
@@ -457,7 +457,7 @@ export const SCENE_SCRIPTS: SceneScript[] = [
         pose: "soft",
         bg: "night-cafe",
         bgm: "result-loop",
-        text: "她推来一张新的表格：还要记录假设偏差。你越依赖直觉，偏差越难复盘；你越能自洽地解释市场，下一次判断越稳定。",
+        text: "她推来一张新的表格：还要记录假设偏差。越依赖直觉，偏差越难复盘。解释越清楚，下一次判断越稳定。",
       },
       {
         type: "line",

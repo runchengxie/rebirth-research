@@ -969,6 +969,35 @@ button:disabled {
   background: var(--surface-strong);
 }
 
+.story-recap {
+  margin-top: 14px;
+  padding: 13px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-strong);
+}
+
+.story-recap span {
+  color: var(--pink);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.story-recap.blue span {
+  color: var(--blue);
+}
+
+.story-recap.lavender span {
+  color: var(--lavender);
+}
+
+.story-recap p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
 .result-copy {
   min-width: 0;
 }

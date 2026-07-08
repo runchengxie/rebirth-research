@@ -78,7 +78,7 @@ export function sceneForMonth(index: number, year?: string): SceneScript {
         role: "只有你知道",
         mood: "判断",
         text: story.event.protagonistMemory,
-        prompt: "点击继续，把未来记忆压成当下能解释的研究假设。",
+        prompt: "点击继续，把未来记忆整理成当下说得通的研究假设。",
         voiceCue: "silent",
       },
       {
@@ -88,7 +88,7 @@ export function sceneForMonth(index: number, year?: string): SceneScript {
         role: story.role,
         mood: story.mood,
         text: `${story.line} ${story.event.publicContext}`,
-        prompt: "点击继续，进入本月事件研究会。",
+        prompt: "点击继续，进入本月实战会。",
         voiceCue: "key",
       },
       {
@@ -109,8 +109,8 @@ export function sceneForMonth(index: number, year?: string): SceneScript {
           },
           {
             characterId: "mei",
-            label: "知识边界",
-            text: "女主们只依据公开信息和当下数据判断；男主的未来记忆必须转译成可验证假设。",
+            label: "剧情边界",
+            text: "女主们只依据公开信息和当下数据判断。男主需要把未来记忆转成可验证假设。",
           },
         ],
       },
@@ -134,7 +134,7 @@ export function signalType(option: StockOption): string {
 }
 
 export function riskLabel(option: StockOption): string {
-  if (option.returnRank <= 10) return "闪光主线";
+  if (option.returnRank <= 10) return "参考路线";
   if (option.activeRank <= 50) return "热门线";
   if (option.returnRate < 0) return "会扣血";
   return "观察中";
@@ -157,7 +157,7 @@ export function analysisNote(option: StockOption, revealed = false): string {
       : option.returnRate >= 0
         ? "复盘结果偏稳，强度低于主线"
         : "复盘结果为负，说明当时的风险释放快于逻辑兑现";
-  return `历史复盘：${setup}，涨幅排名 #${option.returnRank}。${review}。`;
+  return `角色复盘：${setup}，涨幅排名 #${option.returnRank}。${review}。`;
 }
 
 export function createInitialState(year: string, data: GameDataYear, initialCapital?: number): GameState {
@@ -193,8 +193,8 @@ export function buildOutcome(
   const focusText = focus.returnBonus === 0 ? "本话没有收益修正" : `日程修正 ${formatPct(focus.returnBonus)}`;
   if (option.isBest) {
     return {
-      title: "闪光路线命中",
-      dialogue: `${story.speaker}开心地合上笔记本：答对啦！这就是本月最闪耀的主线，今天给你加一颗小星星。`,
+      title: "实战路线命中",
+      dialogue: `${story.speaker}开心地合上笔记本：答对啦！这条路线把事件和资金连起来了，今天给你加一颗小星星。`,
       detail: `小金库 ${formatMoneyFull(before)} → ${formatMoneyFull(after)}，${focusText}。`,
       reputationDelta: 10,
       fatigueDelta: -6,
@@ -203,7 +203,7 @@ export function buildOutcome(
   }
   if (option.returnRate >= 0.2) {
     return {
-      title: "支线也有甜甜收益",
+      title: "支线也有收益",
       dialogue: `${story.speaker}看了一眼涨幅，露出笑容：这条支线也有不错收益，选得很细心。`,
       detail: `小金库 ${formatMoneyFull(before)} → ${formatMoneyFull(after)}，${focusText}。`,
       reputationDelta: 5,

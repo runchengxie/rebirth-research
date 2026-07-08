@@ -36,7 +36,7 @@ describe("game engine", () => {
   it("creates the initial state with research metrics", () => {
     const state = makeTestState();
 
-    expect(state.researchCredibility).toBe(8);
+    expect(state.researchCredibility).toBe(14);
     expect(state.focusId).toBe("deep_research");
     expect(state.relations.lin_ruoning).toBeGreaterThan(state.relations.zhou_mingzhao);
     expect(state.locked).toBe(false);
@@ -152,7 +152,7 @@ describe("utility functions", () => {
 
   it("totalRelations sums all characters", () => {
     const state = makeTestState();
-    expect(totalRelations(state)).toBe(12 + 10 + 8);
+    expect(totalRelations(state)).toBe(18 + 14 + 12);
   });
 
   it("bestRoute returns character with highest relation", () => {

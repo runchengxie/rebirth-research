@@ -1,4 +1,4 @@
-import { FOCUS_ACTIONS, SCENE_SCRIPTS, SIGNAL_TYPES, STORY_ARCS } from "./content";
+import { FOCUS_ACTIONS, SCENE_SCRIPTS, SIGNAL_TYPES, STORY_ARCS, YEAR_STORY_OVERRIDES } from "./content";
 import type {
   CharacterId,
   FocusAction,
@@ -45,17 +45,28 @@ export function formatDelta(value: number): string {
   return `${sign}${value}`;
 }
 
-export function storyForMonth(index: number): StoryArc {
-  return STORY_ARCS[index % STORY_ARCS.length];
+export function storyForMonth(index: number, year?: string): StoryArc {
+  const base = STORY_ARCS[index % STORY_ARCS.length];
+  const override = year ? YEAR_STORY_OVERRIDES[year]?.[index] : undefined;
+  if (!override) return base;
+  return {
+    ...base,
+    ...override,
+    event: {
+      ...base.event,
+      ...override.event,
+    },
+  };
 }
 
-export function sceneForMonth(index: number): SceneScript {
-  const explicitScene = SCENE_SCRIPTS.find((scene) => scene.monthIndex === index);
+export function sceneForMonth(index: number, year?: string): SceneScript {
+  const explicitScene = SCENE_SCRIPTS.find((scene) => scene.monthIndex === index && (!scene.year || scene.year === year));
   if (explicitScene) return explicitScene;
 
-  const story = storyForMonth(index);
+  const story = storyForMonth(index, year);
   return {
-    id: `month-${index + 1}`,
+    id: `${year || "default"}-month-${index + 1}`,
+    year,
     monthIndex: index,
     title: story.title,
     defaultCharacterId: story.characterId,
@@ -63,23 +74,52 @@ export function sceneForMonth(index: number): SceneScript {
       {
         type: "line",
         characterId: story.characterId,
+        speaker: "内心独白",
+        role: "只有你知道",
+        mood: "判断",
+        text: story.event.protagonistMemory,
+        prompt: "点击继续，把未来记忆压成当下能解释的研究假设。",
+        voiceCue: "silent",
+      },
+      {
+        type: "line",
+        characterId: story.characterId,
         speaker: story.speaker,
         role: story.role,
         mood: story.mood,
-        text: story.line,
-        prompt: "点击继续，进入本月情报会。",
+        text: `${story.line} ${story.event.publicContext}`,
+        prompt: "点击继续，进入本月事件研究会。",
+        voiceCue: "key",
       },
       {
         type: "stockRound",
         prompt: story.mission,
         bg: "briefing-room",
+        briefTitle: `${story.event.period}：${story.event.title}`,
+        briefs: [
+          {
+            characterId: "rina",
+            label: "事件背景",
+            text: story.event.publicContext,
+          },
+          {
+            characterId: "misaki",
+            label: "实战入口",
+            text: story.event.gameHook,
+          },
+          {
+            characterId: "mei",
+            label: "知识边界",
+            text: "女主们只依据公开信息和当下数据判断；男主的未来记忆必须转译成可验证假设。",
+          },
+        ],
       },
     ],
   };
 }
 
 export function currentSceneNode(state: GameState): SceneNode {
-  const scene = sceneForMonth(state.monthIndex);
+  const scene = sceneForMonth(state.monthIndex, state.year);
   return scene.nodes[state.sceneNodeIndex] || scene.nodes[scene.nodes.length - 1];
 }
 
@@ -199,7 +239,7 @@ export function selectFocus(state: GameState, focusId: string): GameState {
 export function chooseOption(state: GameState, data: GameDataYear, option: StockOption): GameState {
   if (state.locked || state.finished) return state;
   const month = data.months[state.monthIndex];
-  const story = storyForMonth(state.monthIndex);
+  const story = storyForMonth(state.monthIndex, state.year);
   const focus = focusById(state.focusId);
   const before = state.capital;
   const finalRate = Math.max(-0.95, option.returnRate + focus.returnBonus);
@@ -268,7 +308,7 @@ export function canAdvanceScene(state: GameState): boolean {
 }
 
 export function advanceScene(state: GameState, data: GameDataYear): GameState {
-  const scene = sceneForMonth(state.monthIndex);
+  const scene = sceneForMonth(state.monthIndex, state.year);
   const node = currentSceneNode(state);
   if (node.type === "stockRound" && !state.locked) return state;
   if (state.sceneNodeIndex < scene.nodes.length - 1) {

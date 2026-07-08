@@ -107,7 +107,7 @@ describe("game engine", () => {
   });
 
   it("walks scripted dialogue into the stock round node", () => {
-    const scene = sceneForMonth(0);
+    const scene = sceneForMonth(0, "2025");
     const stockRoundIndex = scene.nodes.findIndex((node) => node.type === "stockRound");
     let state = createInitialState("2025", fixture);
 
@@ -121,7 +121,7 @@ describe("game engine", () => {
   });
 
   it("continues post-choice dialogue before moving to the next month", () => {
-    const scene = sceneForMonth(0);
+    const scene = sceneForMonth(0, "2025");
     const stockRoundIndex = scene.nodes.findIndex((node) => node.type === "stockRound");
     let state = createInitialState("2025", fixture);
 

@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { GAME_DATA, GAME_YEARS } from "./data/gameData";
 import { ProceduralBgm } from "./audio/bgm";
+import { ProceduralVoice } from "./audio/voice";
 import { CHARACTERS, FOCUS_ACTIONS } from "./game/content";
 import {
   advanceScene,
@@ -23,7 +24,7 @@ import {
   storyForMonth,
   totalAffection,
 } from "./game/engine";
-import type { CharacterId, GameState, ResearchBrief, RoundResult, StockOption } from "./types";
+import type { CharacterId, GameState, HistoricalEvent, ResearchBrief, RoundResult, StockOption } from "./types";
 
 const PixiStage = lazy(() =>
   import("./components/PixiStage").then((module) => ({ default: module.PixiStage })),
@@ -154,6 +155,29 @@ function ResearchBriefPanel({
           );
         })}
       </div>
+    </div>
+  );
+}
+
+function HistoricalEventPanel({ event }: { event: HistoricalEvent }) {
+  return (
+    <div className="historical-event" aria-label="历史金融事件">
+      <div className="historical-event-head">
+        <span>历史事件</span>
+        <strong>{event.period}</strong>
+      </div>
+      <h3>{event.title}</h3>
+      <p>{event.publicContext}</p>
+      <dl>
+        <div>
+          <dt>男主内心</dt>
+          <dd>{event.protagonistMemory}</dd>
+        </div>
+        <div>
+          <dt>实战入口</dt>
+          <dd>{event.gameHook}</dd>
+        </div>
+      </dl>
     </div>
   );
 }
@@ -432,16 +456,20 @@ export default function App() {
   const [theme, setTheme] = useState<"light" | "dark">(readTheme());
   const [musicOn, setMusicOn] = useState(false);
   const [volume, setVolume] = useState(0.22);
+  const [voiceOn, setVoiceOn] = useState(false);
+  const [voiceVolume, setVoiceVolume] = useState(0.16);
   const [usePixiStage] = useState(canUsePixiStage);
   const bgmRef = useRef<ProceduralBgm | null>(null);
+  const voiceRef = useRef<ProceduralVoice | null>(null);
+  const lastVoiceCueRef = useRef("");
   const settingsRef = useRef<HTMLDivElement | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [initialCapitalInput, setInitialCapitalInput] = useState(() => String(GAME_DATA[bestInitialYear()].initialCapital || 10000));
   const [state, setState] = useState<GameState>(() => createState());
   const data = GAME_DATA[state.year];
   const month = data.months[state.monthIndex];
-  const story = storyForMonth(state.monthIndex);
-  const scene = sceneForMonth(state.monthIndex);
+  const story = storyForMonth(state.monthIndex, state.year);
+  const scene = sceneForMonth(state.monthIndex, state.year);
   const sceneNode = currentSceneNode(state);
   const stockRoundNode = sceneNode.type === "stockRound" ? sceneNode : null;
   const isStockRound = Boolean(stockRoundNode);
@@ -471,7 +499,7 @@ export default function App() {
       : `${compactDate(month.marketStart)} 至 ${compactDate(month.marketEnd)}，候选池 ${month.candidateCount} 只。`
     : state.locked && last
       ? `${last.outcome.title} · 剧情节点 ${sceneProgress}，${isLastSceneNode ? "继续后会进入下一话。" : "继续后会推进结算后剧情。"}`
-      : `${scene.title} · 剧情节点 ${sceneProgress}，继续后会进入本月情报会。`;
+      : `${story.event.title} · 剧情节点 ${sceneProgress}，继续后会进入本月情报会。`;
   const dialogue = stockRoundNode
     ? state.locked && last
       ? last.outcome.dialogue
@@ -505,7 +533,17 @@ export default function App() {
   }, [volume]);
 
   useEffect(() => {
-    return () => bgmRef.current?.stop();
+    if (!voiceRef.current) {
+      voiceRef.current = new ProceduralVoice();
+    }
+    voiceRef.current.setVolume(voiceVolume);
+  }, [voiceVolume]);
+
+  useEffect(() => {
+    return () => {
+      bgmRef.current?.stop();
+      voiceRef.current?.stop();
+    };
   }, []);
 
   useEffect(() => {
@@ -565,6 +603,39 @@ export default function App() {
     setMusicOn(true);
   }
 
+  async function toggleVoice() {
+    const controller = voiceRef.current || new ProceduralVoice();
+    voiceRef.current = controller;
+    if (voiceOn) {
+      controller.stop();
+      setVoiceOn(false);
+      return;
+    }
+    await controller.start();
+    controller.setVolume(voiceVolume);
+    setVoiceOn(true);
+  }
+
+  const voiceCueKey =
+    sceneNode.type === "line"
+      ? `${state.year}-${state.monthIndex}-${state.sceneNodeIndex}-${sceneNode.speaker}`
+      : state.locked && last
+        ? `result-${last.month}-${last.selected.id}`
+        : "";
+
+  useEffect(() => {
+    if (!voiceOn || !voiceCueKey) return;
+    if (lastVoiceCueRef.current === voiceCueKey) return;
+    lastVoiceCueRef.current = voiceCueKey;
+    if (sceneNode.type === "line") {
+      voiceRef.current?.playLine(sceneNode);
+      return;
+    }
+    if (state.locked && last) {
+      voiceRef.current?.playResult();
+    }
+  }, [last, sceneNode, state.locked, voiceCueKey, voiceOn]);
+
   return (
     <main className="app">
       <header className="topbar">
@@ -617,6 +688,9 @@ export default function App() {
               <button className="icon-button" type="button" title="切换背景音乐" aria-label="切换背景音乐" onClick={() => void toggleMusic()}>
                 {musicOn ? "♪" : "♩"}
               </button>
+              <button className="icon-button" type="button" title="切换语音感" aria-label="切换语音感" onClick={() => void toggleVoice()}>
+                {voiceOn ? "Vo" : "vo"}
+              </button>
               <label className="volume-input" title="背景音乐音量">
                 音量
                 <input
@@ -626,6 +700,17 @@ export default function App() {
                   type="range"
                   value={volume}
                   onChange={(event) => setVolume(Number(event.target.value))}
+                />
+              </label>
+              <label className="volume-input" title="语音音量">
+                语音
+                <input
+                  max="0.5"
+                  min="0"
+                  step="0.01"
+                  type="range"
+                  value={voiceVolume}
+                  onChange={(event) => setVoiceVolume(Number(event.target.value))}
                 />
               </label>
               <button className="icon-button" type="button" title="重新开始" aria-label="重新开始" onClick={() => restart(state.year)}>
@@ -683,7 +768,7 @@ export default function App() {
         <div className="question-panel">
           <div className="month-head">
             <div>
-              <span className="panel-kicker">本话分支</span>
+              <span className="panel-kicker">主线事件 / 分支小游戏</span>
               <h2>{month.label} 心动情报会</h2>
             </div>
             <div className="dates">
@@ -691,6 +776,7 @@ export default function App() {
             </div>
           </div>
           <p className="scene-brief">{isStockRound ? story.mission : "剧情演出中。继续对话后，会进入本月心动情报会。"}</p>
+          <HistoricalEventPanel event={story.event} />
           {isStockRound ? (
             <>
               <ResearchBriefPanel
@@ -765,7 +851,7 @@ export default function App() {
         <h2 id="rulesTitle">企划与机制</h2>
         <p>
           本页面是静态网页游戏。股票收益来自真实 A
-          股月度题库，日程行动会影响执行修正、角色状态和好感。当前背景音乐由浏览器生成，暂不使用外部音频素材。
+          股月度题库，主线先讨论历史金融事件，再进入选股实战。日程行动会影响执行修正、角色状态和好感。当前背景音乐和语音感由浏览器生成，未来关键句可接入离线音频素材。
         </p>
       </footer>
     </main>

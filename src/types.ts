@@ -43,6 +43,14 @@ export interface GameDataYear {
 
 export type GameDataMap = Record<string, GameDataYear>;
 
+export interface HistoricalEvent {
+  title: string;
+  period: string;
+  publicContext: string;
+  protagonistMemory: string;
+  gameHook: string;
+}
+
 export interface StoryArc {
   characterId: CharacterId;
   title: string;
@@ -51,6 +59,11 @@ export interface StoryArc {
   mood: string;
   line: string;
   mission: string;
+  event: HistoricalEvent;
+}
+
+export interface StoryArcOverride extends Partial<Omit<StoryArc, "event">> {
+  event?: Partial<HistoricalEvent>;
 }
 
 export interface DialogueNode {
@@ -64,6 +77,8 @@ export interface DialogueNode {
   pose?: string;
   bg?: string;
   bgm?: string;
+  voice?: string;
+  voiceCue?: "silent" | "blip" | "key";
 }
 
 export interface StockRoundNode {
@@ -84,6 +99,7 @@ export interface ResearchBrief {
 
 export interface SceneScript {
   id: string;
+  year?: string;
   monthIndex: number;
   title: string;
   defaultCharacterId: CharacterId;

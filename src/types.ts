@@ -194,6 +194,12 @@ export interface GameState {
   // Character relations
   relations: Record<CharacterId, number>;
 
+  // Branching / progression flags (affinity gates, story beats, etc.)
+  flags: Record<string, boolean | number>;
+
+  // Transient: the character whose affinity crossed a gate on the most recent decision
+  milestone: CharacterId | null;
+
   history: RoundResult[];
 }
 

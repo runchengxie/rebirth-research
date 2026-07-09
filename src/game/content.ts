@@ -1,4 +1,4 @@
-import type { CharacterId, CharacterProfile, FocusAction, MarketTheme, MonthScene, ResearchDecision, SceneNode, StoryArc as StoryArcType } from "../types";
+import type { CharacterId, CharacterProfile, DecisionCategory, DecisionEffects, CharacterRelation, FocusAction, MarketTheme, MonthScene, ResearchDecision, SceneNode, StoryArc as StoryArcType } from "../types";
 import { THEMES_2025, makeDecisions2025 } from "./content2025";
 import { THEMES_2023, makeDecisions2023 } from "./content2023";
 // Re-export StoryArc for engine.ts
@@ -43,6 +43,11 @@ export const PROTAGONIST = {
   role: "新手研究员",
   intro: "你是投研部的新人，刚转正不久。没人知道的是，你带着未来三年的记忆回到了这个时间线。你不能直接喊方向，只能把未来的碎片翻译成当下能被验证的研究假设。林若宁、陈星禾、周明昭三位同事各有各的方法论，你的每一次选择都在她们的注视下——是跟着基本面交叉验证，还是相信量价信号，还是在风控框架里找安全边际。",
 };
+
+// 好感度门槛：跨过 AFFINITY_GATE 的角色会解锁专属桥段与「默契线」结局；
+// 跨过 AFFINITY_TRUE 则在职业达标时解锁「心动线」真结局。
+export const AFFINITY_GATE = 60;
+export const AFFINITY_TRUE = 80;
 
 // ═══════════════════════════════════════════════════════════
 // Market Themes — 12个月金融主题（2024年历史事件为原型）
@@ -330,6 +335,53 @@ export const STORY_ARCS: StoryArc[] = [
 // Monthly Decision Pool — 每月5-6个工作/生活选择
 // ═══════════════════════════════════════════════════════════
 
+// Decision factory — 用紧凑写法消除每月决策的样板重复。
+// 每个决策只需给出：主要好感对象(to/val)、效果覆盖(fx)、评分(ev/cl/rk/rf)。
+type DecisionInput = {
+  id: string;
+  label: string;
+  category: DecisionCategory;
+  description: string;
+  to?: CharacterId;        // 主要好感对象
+  val?: number;             // 主要好感增量
+  rx?: CharacterRelation[]; // 额外的好感增量（to 之外的角色）
+  fx?: Partial<DecisionEffects>; // 效果覆盖（在零默认值之上合并）
+  ev?: number;              // evidenceLevel
+  cl?: number;              // clarityLevel
+  rk?: number;              // riskAwareness
+  rf?: number;              // reflectionValue
+  note?: string;            // backgroundNote
+};
+
+function d(input: DecisionInput): ResearchDecision {
+  const characterRelations: CharacterRelation[] =
+    input.rx ?? (input.to ? [{ characterId: input.to, value: input.val ?? 0 }] : []);
+  const base: DecisionEffects = {
+    researchCredibility: 0,
+    committeeAdoption: 0,
+    portfolioNav: 0,
+    viewAccuracy: 0,
+    clientFeedback: 0,
+    teamTrust: 0,
+    fatigue: 0,
+    lifeBalance: 0,
+    characterRelations,
+  };
+  const effects: DecisionEffects = input.fx ? { ...base, ...input.fx } : base;
+  return {
+    id: input.id,
+    label: input.label,
+    category: input.category,
+    description: input.description,
+    effects,
+    evidenceLevel: input.ev ?? 0,
+    clarityLevel: input.cl ?? 0,
+    riskAwareness: input.rk ?? 0,
+    reflectionValue: input.rf ?? 0,
+    backgroundNote: input.note,
+  };
+}
+
 function makeResearchDecisions(year: string, monthIndex: number): ResearchDecision[] {
   // Route to year-specific decision pools
   if (year === "2025") {
@@ -341,61 +393,68 @@ function makeResearchDecisions(year: string, monthIndex: number): ResearchDecisi
   // Default: 2024 decision pool
   const allMonths: ResearchDecision[][] = [
     // ══ 一月：流动性冲击与雪球敲入链 ══
+    // 一月已用 d() 工厂重写（迁移范本）；二至十二月与 content2023/2025 按计划迁移。
     [
-      {
+      d({
         id: "jan-leverage",
         label: "写《雪球产品敲入规模与剩余风险》",
         category: "deep_research",
         description: "估算雪球产品的敲入存量、两融预警比例和质押风险敞口，做一份市场恐慌程度的量化画像。",
-        effects: { researchCredibility: 14, committeeAdoption: 8, portfolioNav: 0.02, viewAccuracy: 8, clientFeedback: 3, teamTrust: 6, fatigue: 12, lifeBalance: -8, characterRelations: [{ characterId: "zhou_mingzhao", value: 7 }] },
-        evidenceLevel: 18, clarityLevel: 16, riskAwareness: 18, reflectionValue: 8,
-        backgroundNote: "杠杆出清程度是判断底部的最关键变量之一。",
-      },
-      {
+        to: "zhou_mingzhao", val: 7,
+        fx: { researchCredibility: 14, committeeAdoption: 8, portfolioNav: 0.02, viewAccuracy: 8, clientFeedback: 3, teamTrust: 6, fatigue: 12, lifeBalance: -8 },
+        ev: 18, cl: 16, rk: 18, rf: 8,
+        note: "杠杆出清程度是判断底部的最关键变量之一。",
+      }),
+      d({
         id: "jan-flow",
         label: "拆每日成交数据：谁在卖、谁在接",
         category: "data_deep_dive",
         description: "把每日成交按机构/散户/北向拆开，找出真正的恐慌性卖盘和逆势承接方。",
-        effects: { researchCredibility: 10, committeeAdoption: 5, portfolioNav: 0.01, viewAccuracy: 10, clientFeedback: 4, teamTrust: 5, fatigue: 8, lifeBalance: -4, characterRelations: [{ characterId: "chen_xinghe", value: 8 }] },
-        evidenceLevel: 16, clarityLevel: 14, riskAwareness: 14, reflectionValue: 6,
-        backgroundNote: "成交结构揭示的买卖力量对比，比指数跌幅本身更值得关注。",
-      },
-      {
+        to: "chen_xinghe", val: 8,
+        fx: { researchCredibility: 10, committeeAdoption: 5, portfolioNav: 0.01, viewAccuracy: 10, clientFeedback: 4, teamTrust: 5, fatigue: 8, lifeBalance: -4 },
+        ev: 16, cl: 14, rk: 14, rf: 6,
+        note: "成交结构揭示的买卖力量对比，比指数跌幅本身更值得关注。",
+      }),
+      d({
         id: "jan-call",
         label: "约杠杆资金渠道验证真实压力",
         category: "expert_interview",
         description: "通过券商两融部门、衍生品台和私募渠道了解杠杆资金的实际承压情况和强平线分布。",
-        effects: { researchCredibility: 8, committeeAdoption: 10, portfolioNav: 0.005, viewAccuracy: 7, clientFeedback: 8, teamTrust: 4, fatigue: 5, lifeBalance: -3, characterRelations: [{ characterId: "lin_ruoning", value: 5 }] },
-        evidenceLevel: 12, clarityLevel: 12, riskAwareness: 12, reflectionValue: 4,
-        backgroundNote: "一手信息源提供了公开数据看不到的杠杆压力分布。",
-      },
-      {
+        to: "lin_ruoning", val: 5,
+        fx: { researchCredibility: 8, committeeAdoption: 10, portfolioNav: 0.005, viewAccuracy: 7, clientFeedback: 8, teamTrust: 4, fatigue: 5, lifeBalance: -3 },
+        ev: 12, cl: 12, rk: 12, rf: 4,
+        note: "一手信息源提供了公开数据看不到的杠杆压力分布。",
+      }),
+      d({
         id: "jan-risk",
         label: "写《流动性冲击的历史复盘与政策响应规律》",
         category: "risk_alert",
         description: "复盘历史上类似流动性冲击的演化和政策干预时点，给出风险边界。",
-        effects: { researchCredibility: 10, committeeAdoption: 6, portfolioNav: 0.005, viewAccuracy: 5, clientFeedback: 6, teamTrust: 7, fatigue: 6, lifeBalance: -3, characterRelations: [{ characterId: "zhou_mingzhao", value: 8 }] },
-        evidenceLevel: 14, clarityLevel: 14, riskAwareness: 18, reflectionValue: 6,
-        backgroundNote: "历史不会重复，但杠杆出清的节奏往往有相似之处。",
-      },
-      {
+        to: "zhou_mingzhao", val: 8,
+        fx: { researchCredibility: 10, committeeAdoption: 6, portfolioNav: 0.005, viewAccuracy: 5, clientFeedback: 6, teamTrust: 7, fatigue: 6, lifeBalance: -3 },
+        ev: 14, cl: 14, rk: 18, rf: 6,
+        note: "历史不会重复，但杠杆出清的节奏往往有相似之处。",
+      }),
+      d({
         id: "jan-help",
         label: "帮林若宁更新行业估值表",
         category: "help_colleague",
         description: "在市场恐慌时，帮前辈把各行业最新估值和股息率拉出来。",
-        effects: { researchCredibility: 4, committeeAdoption: 2, portfolioNav: 0, viewAccuracy: 3, clientFeedback: 2, teamTrust: 10, fatigue: 3, lifeBalance: -1, characterRelations: [{ characterId: "lin_ruoning", value: 10 }] },
-        evidenceLevel: 6, clarityLevel: 6, riskAwareness: 8, reflectionValue: 2,
-        backgroundNote: "在最恐慌的时候帮同事梳理估值，本身就是一种研究态度。",
-      },
-      {
+        to: "lin_ruoning", val: 10,
+        fx: { researchCredibility: 4, committeeAdoption: 2, portfolioNav: 0, viewAccuracy: 3, clientFeedback: 2, teamTrust: 10, fatigue: 3, lifeBalance: -1 },
+        ev: 6, cl: 6, rk: 8, rf: 2,
+        note: "在最恐慌的时候帮同事梳理估值，本身就是一种研究态度。",
+      }),
+      d({
         id: "jan-rest",
         label: "按时下班，在恐慌中守住节奏",
         category: "self_care",
         description: "在市场最恐慌的时候，先确认自己的状态能不能支持理性判断。",
-        effects: { researchCredibility: 0, committeeAdoption: 0, portfolioNav: 0, viewAccuracy: 2, clientFeedback: 0, teamTrust: 1, fatigue: -12, lifeBalance: 12, characterRelations: [{ characterId: "lin_ruoning", value: 2 }] },
-        evidenceLevel: 2, clarityLevel: 4, riskAwareness: 10, reflectionValue: 10,
-        backgroundNote: "带着恐慌做研究，不如带着清晰的头脑推开明天的门。",
-      },
+        to: "lin_ruoning", val: 2,
+        fx: { researchCredibility: 0, committeeAdoption: 0, portfolioNav: 0, viewAccuracy: 2, clientFeedback: 0, teamTrust: 1, fatigue: -12, lifeBalance: 12 },
+        ev: 2, cl: 4, rk: 10, rf: 10,
+        note: "带着恐慌做研究，不如带着清晰的头脑推开明天的门。",
+      }),
     ],
     // ══ 二月：节后回流与AI叙事扩散 ══
     [
@@ -1026,7 +1085,11 @@ function makeResearchDecisions(year: string, monthIndex: number): ResearchDecisi
 // Scene Scripts
 // ═══════════════════════════════════════════════════════════
 
-export function buildMonthScene(monthIndex: number, year?: string): MonthScene {
+export function buildMonthScene(
+  monthIndex: number,
+  year?: string,
+  relations?: Record<CharacterId, number>,
+): MonthScene {
   const actualYear = year || "2025";
   const story = STORY_ARCS[monthIndex % STORY_ARCS.length];
   const monthNum = monthIndex + 1;
@@ -1037,6 +1100,14 @@ export function buildMonthScene(monthIndex: number, year?: string): MonthScene {
   if (actualYear === "2025" && monthIndex === 0) {
     return build2025Prologue(month, label, theme);
   }
+
+  // Affinity gate: if the month's arc character has crossed the relationship
+  // threshold, inject a one-time "relationship moment" node. This is what
+  // makes affection actually change the script — not just a number on a meter.
+  const affinityNode: SceneNode | null =
+    relations && (relations[story.characterId] ?? 0) >= AFFINITY_GATE
+      ? buildAffinityMoment(story, monthIndex)
+      : null;
 
   // Default scene for non-prologue months
   const decisions = makeResearchDecisions(actualYear, monthIndex);
@@ -1055,6 +1126,7 @@ export function buildMonthScene(monthIndex: number, year?: string): MonthScene {
       bgm: "morning-loop",
       voiceCue: "silent",
     },
+    ...(affinityNode ? [affinityNode] : []),
     {
       id: `m${monthIndex}-colleague`,
       type: "dialogue",
@@ -1094,6 +1166,24 @@ export function buildMonthScene(monthIndex: number, year?: string): MonthScene {
   ];
 
   return { id: `${year || "default"}-m${monthIndex}`, year, monthIndex, month, label, theme, nodes };
+}
+
+function buildAffinityMoment(story: StoryArc, monthIndex: number): SceneNode {
+  const name = CHARACTERS[story.characterId].name;
+  return {
+    id: `m${monthIndex}-affinity`,
+    type: "dialogue",
+    characterId: story.characterId,
+    speaker: story.speaker,
+    role: story.role,
+    mood: "心动",
+    text: `${name}的声音放轻了些：你最近总在我卡住的时候，递来那条对的线索。这种默契，比任何一份研报都难得。`,
+    prompt: "点击继续。",
+    pose: "soft",
+    bg: "research-room",
+    bgm: "morning-loop",
+    voiceCue: "key",
+  };
 }
 
 function build2025Prologue(month: string, label: string, theme: MarketTheme): MonthScene {

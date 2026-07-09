@@ -1,16 +1,20 @@
 import { describe, expect, it } from "vitest";
 import {
+  adjustAffection,
   advanceScene,
   bestRoute,
   clamp,
   createInitialState,
   currentSceneNode,
   formatPct,
+  getFlag,
   gradeReviewText,
+  hasFlag,
   makeDecision,
   nextMonth,
   sceneForMonth,
   selectFocus,
+  setFlag,
   totalRelations,
 } from "./engine";
 import { buildMonthScene } from "./content";
@@ -203,5 +207,68 @@ describe("grade review", () => {
 
   it("returns empty string for invalid grade", () => {
     expect(gradeReviewText("lin_ruoning", "Z")).toBe("");
+  });
+});
+
+describe("affection system & branching", () => {
+  it("adjustAffection applies deltas and clamps to [0,100]", () => {
+    const rel = { lin_ruoning: 95, chen_xinghe: 0, zhou_mingzhao: 0 };
+    adjustAffection(rel, "lin_ruoning", 10, "test");
+    expect(rel.lin_ruoning).toBe(100);
+    adjustAffection(rel, "chen_xinghe", -5, "test");
+    expect(rel.chen_xinghe).toBe(0);
+  });
+
+  it("applies the arc character's affection exactly once (no double-count)", () => {
+    const data = emptyYear();
+    const scene = buildMonthScene(0, "2024");
+    const decision = scene.nodes.find((n) => n.type === "decision")!;
+    const janHelp = decision.decisions!.find((d) => d.id === "jan-help")!;
+    // jan-help targets lin_ruoning (+10); lin is the month-0 arc character.
+    // deep_research focus -> floor(teamTrust/3) = floor(3/3) = 1.
+    // Buggy code doubled the arc delta (+10 twice => +21); fixed code is +10 +1 = +11.
+    const state = selectFocus(makeTestState(), "deep_research");
+    const result = makeDecision(state, data, janHelp);
+    expect(result.relations.lin_ruoning - state.relations.lin_ruoning).toBe(11);
+  });
+
+  it("flag helpers get/set/has work", () => {
+    let state = makeTestState();
+    expect(hasFlag(state, "affinity_lin_ruoning")).toBe(false);
+    state = setFlag(state, "affinity_lin_ruoning", 65);
+    expect(getFlag(state, "affinity_lin_ruoning")).toBe(65);
+    expect(hasFlag(state, "affinity_lin_ruoning")).toBe(true);
+    state = setFlag(state, "affinity_lin_ruoning", 0);
+    expect(hasFlag(state, "affinity_lin_ruoning")).toBe(false);
+  });
+
+  it("sets an affinity flag and a one-time milestone when a relation crosses the gate", () => {
+    const data = emptyYear();
+    const scene = buildMonthScene(0, "2024");
+    const decision = scene.nodes.find((n) => n.type === "decision")!;
+    const janHelp = decision.decisions!.find((d) => d.id === "jan-help")!; // lin +10 -> 65
+    const state = {
+      ...makeTestState(),
+      relations: { lin_ruoning: 55, chen_xinghe: 10, zhou_mingzhao: 10 },
+    };
+    const result = makeDecision(state, data, janHelp);
+    expect(result.flags[`affinity_lin_ruoning`]).toBe(result.relations.lin_ruoning);
+    expect(result.relations.lin_ruoning).toBeGreaterThanOrEqual(60);
+    expect(result.milestone).toBe("lin_ruoning");
+  });
+
+  it("injects an affinity moment node only when the arc character is above the gate", () => {
+    const flat = buildMonthScene(0, "2024"); // no relations -> 3 nodes
+    expect(flat.nodes).toHaveLength(3);
+    const warm = buildMonthScene(0, "2024", {
+      lin_ruoning: 70,
+      chen_xinghe: 10,
+      zhou_mingzhao: 10,
+    });
+    expect(warm.nodes).toHaveLength(4);
+    const inserted = warm.nodes.find((n) => n.id === "m0-affinity");
+    expect(inserted).toBeDefined();
+    expect(inserted!.characterId).toBe("lin_ruoning");
+    expect(inserted!.type).toBe("dialogue");
   });
 });

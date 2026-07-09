@@ -1,4 +1,4 @@
-import { FOCUS_ACTIONS, GRADE_REVIEWS, STORY_ARCS, buildMonthScene, getTheme } from "./content";
+import { AFFINITY_GATE, FOCUS_ACTIONS, GRADE_REVIEWS, STORY_ARCS, buildMonthScene, getTheme } from "./content";
 import type {
   CharacterId,
   DecisionCategory,
@@ -18,6 +18,27 @@ import type {
 
 export function clamp(value: number, min = 0, max = 100): number {
   return Math.max(min, Math.min(max, Math.round(value)));
+}
+
+// When true, affection changes are logged to the console (dev aid).
+const AFFECTION_TRACE = false;
+
+// Single choke-point for every affection mutation. Clamps to [0,100] and
+// (optionally) traces the change so behaviour is debuggable — this is the
+// "adjustAffection" helper that replaces scattered `+=` writes.
+export function adjustAffection(
+  relations: Record<CharacterId, number>,
+  characterId: CharacterId,
+  delta: number,
+  reason?: string,
+): Record<CharacterId, number> {
+  const current = relations[characterId] ?? 0;
+  const next = clamp(current + delta);
+  relations[characterId] = next;
+  if (AFFECTION_TRACE) {
+    console.debug("[affection]", characterId, current, "->", next, `(delta ${delta >= 0 ? "+" : ""}${delta})`, reason ?? "");
+  }
+  return relations;
 }
 
 export function compactDate(raw: string): string {
@@ -54,12 +75,12 @@ export function storyForMonth(index: number, year?: string): StoryArc {
   return arc;
 }
 
-export function sceneForMonth(index: number, year?: string): MonthScene {
-  return buildMonthScene(index, year);
+export function sceneForMonth(index: number, year?: string, relations?: Record<CharacterId, number>): MonthScene {
+  return buildMonthScene(index, year, relations);
 }
 
 export function currentSceneNode(state: GameState): MonthScene["nodes"][number] {
-  const scene = sceneForMonth(state.monthIndex, state.year);
+  const scene = sceneForMonth(state.monthIndex, state.year, state.relations);
   return scene.nodes[state.sceneNodeIndex] || scene.nodes[scene.nodes.length - 1];
 }
 
@@ -100,6 +121,8 @@ export function createInitialState(year: string): GameState {
       chen_xinghe: 14,
       zhou_mingzhao: 12,
     },
+    flags: {},
+    milestone: null,
     history: [],
   };
 }
@@ -278,15 +301,31 @@ export function makeDecision(state: GameState, _data: GameDataYear, decision: Re
   const nextFatigue = clamp(state.fatigue + eff.fatigue + fatigueFromFocus);
   const nextLifeBalance = clamp(state.lifeBalance + eff.lifeBalance + lifeBalanceFromFocus);
 
+  // All per-decision affection deltas are applied exactly once through the
+  // central adjustAffection helper (no hidden double-counting).
   const nextRelations: Record<CharacterId, number> = { ...state.relations };
   eff.characterRelations.forEach((rel) => {
-    nextRelations[rel.characterId] = clamp((nextRelations[rel.characterId] || 0) + rel.value);
+    adjustAffection(nextRelations, rel.characterId, rel.value, `decision:${decision.id}`);
   });
-  // Character relation: apply decision effects + find the specific character delta
-  const charRelationDelta = eff.characterRelations.find((r) => r.characterId === characterId)?.value || 0;
-  nextRelations[characterId] = clamp(
-    (nextRelations[characterId] || 0) + charRelationDelta + Math.floor(teamTrustFromFocus / 3)
-  );
+  // The month's arc character also absorbs a small fraction of the team trust
+  // built through the chosen daily focus. This is an explicit, documented
+  // coupling (not a hidden double-count) and is intentionally small so the
+  // player's own choices dominate who they grow close to.
+  const focusTrustToArc = Math.floor(teamTrustFromFocus / 3);
+  if (focusTrustToArc !== 0) {
+    adjustAffection(nextRelations, characterId, focusTrustToArc, `focus:${focus.id}`);
+  }
+
+  // Affinity gates: record which characters crossed the relationship threshold,
+  // and surface a one-time milestone for the UI.
+  const nextFlags: Record<string, boolean | number> = { ...state.flags };
+  let milestone: CharacterId | null = null;
+  (Object.keys(nextRelations) as CharacterId[]).forEach((cid) => {
+    const before = state.relations[cid] ?? 0;
+    const after = nextRelations[cid];
+    if (after >= AFFINITY_GATE) nextFlags[`affinity_${cid}`] = after;
+    if (before < AFFINITY_GATE && after >= AFFINITY_GATE && !milestone) milestone = cid;
+  });
 
   const score = scoreDecision(decision, story, focus);
 
@@ -303,6 +342,8 @@ export function makeDecision(state: GameState, _data: GameDataYear, decision: Re
     fatigue: nextFatigue,
     lifeBalance: nextLifeBalance,
     relations: nextRelations,
+    flags: nextFlags,
+    milestone,
     finished: state.monthIndex >= 11,
     history: [
       ...state.history,
@@ -341,6 +382,7 @@ export function nextMonth(state: GameState): GameState {
     sceneNodeIndex: 0,
     locked: false,
     focusId: "deep_research",
+    milestone: null,
   };
 }
 
@@ -355,7 +397,7 @@ export function canAdvanceScene(state: GameState): boolean {
 
 export function advanceScene(state: GameState, _data: GameDataYear): GameState {
   void _data;
-  const scene = sceneForMonth(state.monthIndex, state.year);
+  const scene = sceneForMonth(state.monthIndex, state.year, state.relations);
   const node = currentSceneNode(state);
   if (node.type === "decision" && !state.locked) return state;
   if (state.sceneNodeIndex < scene.nodes.length - 1) {
@@ -391,4 +433,21 @@ export function bestRoute(state: GameState): CharacterId {
 
 export function totalRelations(state: GameState): number {
   return Object.values(state.relations).reduce((sum, v) => sum + v, 0);
+}
+
+// ═══════════════════════════════════════════════
+// Branching / progression flags
+// ═══════════════════════════════════════════════
+
+export function setFlag(state: GameState, key: string, value: boolean | number = true): GameState {
+  return { ...state, flags: { ...state.flags, [key]: value } };
+}
+
+export function getFlag(state: GameState, key: string): boolean | number | undefined {
+  return state.flags[key];
+}
+
+export function hasFlag(state: GameState, key: string): boolean {
+  const value = state.flags[key];
+  return value !== undefined && value !== false && value !== 0;
 }

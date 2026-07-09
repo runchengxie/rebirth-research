@@ -244,7 +244,7 @@ export default function App() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [state, setState] = useState<GameState>(() => createState());
   const data = GAME_DATA[state.year];
-  const scene = sceneForMonth(state.monthIndex, state.year);
+  const scene = sceneForMonth(state.monthIndex, state.year, state.relations);
   const sceneNode = currentSceneNode(state);
   const decisionNode = sceneNode.type === "decision" ? sceneNode : null;
   const isDecision = Boolean(decisionNode);
@@ -452,6 +452,13 @@ export default function App() {
           </div>
         </div>
       </header>
+
+      {state.milestone ? (
+        <div className="milestone-banner" role="status" aria-label="关系升温">
+          <span>关系升温</span>
+          <strong>你和{CHARACTERS[state.milestone].name}的关系更近了一步</strong>
+        </div>
+      ) : null}
 
       <StatusBar state={state} />
 

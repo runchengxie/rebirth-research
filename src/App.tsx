@@ -4,18 +4,20 @@ import { ProceduralBgm } from "./audio/bgm";
 import { NarrativeAudio } from "./audio/sfx";
 import { CHARACTERS } from "./game/content";
 import {
-  advanceScene,
-  canAdvanceScene,
-  createInitialState,
-  currentSceneNode,
   focusById,
   gradeReviewText,
   makeDecision,
   postMortem,
-  sceneForMonth,
   selectFocus,
   storyForMonth,
 } from "./game/engine";
+import {
+  advanceScene,
+  canAdvanceScene,
+  createInitialState,
+  currentSceneNode,
+  sceneForMonth,
+} from "./game/runtime";
 import type { CharacterId, GameState, ResearchDecision, RoundResult } from "./types";
 import { EndingPanel } from "./components/EndingPanel";
 import { FocusSelector } from "./components/FocusSelector";

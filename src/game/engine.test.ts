@@ -1,21 +1,23 @@
 import { describe, expect, it } from "vitest";
 import {
   adjustAffection,
-  advanceScene,
   bestRoute,
   clamp,
-  createInitialState,
-  currentSceneNode,
   formatPct,
   getFlag,
   gradeReviewText,
   hasFlag,
   makeDecision,
-  nextMonth,
   selectFocus,
   setFlag,
   totalRelations,
 } from "./engine";
+import {
+  advanceScene,
+  createInitialState,
+  currentSceneNode,
+  nextMonth,
+} from "./runtime";
 import { buildMonthScene } from "./content";
 import { evaluateBranchCondition } from "./branching";
 import type { GameDataYear, GameState } from "../types";

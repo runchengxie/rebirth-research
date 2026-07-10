@@ -5,7 +5,8 @@ type ResultTone = "success" | "miss" | "neutral";
 // ── Client-side TTS placeholder voices ──
 // Fills the blank VO slot with zero assets / zero network, mirroring ProceduralBgm.
 // Voices are OS-provided (Web Speech API). Profile is anchored to docs/CHARACTERS.md
-// Voice Pillars: 林若宁 warm+moderate, 陈星禾 precise+fast, 周明昭 calm+slow.
+// Voice Pillars: 林若宁 warm+moderate, 陈星禾 precise+fast, 周明昭 calm+slow,
+// 赵承宇 grounded+steady (同级同事，语速中性、音高略低).
 type VoiceProfile = {
   lang: string; // BCP-47, e.g. "zh-CN"
   rate: number; // 0.1..10, 1 = normal
@@ -19,6 +20,7 @@ const VOICE_PROFILES: Record<CharacterId, VoiceProfile> = {
   lin_ruoning: { lang: "zh-CN", rate: 0.95, pitch: 1.05 },
   chen_xinghe: { lang: "zh-CN", rate: 1.08, pitch: 1.0 },
   zhou_mingzhao: { lang: "zh-CN", rate: 0.85, pitch: 0.9 },
+  zhao_chengyu: { lang: "zh-CN", rate: 1.0, pitch: 0.95 },
 };
 
 const maxEffectVolume = 0.45;

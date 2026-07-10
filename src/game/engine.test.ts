@@ -158,7 +158,7 @@ describe("utility functions", () => {
 
   it("totalRelations sums all characters", () => {
     const state = makeTestState();
-    expect(totalRelations(state)).toBe(18 + 14 + 12);
+    expect(totalRelations(state)).toBe(18 + 14 + 12 + 10);
   });
 
   it("bestRoute returns character with highest relation", () => {
@@ -214,7 +214,7 @@ describe("grade review", () => {
 
 describe("affection system & branching", () => {
   it("adjustAffection applies deltas and clamps to [0,100]", () => {
-    const rel = { lin_ruoning: 95, chen_xinghe: 0, zhou_mingzhao: 0 };
+    const rel = { lin_ruoning: 95, chen_xinghe: 0, zhou_mingzhao: 0, zhao_chengyu: 0 };
     adjustAffection(rel, "lin_ruoning", 10, "test");
     expect(rel.lin_ruoning).toBe(100);
     adjustAffection(rel, "chen_xinghe", -5, "test");
@@ -251,7 +251,7 @@ describe("affection system & branching", () => {
     const janHelp = decision.decisions!.find((d) => d.id === "jan-help")!; // lin +10 -> 65
     const state = {
       ...makeTestState(),
-      relations: { lin_ruoning: 55, chen_xinghe: 10, zhou_mingzhao: 10 },
+      relations: { lin_ruoning: 55, chen_xinghe: 10, zhou_mingzhao: 10, zhao_chengyu: 10 },
     };
     const result = makeDecision(state, data, janHelp);
     expect(result.flags[`affinity_lin_ruoning`]).toBe(result.relations.lin_ruoning);
@@ -264,7 +264,7 @@ describe("affection system & branching", () => {
     expect(flat.nodes).toHaveLength(3);
     const warm = buildMonthScene(0, "2024", {
       ...createInitialState("2024"),
-      relations: { lin_ruoning: 70, chen_xinghe: 10, zhou_mingzhao: 10 },
+      relations: { lin_ruoning: 70, chen_xinghe: 10, zhou_mingzhao: 10, zhao_chengyu: 10 },
     });
     expect(warm.nodes).toHaveLength(4);
     const inserted = warm.nodes.find((n) => n.id === "m0-affinity");
@@ -302,7 +302,7 @@ describe("affection system & branching", () => {
       expect(
         evaluateBranchCondition(
           { kind: "affinityAny", gte: 60 },
-          { ...s, relations: { lin_ruoning: 70, chen_xinghe: 10, zhou_mingzhao: 10 } },
+          { ...s, relations: { lin_ruoning: 70, chen_xinghe: 10, zhou_mingzhao: 10, zhao_chengyu: 10 } },
         ),
       ).toBe(true);
     });

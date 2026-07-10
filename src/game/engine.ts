@@ -1,4 +1,4 @@
-import { AFFINITY_GATE, BRANCHES, FOCUS_ACTIONS, GRADE_REVIEWS, STORY_ARCS, getTheme, pickKnowledgeCard } from "./content";
+import { AFFINITY_GATE, BRANCHES, CHARACTERS, FOCUS_ACTIONS, GRADE_REVIEWS, STORY_ARCS, getTheme, pickKnowledgeCard } from "./content";
 import { branchFlagsForMonth } from "./branching";
 import type {
   CharacterId,
@@ -9,6 +9,7 @@ import type {
   GameState,
   KnowledgeCard,
   MarketTheme,
+  MentorId,
   OfficeState,
   ResearchDecision,
   RoundOutcome,
@@ -232,7 +233,7 @@ export function scoreDecision(
 // ═══════════════════════════════════════════════════════════
 
 export function gradeReviewText(characterId: CharacterId, grade: string): string {
-  const reviews = GRADE_REVIEWS[characterId]?.[grade];
+  const reviews = GRADE_REVIEWS[characterId as MentorId]?.[grade];
   if (!reviews || reviews.length === 0) return "";
   const seed = Array.from(grade).reduce((sum, c) => sum + c.charCodeAt(0), 0);
   return reviews[seed % reviews.length];
@@ -448,9 +449,10 @@ export function buildBusinessVerdict(
 // ═══════════════════════════════════════════════════════════
 
 export function bestRoute(state: GameState): CharacterId {
-  const sorted = (Object.entries(state.relations) as Array<[CharacterId, number]>).sort(
-    (a, b) => b[1] - a[1],
-  );
+  // 同级友人（peer，如赵承宇）只走友谊线，不进浪漫主线路线筛选。
+  const sorted = (Object.entries(state.relations) as Array<[CharacterId, number]>)
+    .filter(([cid]) => CHARACTERS[cid]?.kind !== "peer")
+    .sort((a, b) => b[1] - a[1]);
   return sorted[0]?.[0] || "lin_ruoning";
 }
 

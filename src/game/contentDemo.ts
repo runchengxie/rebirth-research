@@ -11,10 +11,10 @@
 // ═══════════════════════════════════════════════════════════
 
 import type {
-  CharacterId,
   GameState,
   KnowledgeCard,
   MarketTheme,
+  MentorId,
   MonthScene,
   ResearchDecision,
   SceneNode,
@@ -22,7 +22,7 @@ import type {
 import { d } from "./decisionFactory";
 
 // 三位导师的基础信息（本地化，避免与 content.ts 形成循环依赖）。
-const MENTORS: Record<CharacterId, { name: string; role: string }> = {
+const MENTORS: Record<MentorId, { name: string; role: string }> = {
   lin_ruoning: { name: "林若宁", role: "基本面研究员" },
   chen_xinghe: { name: "陈星禾", role: "量化/资金信号研究员" },
   zhou_mingzhao: { name: "周明昭", role: "宏观策略师" },
@@ -219,6 +219,20 @@ function pool0(): ResearchDecision[] {
       fx: { lifeBalance: 14, fatigue: -16, researchCredibility: 2, teamTrust: 2 },
       ev: 4, cl: 4, rk: 8, rf: 12,
     }),
+    {
+      ...d({
+        id: "demo-a-peer",
+        label: "午休时跟赵承宇去交易台看盘",
+        category: "data_deep_dive",
+        description: "研究说得再漂亮，没承接就是纸上谈兵。去看看真实买单怎么说话。",
+        to: "zhao_chengyu",
+        val: 5,
+        fx: { viewAccuracy: 7, teamTrust: 8, researchCredibility: 3, fatigue: 3, lifeBalance: -2 },
+        ev: 10, cl: 9, rk: 8, rf: 8,
+        note: "实战派视角：成交是研究的试金石。",
+      }),
+      framework: "chen_xinghe",
+    },
   ];
 }
 
@@ -471,7 +485,7 @@ function buildDemoCompetingNode(theme: MarketTheme, monthIndex: number): SceneNo
 export function buildDemoChapter(monthIndex: number, state?: GameState): MonthScene {
   const theme = THEMES_DEMO[monthIndex % THEMES_DEMO.length];
   // 叙述者按月轮换三位导师，让 demo 整年都能听到不同声音。
-  const narratorOrder: CharacterId[] = ["lin_ruoning", "chen_xinghe", "zhou_mingzhao"];
+  const narratorOrder: MentorId[] = ["lin_ruoning", "chen_xinghe", "zhou_mingzhao"];
   const narrator = narratorOrder[monthIndex % narratorOrder.length];
   const m = MENTORS[narrator];
 
@@ -513,6 +527,23 @@ export function buildDemoChapter(monthIndex: number, state?: GameState): MonthSc
     voiceCue: "key",
   };
 
+  // 同级同事赵承宇的插话：demo 章节从第一话就让他露面，证明投研部不只有女同事。
+  // 他走友谊线、不进图鉴，framework 指给陈星禾避免塞知识卡。
+  const peerNode: SceneNode = {
+    id: `demo-m${monthIndex}-peer`,
+    type: "dialogue",
+    characterId: "zhao_chengyu",
+    speaker: "赵承宇",
+    role: "交易台同级同事",
+    mood: "随意",
+    text: "交易台那边的赵承宇探进头来：顾研究员，你又在会议室拆框架啦？你那套逻辑我信一半——另一半得看盘口认不认。回头带你看笔真实成交？",
+    prompt: "点击继续，进入本月研究选择。",
+    pose: "soft",
+    bg: "research-room",
+    bgm: "morning-loop",
+    voiceCue: "key",
+  };
+
   const decisions = makeDecisionsDemo(monthIndex);
 
   const decisionNode: SceneNode = {
@@ -542,6 +573,7 @@ export function buildDemoChapter(monthIndex: number, state?: GameState): MonthSc
     memoryNode,
     ...(competingNode ? [competingNode] : []),
     colleagueNode,
+    peerNode,
     decisionNode,
   ];
 

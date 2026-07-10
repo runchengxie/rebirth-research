@@ -1,11 +1,19 @@
-export type CharacterId = "lin_ruoning" | "chen_xinghe" | "zhou_mingzhao";
+export type CharacterId = "lin_ruoning" | "chen_xinghe" | "zhou_mingzhao" | "zhao_chengyu";
+
+// 导师（可攻略/教学线）身份：排除同级友人同事赵承宇。
+// 导师专属表（MENTOR_TEACHINGS / GRADE_REVIEWS 等）用这个，避免强加赵承宇进图鉴。
+export type MentorId = Exclude<CharacterId, "zhao_chengyu">;
+
+export type CharacterKind = "mentor" | "peer";
 
 export interface CharacterProfile {
   id: CharacterId;
   name: string;
   role: string;
   tag: string;
-  color: "pink" | "blue" | "lavender";
+  color: "pink" | "blue" | "lavender" | "slate";
+  // mentor = 可攻略/教学线角色；peer = 同级友人同事，不进浪漫线、不进图鉴教学目录。
+  kind?: CharacterKind;
   intro: string;
   methodology?: string; // 角色研究框架简述
 }

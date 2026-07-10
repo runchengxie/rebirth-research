@@ -1,6 +1,6 @@
 import { CHARACTERS, AFFINITY_GATE, AFFINITY_TRUE, MENTOR_TEACHINGS } from "../game/content";
 import { bestRoute, formatNav } from "../game/engine";
-import type { CharacterId, GameState } from "../types";
+import type { GameState, MentorId } from "../types";
 
 export function EndingPanel({ state }: { state: GameState }) {
   if (!state.finished || state.history.length === 0) return null;
@@ -10,7 +10,7 @@ export function EndingPanel({ state }: { state: GameState }) {
 
   // 研究图鉴：按导师分列，展示这一遍从 TA 那学到了哪些手艺（分母=该导师教学目录数）。
   // 不做全局百分比——分支会关闭其他路径，「差多少」会打脸「你的选择塑造了独一无二的这一遍」。
-  const MENTOR_IDS: CharacterId[] = ["lin_ruoning", "chen_xinghe", "zhou_mingzhao"];
+  const MENTOR_IDS: MentorId[] = ["lin_ruoning", "chen_xinghe", "zhou_mingzhao"];
   const ledger = MENTOR_IDS.map((id) => {
     const collected = state.knowledgeCards.filter((c) => c.mentorId === id);
     const total = Object.keys(MENTOR_TEACHINGS[id]).length;

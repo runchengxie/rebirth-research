@@ -1,4 +1,4 @@
-import type { Branch, CharacterId, CharacterProfile, DecisionCategory, FocusAction, GameState, KnowledgeCard, MarketTheme, MonthScene, ResearchDecision, SceneNode, StoryArc as StoryArcType } from "../types";
+import type { Branch, CharacterId, CharacterProfile, DecisionCategory, FocusAction, GameState, KnowledgeCard, MarketTheme, MentorId, MonthScene, ResearchDecision, SceneNode, StoryArc as StoryArcType } from "../types";
 import { d } from "./decisionFactory";
 import { activeBranches } from "./branching";
 import { THEMES_2025, makeDecisions2025 } from "./content2025";
@@ -39,6 +39,16 @@ export const CHARACTERS: Record<CharacterId, CharacterProfile> = {
     color: "lavender",
     intro: "看起来很安静，但总能在大家慌乱前标出拐点。",
     methodology: "估值-流动性-风险偏好三角。看拐点不看趋势，看赔率不看方向。",
+  },
+  zhao_chengyu: {
+    id: "zhao_chengyu",
+    name: "赵承宇",
+    role: "交易台同级同事",
+    tag: "实战交易线",
+    color: "slate",
+    kind: "peer",
+    intro: "交易台那边的同级同事。嘴上嫌研究员慢，真到下单前又会跑来问你这边的逻辑。",
+    methodology: "成交驱动，盘中验证。研究说得再漂亮，没承接就是纸上谈兵。",
   },
 };
 
@@ -241,7 +251,7 @@ function makeResearchDecisions(year: string, monthIndex: number): ResearchDecisi
 // leaning over your desk, not a lecture.
 type Teaching = { concept: string; line: string; cfaRef: string };
 
-export const MENTOR_TEACHINGS: Record<CharacterId, Record<DecisionCategory, Teaching>> = {
+export const MENTOR_TEACHINGS: Record<MentorId, Record<DecisionCategory, Teaching>> = {
   lin_ruoning: {
     deep_research: { concept: "产业链交叉验证", line: "别只看一个点。把上游、中游、下游的节奏差拆开，超额收益藏在断层里。", cfaRef: "CFA · 权益估值与产业链验证" },
     expert_interview: { concept: "一线验证", line: "研报会说漂亮话，但经销商的库存、厂长的语气不会。去一线，比看十篇纪要都值钱。", cfaRef: "CFA · 尽职调查与一手信息" },
@@ -285,7 +295,7 @@ function frameworkOfLocal(decision: ResearchDecision, story: StoryArc): Characte
 export function pickKnowledgeCard(decision: ResearchDecision, story: StoryArc): KnowledgeCard {
   if (decision.teaches) return decision.teaches;
   const mentor = frameworkOfLocal(decision, story);
-  const t = MENTOR_TEACHINGS[mentor]?.[decision.category];
+  const t = MENTOR_TEACHINGS[mentor as MentorId]?.[decision.category];
   if (!t) {
     return {
       id: `generic_${decision.category}`,
@@ -306,7 +316,7 @@ export function pickKnowledgeCard(decision: ResearchDecision, story: StoryArc): 
 }
 
 // ── In-voice monologues for the grade-driven / liability branches ──
-const GRADE_MONO: Record<"respect" | "watch" | "liability", Record<CharacterId, string>> = {
+const GRADE_MONO: Record<"respect" | "watch" | "liability", Record<MentorId, string>> = {
   respect: {
     lin_ruoning: "这条线你不是蒙对的。推导链我反复看过了——下次这种判断，我放心交给你。",
     chen_xinghe: "量价信号没骗你，你也没骗自己。这种诚实，比一次 Alpha 更值钱。",
@@ -347,7 +357,7 @@ function monoNode(id: string, cid: CharacterId, mood: string, text: string): Sce
 // Grade-driven + liability + delayed-debt branches, generated per character so
 // the same flag logic serves all three colleagues. All are flag-gated, so they
 // never fire in a fresh or test state (keeping node-count tests stable).
-const GRADE_BRANCHES: Branch[] = (["lin_ruoning", "chen_xinghe", "zhou_mingzhao"] as CharacterId[]).flatMap(
+const GRADE_BRANCHES: Branch[] = (["lin_ruoning", "chen_xinghe", "zhou_mingzhao"] as MentorId[]).flatMap(
   (cid) =>
     (["respect", "watch", "liability"] as const).map((kind) => ({
       id: `grade-${kind}-${cid}`,
@@ -386,6 +396,57 @@ const DEBT_BRANCH: Branch = {
 // affinity-gate bridge node and the affection-driven endings — together they
 // make the player's accumulated choices visibly reshape the story.
 // ═══════════════════════════════════════════════════════════
+
+// 赵承宇（同级同事）的实战插话分支：把「研究 vs 成交」的张力摆到玩家面前。
+const PEER_BRANCH: Branch = {
+  id: "peer-zhao-execution",
+  label: "赵承宇的盘口插话",
+  when: {
+    kind: "and",
+    of: [
+      { kind: "metric", key: "teamTrust", gte: 50 },
+      { kind: "month", gte: 2 },
+    ],
+  },
+  once: true,
+  injectAt: "after-memory",
+  contribute: {
+    nodes: [
+      {
+        id: "peer-zhao-banter",
+        type: "dialogue",
+        characterId: "zhao_chengyu",
+        speaker: "赵承宇",
+        role: "交易台同级同事",
+        mood: "随意",
+        text: "赵承宇把椅子转过来，手里转着笔：你们研究员又在会议室拆框架了？说真的，你上次那份东西逻辑我看了，挺顺。但市场认不认，得看有没有人真金白银接。要不要我带你看看盘口怎么说话？",
+        prompt: "点击继续。",
+        pose: "soft",
+        bg: "research-room",
+        bgm: "morning-loop",
+        voiceCue: "key",
+      },
+    ],
+    decisions: [
+      {
+        ...d({
+          id: "peer-zhao-exec-check",
+          label: "跟赵承宇去交易台看一笔真实成交",
+          category: "data_deep_dive",
+          description: "研究说得再漂亮，没承接就是纸上谈兵。去盘口看真实买单怎么说话。代价是少了半天写研报的时间。",
+          to: "zhao_chengyu",
+          val: 5,
+          fx: { viewAccuracy: 8, teamTrust: 8, researchCredibility: 4, fatigue: 4, lifeBalance: -2 },
+          ev: 10, cl: 10, rk: 8, rf: 8,
+          note: "实战派的视角：成交是研究的试金石，但别被分时图带节奏。",
+        }),
+        // 教学归属给陈星禾（量价信号），赵承宇本人不进知识卡图鉴。
+        framework: "chen_xinghe",
+      },
+    ],
+    setFlags: { peer_zhao_met: true },
+  },
+};
 
 export const BRANCHES: Branch[] = [
   {
@@ -563,6 +624,10 @@ export const BRANCHES: Branch[] = [
   },
   ...GRADE_BRANCHES,
   DEBT_BRANCH,
+  // 同级同事赵承宇的实战插话：不进浪漫线、不进图鉴。teamTrust 够高（你是个体面
+  // 队友）且在年中之后触发一次，用盘口视角给研究做压力测试，也暴露他自己的毛病——
+  // 他信成交胜过信框架，容易在热闹里追涨。framework 指给陈星禾，避免给玩家塞知识卡。
+  PEER_BRANCH,
 ];
 
 // The three colleagues each form a defensible hypothesis from the same future
@@ -939,7 +1004,7 @@ export const FOCUS_ACTIONS: FocusAction[] = [
 // Grade Reviews — 评分等级复盘文案
 // ═══════════════════════════════════════════════════════════
 
-export const GRADE_REVIEWS: Record<CharacterId, Record<string, string[]>> = {
+export const GRADE_REVIEWS: Record<MentorId, Record<string, string[]>> = {
   lin_ruoning: {
     S: ["这条路线把事件、数据和逻辑完整串起来了，你的研究框架经得起任何复盘。", "完美的判断。你不仅在正确的时间做了正确的选择，更重要的是你知道为什么对。"],
     A: ["逻辑扎实，证据链完整。下次可以考虑更早在分歧点入场。", "这次研究做到了交叉验证，只是还差一点超额认知。继续打磨框架。"],

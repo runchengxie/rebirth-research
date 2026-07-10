@@ -25,6 +25,8 @@
   --pink-soft: #ffe8f4;
   --lavender: #9c78e6;
   --lavender-soft: #f0e9ff;
+  --slate: #5b6b7a;
+  --slate-soft: #eef2f6;
   --stage-text: #3a2b42;
   --stage-muted: #7f6c8d;
   --glass: rgba(255, 249, 253, 0.86);
@@ -61,6 +63,8 @@
   --pink-soft: #4b2638;
   --lavender: #c6a7ff;
   --lavender-soft: #39284c;
+  --slate: #9fb2c4;
+  --slate-soft: #1f2933;
   --stage-text: #fff4fb;
   --stage-muted: #ead0e1;
   --glass: rgba(36, 25, 48, 0.78);
@@ -403,6 +407,11 @@ button:disabled {
 
 .vn-stage.character-lavender .pixi-stage-fallback::after {
   background-image: url("../assets/vn/characters/mei-neutral.png");
+}
+
+/* 赵承宇（同级同事）暂无立绘资源：文字层出现，fallback 不放人物图。 */
+.vn-stage.character-slate .pixi-stage-fallback::after {
+  background-image: none;
 }
 
 .vn-stage-content {
@@ -758,6 +767,10 @@ button:disabled {
   border-color: rgba(198, 167, 255, 0.62);
 }
 
+.research-brief.slate {
+  border-color: rgba(111, 127, 144, 0.6);
+}
+
 .research-brief span {
   color: var(--muted);
   font-size: 12px;
@@ -987,6 +1000,10 @@ button:disabled {
   color: var(--lavender);
 }
 
+.story-recap.slate span {
+  color: var(--slate);
+}
+
 .story-recap p {
   margin: 6px 0 0;
   color: var(--muted);
@@ -1081,6 +1098,11 @@ button:disabled {
   color: var(--lavender);
 }
 
+.character-card.slate .character-avatar {
+  background: var(--slate-soft);
+  color: var(--slate);
+}
+
 .character-copy {
   min-width: 0;
 }
@@ -1137,6 +1159,10 @@ button:disabled {
 
 .character-card.lavender .mini-meter i {
   background: var(--lavender);
+}
+
+.character-card.slate .mini-meter i {
+  background: var(--slate);
 }
 
 .meter {
@@ -1871,6 +1897,7 @@ tr:last-child td {
 
 .knowledge-card.blue { border-left-color: var(--blue); }
 .knowledge-card.lavender { border-left-color: var(--lavender); }
+.knowledge-card.slate { border-left-color: var(--slate); }
 
 .knowledge-card strong {
   display: block;
@@ -2042,6 +2069,7 @@ tr:last-child td {
 
 .research-note.blue { border-left-color: var(--blue); }
 .research-note.lavender { border-left-color: var(--lavender); }
+.research-note.slate { border-left-color: var(--slate); }
 
 .research-note strong {
   display: block;

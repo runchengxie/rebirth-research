@@ -31,8 +31,8 @@ interface StageScene {
   host: HTMLDivElement;
   background: Sprite;
   backgroundTextures: Record<string, Texture>;
-  characterTextures: Record<CharacterId, Record<string, Texture>>;
-  characterSprites: Record<CharacterId, Sprite>;
+  characterTextures: Partial<Record<CharacterId, Record<string, Texture>>>;
+  characterSprites: Partial<Record<CharacterId, Sprite>>;
   overlay: Graphics;
   sparkleItems: Sparkle[];
 }
@@ -49,8 +49,9 @@ const backgroundAssets: Record<string, string> = {
   "night-cafe": bgNightCafe,
 };
 
-// Map new CharacterId → old asset paths (image files not renamed yet)
-const characterAssets: Record<CharacterId, Record<string, string>> = {
+// Map new CharacterId → old asset paths (image files not renamed yet).
+// 同级同事（如赵承宇）暂无立绘资源，故用 Partial——renderScene 对缺失 sprite 做 guard。
+const characterAssets: Partial<Record<CharacterId, Record<string, string>>> = {
   lin_ruoning: {
     smile: rinaSmileSprite,
     thinking: rinaThinkingSprite,
@@ -68,7 +69,7 @@ const characterAssets: Record<CharacterId, Record<string, string>> = {
   },
 };
 
-const defaultPose: Record<CharacterId, string> = {
+const defaultPose: Partial<Record<CharacterId, string>> = {
   lin_ruoning: "smile",
   chen_xinghe: "neutral",
   zhou_mingzhao: "neutral",
@@ -78,6 +79,7 @@ const routeTint: Record<CharacterProfile["color"], number> = {
   pink: 0xff8ec3,
   blue: 0x8fc7ff,
   lavender: 0xc6a7ff,
+  slate: 0x6f7f90,
 };
 
 async function loadTextureMap<T extends string>(assets: Record<T, string>): Promise<Record<T, Texture>> {
@@ -87,17 +89,17 @@ async function loadTextureMap<T extends string>(assets: Record<T, string>): Prom
   return Object.fromEntries(entries) as Record<T, Texture>;
 }
 
-async function loadCharacterTextureMap(): Promise<Record<CharacterId, Record<string, Texture>>> {
+async function loadCharacterTextureMap(): Promise<Partial<Record<CharacterId, Record<string, Texture>>>> {
   const entries = await Promise.all(
     (Object.entries(characterAssets) as Array<[CharacterId, Record<string, string>]>).map(
       async ([characterId, poseAssets]) => [characterId, await loadTextureMap(poseAssets)] as const,
     ),
   );
-  return Object.fromEntries(entries) as Record<CharacterId, Record<string, Texture>>;
+  return Object.fromEntries(entries) as Partial<Record<CharacterId, Record<string, Texture>>>;
 }
 
 function normalizePose(characterId: CharacterId, pose: string): string {
-  const aliases: Record<CharacterId, Record<string, string>> = {
+  const aliases: Partial<Record<CharacterId, Record<string, string>>> = {
     lin_ruoning: {
       calm: "smile", neutral: "smile", smile: "smile",
       thinking: "thinking", serious: "thinking", soft: "soft",
@@ -113,7 +115,7 @@ function normalizePose(characterId: CharacterId, pose: string): string {
       soft: "soft", smile: "soft",
     },
   };
-  return aliases[characterId][pose] || defaultPose[characterId];
+  return aliases[characterId]?.[pose] || defaultPose[characterId] || "neutral";
 }
 
 function layoutCover(sprite: Sprite, texture: Texture, width: number, height: number): void {
@@ -143,9 +145,12 @@ function renderScene(scene: StageScene, props: StagePropsSnapshot): void {
   const bottom = compactStage ? height - Math.min(26, height * 0.045) : height + Math.min(26, height * 0.05);
   (Object.keys(scene.characterSprites) as CharacterId[]).forEach((characterId) => {
     const sprite = scene.characterSprites[characterId];
+    if (!sprite) return; // 无立绘角色（如同级同事）只在 React 文字层出现
     const active = characterId === props.activeCharacter.id;
-    const pose = active ? normalizePose(characterId, props.activePose) : defaultPose[characterId];
-    sprite.texture = scene.characterTextures[characterId][pose] || scene.characterTextures[characterId][defaultPose[characterId]];
+    const pose = active ? normalizePose(characterId, props.activePose) : defaultPose[characterId] || "neutral";
+    const textures = scene.characterTextures[characterId];
+    const fallback = defaultPose[characterId] || "neutral";
+    sprite.texture = (textures && (textures[pose] || textures[fallback])) || sprite.texture;
     const baseScale = targetHeight / sprite.texture.height;
 
     sprite.visible = active;
@@ -211,7 +216,7 @@ export function PixiStage({ activeCharacter, backgroundId = "research-room", act
       hostElement.appendChild(app.canvas);
 
       let backgroundTextures: Record<string, Texture>;
-      let characterTextures: Record<CharacterId, Record<string, Texture>>;
+      let characterTextures: Partial<Record<CharacterId, Record<string, Texture>>>;
       try {
         [backgroundTextures, characterTextures] = await Promise.all([
           loadTextureMap(backgroundAssets),
@@ -223,10 +228,10 @@ export function PixiStage({ activeCharacter, backgroundId = "research-room", act
       if (disposed) return;
 
       const background = new Sprite(backgroundTextures["research-room"]);
-      const characterSprites: Record<CharacterId, Sprite> = {
-        lin_ruoning: new Sprite(characterTextures.lin_ruoning[defaultPose.lin_ruoning]),
-        chen_xinghe: new Sprite(characterTextures.chen_xinghe[defaultPose.chen_xinghe]),
-        zhou_mingzhao: new Sprite(characterTextures.zhou_mingzhao[defaultPose.zhou_mingzhao]),
+      const characterSprites: Partial<Record<CharacterId, Sprite>> = {
+        lin_ruoning: new Sprite(characterTextures.lin_ruoning![defaultPose.lin_ruoning!]),
+        chen_xinghe: new Sprite(characterTextures.chen_xinghe![defaultPose.chen_xinghe!]),
+        zhou_mingzhao: new Sprite(characterTextures.zhou_mingzhao![defaultPose.zhou_mingzhao!]),
       };
 
       (Object.values(characterSprites) as Sprite[]).forEach((sprite) => {

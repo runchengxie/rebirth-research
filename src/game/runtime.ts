@@ -52,6 +52,7 @@ export function createInitialState(year: string): GameState {
       lin_ruoning: 18,
       chen_xinghe: 14,
       zhou_mingzhao: 12,
+      zhao_chengyu: 10,
     },
     flags: {},
     categoryCounts: {},

@@ -5,9 +5,7 @@ import { NarrativeAudio } from "./audio/sfx";
 import { CHARACTERS } from "./game/content";
 import {
   focusById,
-  gradeReviewText,
   makeDecision,
-  postMortem,
   selectFocus,
   storyForMonth,
 } from "./game/engine";
@@ -24,6 +22,7 @@ import { FocusSelector } from "./components/FocusSelector";
 import { HistoryPanel } from "./components/HistoryPanel";
 import { DecisionCard } from "./components/DecisionCard";
 import { StatusBar } from "./components/StatusBar";
+import { StoryRecapPanel } from "./components/StoryRecapPanel";
 // Phase 3 spike：用 @drincs/pixi-vn 接管第一话的 VN runtime（仅 ?pixivn=1 时启用）。
 // 用 lazy 加载，确保 @drincs/pixi-vn 只在开启 spike 时才会被打包进运行时。
 const Chapter1Spike = lazy(() =>
@@ -67,12 +66,21 @@ function readTheme(): "light" | "dark" {
   return document.documentElement.dataset.theme === "dark" ? "dark" : "light";
 }
 
+function readYearFromUrl(): string | null {
+  if (typeof window === "undefined") return null;
+  const y = new URLSearchParams(window.location.search).get("year");
+  // 校验用 GAME_DATA 的 key（含 demo），而非 GAME_YEARS（已不含 demo）。
+  return y && y in GAME_DATA ? y : null;
+}
+
 function bestInitialYear() {
-  return GAME_YEARS[GAME_YEARS.length - 1] || "2025";
+  // 默认进 2025（最完整的年份）。demo 是示范章节，不作为默认开局。
+  return GAME_YEARS.includes("2025") ? "2025" : GAME_YEARS[GAME_YEARS.length - 1] || "2025";
 }
 
 function createState(year = bestInitialYear()): GameState {
-  return createInitialState(year);
+  const urlYear = readYearFromUrl();
+  return createInitialState(urlYear ?? year);
 }
 
 function ResearchBriefPanel({
@@ -125,21 +133,6 @@ function ThemePanel({ scene }: { scene: ReturnType<typeof sceneForMonth> }) {
           <dd>{theme.gameHook}</dd>
         </div>
       </dl>
-    </div>
-  );
-}
-
-function StoryRecapPanel({ result }: { result: RoundResult | undefined }) {
-  if (!result) return null;
-  const character = CHARACTERS[result.characterId];
-  const gradeReview = result.score ? gradeReviewText(result.characterId, result.score.grade) : "";
-  const pm = postMortem(result.selected, result.label);
-
-  return (
-    <div className={`story-recap ${character.color}`} aria-label="同事复盘">
-      <span>{character.name}的复盘</span>
-      <p>{gradeReview}</p>
-      <p className="story-recap-detail">{pm}</p>
     </div>
   );
 }
@@ -231,6 +224,66 @@ function Meter({ label, value, className }: { label: string; value: number; clas
       </div>
       <div className="meter-track">
         <i style={{ width: `${normalized}%` }} />
+      </div>
+    </div>
+  );
+}
+
+function ResearchNotes({ state }: { state: GameState }) {
+  const cards = state.knowledgeCards;
+  return (
+    <div className="research-notes" aria-label="研究札记 · 知识库">
+      <div className="research-notes-head">
+        <span>研究札记 · 知识库</span>
+        <strong>{cards.length} 条</strong>
+      </div>
+      {cards.length === 0 ? (
+        <p className="research-notes-empty">
+          每做出一个有方法的判断，同事都会顺手教你一句。这里会慢慢攒成你的工具书。
+        </p>
+      ) : (
+        <ul className="research-notes-list">
+          {cards.map((card) => {
+            const mentor = CHARACTERS[card.mentorId];
+            return (
+              <li key={card.id} className={`research-note ${mentor.color}`}>
+                <strong>{card.concept}</strong>
+                <span>
+                  {mentor.name}：{card.mentorLine}
+                </span>
+                {card.cfaRef ? <small>{card.cfaRef}</small> : null}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+function OfficeWidget({ state }: { state: GameState }) {
+  const o = state.office;
+  const flavor =
+    o.monthsElapsed >= 11
+      ? "白板从空到满，便签层层叠着。一年了，这间屋子记得你每一次熬夜和每一次想通。"
+      : o.postIts > 0
+        ? "林若宁的便签又多了一张，白板上的框架慢慢连成了网。研究室本身也在陪你长大。"
+        : "研究室还空着。等你第一个有方法的判断，它就开始长东西。";
+  const pct = Math.min(100, (o.monthsElapsed / 12) * 100);
+  return (
+    <div className="office-widget" aria-label="研究室">
+      <div className="office-head">
+        <span>研究室</span>
+        <strong>第 {o.monthsElapsed}/12 月</strong>
+      </div>
+      <div className="office-progress" aria-hidden="true">
+        <span style={{ width: `${pct}%` }} />
+      </div>
+      <p className="office-flavor">{flavor}</p>
+      <div className="office-meters">
+        <span><strong>{o.postIts}</strong><small>便签</small></span>
+        <span><strong>{o.whiteboardMarkers}</strong><small>白板</small></span>
+        <span><strong>{o.coffeeCups}</strong><small>咖啡</small></span>
       </div>
     </div>
   );
@@ -576,7 +629,7 @@ export default function App() {
               {advanceLabel}
             </button>
           </div>
-          {isDecision ? <StoryRecapPanel result={state.locked ? last : undefined} /> : null}
+          {isDecision ? <StoryRecapPanel result={state.locked ? last : undefined} state={state} /> : null}
           {isDecision ? <ScorePanel result={state.locked ? last : undefined} /> : null}
         </div>
 
@@ -585,6 +638,7 @@ export default function App() {
             <h2>研究档案</h2>
             <span>{data.year} · 12话</span>
           </div>
+          <OfficeWidget state={state} />
           <div className="route-meters">
             <Meter label="研究可信度" value={state.researchCredibility} className="reputation" />
             <Meter label="投委会采纳" value={state.committeeAdoption} className="stress" />
@@ -592,6 +646,7 @@ export default function App() {
             <Meter label="生活平衡" value={state.lifeBalance} className="reputation" />
           </div>
           <CharacterRoutes activeId={activeCharacter.id} state={state} />
+          <ResearchNotes state={state} />
         </aside>
       </section>
 

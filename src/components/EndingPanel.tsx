@@ -1,12 +1,21 @@
-import { CHARACTERS, AFFINITY_GATE, AFFINITY_TRUE } from "../game/content";
+import { CHARACTERS, AFFINITY_GATE, AFFINITY_TRUE, MENTOR_TEACHINGS } from "../game/content";
 import { bestRoute, formatNav } from "../game/engine";
-import type { GameState } from "../types";
+import type { CharacterId, GameState } from "../types";
 
 export function EndingPanel({ state }: { state: GameState }) {
   if (!state.finished || state.history.length === 0) return null;
   const leadId = bestRoute(state);
   const lead = CHARACTERS[leadId];
   const leadRelation = state.relations[leadId];
+
+  // 研究图鉴：按导师分列，展示这一遍从 TA 那学到了哪些手艺（分母=该导师教学目录数）。
+  // 不做全局百分比——分支会关闭其他路径，「差多少」会打脸「你的选择塑造了独一无二的这一遍」。
+  const MENTOR_IDS: CharacterId[] = ["lin_ruoning", "chen_xinghe", "zhou_mingzhao"];
+  const ledger = MENTOR_IDS.map((id) => {
+    const collected = state.knowledgeCards.filter((c) => c.mentorId === id);
+    const total = Object.keys(MENTOR_TEACHINGS[id]).length;
+    return { id, name: CHARACTERS[id].name, collected, total };
+  });
   let title = "普通结局：可靠研究员线";
   let copy = "你还没有解锁最高评价，但每一次复盘都在让下一周目更接近好结局。";
 
@@ -70,6 +79,24 @@ export function EndingPanel({ state }: { state: GameState }) {
           <dt>林若宁、陈星禾、周明昭</dt>
           <dd>
             {state.relations.lin_ruoning}、{state.relations.chen_xinghe}、{state.relations.zhou_mingzhao}
+          </dd>
+        </div>
+        <div>
+          <dt>研究图鉴</dt>
+          <dd>
+            {ledger.map((row) => (
+              <div key={row.id} className="ledger-row">
+                <span className="ledger-name">{row.name}</span>
+                <span className="ledger-count">{row.collected.length}/{row.total}</span>
+                <span className="ledger-chips">
+                  {row.collected.length === 0
+                    ? <span className="ledger-empty">这一遍还没从 TA 那学到手艺</span>
+                    : row.collected.map((c) => (
+                        <span key={c.id} className="ledger-chip" title={c.concept}>{c.concept}</span>
+                      ))}
+                </span>
+              </div>
+            ))}
           </dd>
         </div>
       </dl>

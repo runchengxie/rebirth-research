@@ -1,4 +1,4 @@
-import { AFFINITY_GATE, BRANCHES, FOCUS_ACTIONS, GRADE_REVIEWS, STORY_ARCS, getTheme } from "./content";
+import { AFFINITY_GATE, BRANCHES, FOCUS_ACTIONS, GRADE_REVIEWS, STORY_ARCS, getTheme, pickKnowledgeCard } from "./content";
 import { branchFlagsForMonth } from "./branching";
 import type {
   CharacterId,
@@ -7,6 +7,9 @@ import type {
   FocusAction,
   GameDataYear,
   GameState,
+  KnowledgeCard,
+  MarketTheme,
+  OfficeState,
   ResearchDecision,
   RoundOutcome,
   StoryArc,
@@ -201,6 +204,16 @@ export function scoreDecision(
   else if (total >= 60) grade = "B";
   else if (total >= 40) grade = "C";
 
+  // Reasoning quality, surfaced separately from the conclusion's correctness.
+  // A strong research pick (high evidence/clarity/risk) earns a high score
+  // here; a thin-but-well-graded pick (e.g. high life/communication, low
+  // evidence) earns a low one. Used for "parachuted conclusion" detection and
+  // for telling the player *why* a grade was earned.
+  const reasoningScore = Math.min(
+    25,
+    Math.round(((evidenceScore + clarityScore + riskAwarenessScore) / 3) * 1.25),
+  );
+
   return {
     evidenceScore,
     clarityScore,
@@ -208,6 +221,7 @@ export function scoreDecision(
     communicationScore,
     lifeBalanceScore,
     portfolioScore,
+    reasoningScore,
     total,
     grade,
   };
@@ -297,8 +311,39 @@ export function makeDecision(state: GameState, _data: GameDataYear, decision: Re
 
   const score = scoreDecision(decision, story, focus);
 
+  // ── New narrative-system computation ──
+  const framework = frameworkOf(decision, story);
+  const card: KnowledgeCard | null = pickKnowledgeCard(decision, story);
+  const isParachuted = score.evidenceScore + score.clarityScore < 24 && score.total >= 70;
+
+  // Grade-driven and liability flags — read by content branches in later months.
+  if (score.grade === "S") nextFlags[`respect_${framework}`] = true;
+  if (score.grade === "D") nextFlags[`watch_${framework}`] = true;
+  if (isParachuted) nextFlags[`parachuted_${framework}`] = true;
+  // Delayed-consequence seed: helping 陈星禾 early earns a later closed-door seat.
+  if (decision.category === "help_colleague" && framework === "chen_xinghe") {
+    nextFlags.helped_xinghe = true;
+  }
+  const businessVerdict = buildBusinessVerdict(decision, story.theme, story, score);
+
+  // Office accumulates meaning through props, not exposition.
+  const nextOffice: OfficeState = {
+    postIts: state.office.postIts + (decision.category === "deep_research" || decision.category === "help_colleague" ? 1 : 0),
+    whiteboardMarkers:
+      state.office.whiteboardMarkers +
+      (decision.category === "deep_research" || decision.category === "data_deep_dive" || decision.category === "committee_defense" ? 1 : 0),
+    coffeeCups: state.office.coffeeCups + (focus.id === "deep_research" || decision.category === "deep_research" ? 1 : 0),
+    monthsElapsed: state.monthIndex + 1,
+  };
+
+  // Collect the knowledge card into the glossary (dedupe by id).
+  const alreadyHas = state.knowledgeCards.some((k) => k.id === card?.id);
+  const nextKnowledgeCards = card && !alreadyHas ? [...state.knowledgeCards, card] : state.knowledgeCards;
+
   return {
     ...state,
+    office: nextOffice,
+    knowledgeCards: nextKnowledgeCards,
     locked: true,
     selectedId: decision.id,
     researchCredibility: nextResearchCredibility,
@@ -336,6 +381,10 @@ export function makeDecision(state: GameState, _data: GameDataYear, decision: Re
         marketTheme: story.theme.title,
         marketReturn: 0, // Will be filled from data if available
         score,
+        businessVerdict,
+        framework,
+        knowledgeCardId: card?.id,
+        isParachuted,
       },
     ],
   };
@@ -350,6 +399,48 @@ export function postMortem(
   monthLabel: string,
 ): string {
   return `${monthLabel} ${CATEGORY_TEXT[decision.category] || "做了选择"}。${decision.backgroundNote || ""}`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// Business-fact settlement (replaces market-return scoring)
+// ═══════════════════════════════════════════════════════════
+//
+// Short-term prices are noise — they don't reflect business reality, so they
+// are NOT the arbiter of right/wrong here. Instead each month carries an
+// authored `businessOutcome`: what the underlying business reality actually
+// turned out to be. The verdict rewards *reasoning*, not luck: a well-built
+// hypothesis that the messy business reality only half-confirms still earns
+// the colleague's respect, because the player learned to think, not to guess.
+
+// Which colleague's methodology this choice engaged. Falls back to the
+// decision's primary relation, then to the month's arc character.
+export function frameworkOf(decision: ResearchDecision, story: StoryArc): CharacterId {
+  if (decision.framework) return decision.framework;
+  const primary = decision.effects.characterRelations[0]?.characterId;
+  return primary ?? story.characterId;
+}
+
+// Builds the month's settlement verdict from the authored business outcome
+// plus how well the player reasoned (so a correct-but-thin answer is called
+// out, and a wrong-but-rigorous one is still respected).
+export function buildBusinessVerdict(
+  decision: ResearchDecision,
+  theme: MarketTheme,
+  story: StoryArc,
+  score: DecisionScore,
+): string {
+  const outcome = theme.businessOutcome;
+  const fallback =
+    "业务事实在月末才慢慢显形。价格会吵吵闹闹，但生意自己会说话——你这次的框架，经得起回头看吗？";
+  const base = outcome && outcome.length > 0 ? outcome : fallback;
+
+  if (score.reasoningScore >= 18) {
+    return `${base} 更难得的是，你这次的推导链经得起业务事实的检验——不是蒙对的，是想通的。`;
+  }
+  if (score.reasoningScore <= 8) {
+    return `${base} 可惜你的判断来得太快：中间那几步推导没铺开，连你自己都说不清为什么。答案会过期，方法不会。`;
+  }
+  return base;
 }
 
 // ═══════════════════════════════════════════════════════════

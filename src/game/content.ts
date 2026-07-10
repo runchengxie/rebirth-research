@@ -1,9 +1,10 @@
-import type { Branch, CharacterId, CharacterProfile, FocusAction, GameState, MarketTheme, MonthScene, ResearchDecision, SceneNode, StoryArc as StoryArcType } from "../types";
+import type { Branch, CharacterId, CharacterProfile, DecisionCategory, FocusAction, GameState, KnowledgeCard, MarketTheme, MonthScene, ResearchDecision, SceneNode, StoryArc as StoryArcType } from "../types";
 import { d } from "./decisionFactory";
 import { activeBranches } from "./branching";
 import { THEMES_2025, makeDecisions2025 } from "./content2025";
 import { THEMES_2023, makeDecisions2023 } from "./content2023";
 import { THEMES_2024, makeDecisions2024 } from "./content2024";
+import { buildDemoChapter, makeDecisionsDemo, THEMES_DEMO } from "./contentDemo";
 // Re-export StoryArc for engine.ts
 export type StoryArc = StoryArcType;
 
@@ -62,6 +63,7 @@ export const YEAR_THEMES: Record<string, MarketTheme[]> = {
   "2023": THEMES_2023,
   "2024": THEMES_2024,
   "2025": THEMES_2025,
+  "demo": THEMES_DEMO,
 };
 
 export function getTheme(year: string, monthIndex: number): MarketTheme {
@@ -204,6 +206,9 @@ export const STORY_ARCS: StoryArc[] = [
 
 function makeResearchDecisions(year: string, monthIndex: number): ResearchDecision[] {
   // Route to year-specific decision pools
+  if (year === "demo") {
+    return makeDecisionsDemo(monthIndex);
+  }
   if (year === "2025") {
     return makeDecisions2025(monthIndex);
   }
@@ -221,6 +226,155 @@ function makeResearchDecisions(year: string, monthIndex: number): ResearchDecisi
 // ═══════════════════════════════════════════════════════════
 // Scene Scripts
 // ═══════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════
+// Knowledge cards — the "platform" payoff
+//
+// Every meaningful choice leaves the player a little sharper, not just a little
+// higher-scored. The teaching is delivered *in the colleague's own voice*, not
+// as a pop-up textbook — so what the player learns is "how 林若宁 thinks",
+// not "the factor-crowding entry". Archived into the research notebook.
+// ═══════════════════════════════════════════════════════════
+
+// In-voice teaching lines, keyed by mentor (the framework this choice engaged)
+// and by the decision category. Concise on purpose — these read as a colleague
+// leaning over your desk, not a lecture.
+type Teaching = { concept: string; line: string; cfaRef: string };
+
+export const MENTOR_TEACHINGS: Record<CharacterId, Record<DecisionCategory, Teaching>> = {
+  lin_ruoning: {
+    deep_research: { concept: "产业链交叉验证", line: "别只看一个点。把上游、中游、下游的节奏差拆开，超额收益藏在断层里。", cfaRef: "CFA · 权益估值与产业链验证" },
+    expert_interview: { concept: "一线验证", line: "研报会说漂亮话，但经销商的库存、厂长的语气不会。去一线，比看十篇纪要都值钱。", cfaRef: "CFA · 尽职调查与一手信息" },
+    roadshow: { concept: "框架翻译", line: "把复杂逻辑讲成人能听懂的故事，是研究员的基本功。客户追问的那两个问题，就是你框架的漏洞。", cfaRef: "CFA · 投资沟通" },
+    risk_alert: { concept: "反身性", line: "当所有人都觉得「这回不一样」，就是风险最大的时候。提醒冷静不是泼冷水，是替团队守住边界。", cfaRef: "CFA · 行为金融与反身性" },
+    self_care: { concept: "判断节奏", line: "脑子不清亮的时候，任何判断都打折。先把自己救回来，研究不会跑。", cfaRef: "CFA · 决策卫生" },
+    help_colleague: { concept: "模型直觉", line: "帮人改模型，也是在练自己的手感。你今天搭的每一根假设，明天都会长回你自己的框架里。", cfaRef: "CFA · 财务建模" },
+    committee_defense: { concept: "假设可视化", line: "投委会要的不是结论，是你怎么想的。把概率和赔率都摆出来，比喊方向有用。", cfaRef: "CFA · 投资论述" },
+    data_deep_dive: { concept: "数据诚实", line: "数据不会替你下结论，但会揭穿你的偷懒。先问「这数怎么来的」，再问「说明什么」。", cfaRef: "CFA · 量化与数据质量" },
+  },
+  chen_xinghe: {
+    deep_research: { concept: "量价背离", line: "价格会骗人，成交量不会。量在价先，结构比方向诚实。", cfaRef: "CFA · 市场微观结构" },
+    expert_interview: { concept: "信号交叉", line: "一手信息能校准你的因子。别只信回测，去问圈内人信号变没变。", cfaRef: "CFA · 另类数据与调研" },
+    roadshow: { concept: "信号翻译", line: "把因子讲成人话，是量化员的修行。客户听得懂，才会信你的 Alpha。", cfaRef: "CFA · 投资沟通" },
+    risk_alert: { concept: "因子拥挤度", line: "所有人都挤一个方向时，风险溢价趋近零。这时候还冲，是在给前人接盘。", cfaRef: "CFA · 因子投资与拥挤度" },
+    self_care: { concept: "噪声 vs 信号", line: "连轴转的时候信噪比会塌。休息不是偷懒，是给模型留干净输入。", cfaRef: "CFA · 决策卫生" },
+    help_colleague: { concept: "交叉验证", line: "量化和基本面打架时，真理通常在中间。你帮我校准的那一下，我也学会了怎么读生意。", cfaRef: "CFA · 多因子融合" },
+    committee_defense: { concept: "因子正交", line: "把动量因子的干扰拆掉，你的净 Alpha 才纯。混着讲，等于什么都没说。", cfaRef: "CFA · Barra 归因" },
+    data_deep_dive: { concept: "Barra 归因", line: "收益里多少是因子、多少是能力？归因拆不开的，都是运气。", cfaRef: "CFA · 绩效归因" },
+  },
+  zhou_mingzhao: {
+    deep_research: { concept: "估值分位", line: "别只看方向，看你在第几层估值分位上出手。赔率比胜率更长久。", cfaRef: "CFA · 估值与安全边际" },
+    expert_interview: { concept: "政策传导", line: "政策到订单之间隔着三层时滞。问清楚「什么时候见效」，比问「好不好」重要。", cfaRef: "CFA · 宏观与政策传导" },
+    roadshow: { concept: "拐点思维", line: "我看拐点不看趋势。最拥挤的地方，往往离拐点最近。", cfaRef: "CFA · 周期与拐点" },
+    risk_alert: { concept: "安全边际", line: "先想清楚错了怎么办，再想对了赚多少。边界划不清，再对的判断也是赌。", cfaRef: "CFA · 风险管理" },
+    self_care: { concept: "长跑节奏", line: "研究是马拉松。把自己熬没了，再好的框架也没人跑。", cfaRef: "CFA · 决策卫生" },
+    help_colleague: { concept: "情景框架", line: "把外生冲击嵌进宏观模型，是教科书学不到的。你帮我补的变量，让我的情景更真了。", cfaRef: "CFA · 情景分析" },
+    committee_defense: { concept: "概率与赔率", line: "我只认一件事：你把概率和赔率都写出来了。这比喊方向专业。", cfaRef: "CFA · 预期收益框架" },
+    data_deep_dive: { concept: "微观结构", line: "制度一变，价格发现机制就变。尊重规则变化，规则才不会惩罚你。", cfaRef: "CFA · 市场微观结构" },
+  },
+};
+
+function frameworkOfLocal(decision: ResearchDecision, story: StoryArc): CharacterId {
+  if (decision.framework) return decision.framework;
+  return decision.effects.characterRelations[0]?.characterId ?? story.characterId;
+}
+
+// Resolve the knowledge card a decision teaches. Prefers an explicit
+// `teaches` on the decision; otherwise derives one from the engaged framework
+// and the decision category, so every choice — even legacy JSON — teaches.
+export function pickKnowledgeCard(decision: ResearchDecision, story: StoryArc): KnowledgeCard {
+  if (decision.teaches) return decision.teaches;
+  const mentor = frameworkOfLocal(decision, story);
+  const t = MENTOR_TEACHINGS[mentor]?.[decision.category];
+  if (!t) {
+    return {
+      id: `generic_${decision.category}`,
+      concept: "研究方法",
+      mentorId: mentor,
+      mentorLine: "每一次选择都是一次练习。复盘时问自己：我这次为什么这么想？",
+      tier: 1,
+    };
+  }
+  return {
+    id: `kc_${mentor}_${decision.category}`,
+    concept: t.concept,
+    mentorId: mentor,
+    mentorLine: t.line,
+    cfaRef: t.cfaRef,
+    tier: 1,
+  };
+}
+
+// ── In-voice monologues for the grade-driven / liability branches ──
+const GRADE_MONO: Record<"respect" | "watch" | "liability", Record<CharacterId, string>> = {
+  respect: {
+    lin_ruoning: "这条线你不是蒙对的。推导链我反复看过了——下次这种判断，我放心交给你。",
+    chen_xinghe: "量价信号没骗你，你也没骗自己。这种诚实，比一次 Alpha 更值钱。",
+    zhou_mingzhao: "结果之外，我更看重你给风险留的位置。能守住框架的人，才走得远。",
+  },
+  watch: {
+    lin_ruoning: "这次我得盯紧你。结论漂亮，但中间的跳步我数不清——下个月我要看你的推导。",
+    chen_xinghe: "信号你这次没读透。没关系，但再乱下结论，我就不帮你兜底了。",
+    zhou_mingzhao: "风口上谁都能喊对一次。你这次边界没划清，我得看着你，别被反身性反噬。",
+  },
+  liability: {
+    lin_ruoning: "结论对，可你是空降的——像提前看到了答案。我要的是你能把每一步讲给我听。",
+    chen_xinghe: "你这结论来得比我信号还快。数据呢？把推导链摊开，我要看中间那几步。",
+    zhou_mingzhao: "你跳过了验证直接给答案，这让我不安。答案会过期，能复用的方法不会。",
+  },
+};
+
+const DEBT_MONO =
+  "你还记得年初帮我跑因子的那次吗？下周的闭门路演，我给你留了座——自己人才能进的门。";
+
+function monoNode(id: string, cid: CharacterId, mood: string, text: string): SceneNode {
+  return {
+    id,
+    type: "dialogue",
+    characterId: cid,
+    speaker: CHARACTERS[cid].name,
+    role: CHARACTERS[cid].role,
+    mood,
+    text,
+    prompt: "点击继续。",
+    pose: "soft",
+    bg: "research-room",
+    bgm: "morning-loop",
+    voiceCue: "key",
+  };
+}
+
+// Grade-driven + liability + delayed-debt branches, generated per character so
+// the same flag logic serves all three colleagues. All are flag-gated, so they
+// never fire in a fresh or test state (keeping node-count tests stable).
+const GRADE_BRANCHES: Branch[] = (["lin_ruoning", "chen_xinghe", "zhou_mingzhao"] as CharacterId[]).flatMap(
+  (cid) =>
+    (["respect", "watch", "liability"] as const).map((kind) => ({
+      id: `grade-${kind}-${cid}`,
+      label: `${kind}·${CHARACTERS[cid].name}`,
+      when: {
+        kind: "flag" as const,
+        key: kind === "respect" ? `respect_${cid}` : kind === "watch" ? `watch_${cid}` : `parachuted_${cid}`,
+      },
+      once: true,
+      contribute: {
+        nodes: [monoNode(`g-${kind}-${cid}`, cid, "认真", GRADE_MONO[kind][cid])],
+      },
+    })),
+);
+
+const DEBT_BRANCH: Branch = {
+  id: "debt-xinghe-seat",
+  label: "迟来的闭门席位",
+  when: {
+    kind: "and",
+    of: [{ kind: "flag", key: "helped_xinghe" }, { kind: "month", gte: 8 }],
+  },
+  once: true,
+  contribute: {
+    nodes: [monoNode("debt-xinghe-seat", "chen_xinghe", "俏皮", DEBT_MONO)],
+  },
+};
 
 // ═══════════════════════════════════════════════════════════
 // Conditional branching — the "real multi-route" layer
@@ -407,7 +561,37 @@ export const BRANCHES: Branch[] = [
       setFlags: { route_balanced: true },
     },
   },
+  ...GRADE_BRANCHES,
+  DEBT_BRANCH,
 ];
+
+// The three colleagues each form a defensible hypothesis from the same future
+// memory. Showing them side by side is the core "plural truths" beat — there is
+// no single correct answer, only frameworks you choose to stand behind.
+function buildCompetingNode(story: StoryArc, theme: MarketTheme, monthIndex: number): SceneNode {
+  const ch = theme.competingHypotheses;
+  const parts: string[] = [];
+  if (ch?.lin) parts.push(`林若宁的基本面说：${ch.lin}`);
+  if (ch?.chen) parts.push(`陈星禾的量价说：${ch.chen}`);
+  if (ch?.zhou) parts.push(`周明昭的风控说：${ch.zhou}`);
+  const body = parts.length > 0
+    ? `${parts.join("；")}。没有哪个是标准答案——你站哪边，哪边就认你，哪边也会在后面盯着你。`
+    : "三种框架摆在你面前，没有哪个是标准答案——你站哪边，哪边就认你，哪边也会在后面盯着你。";
+  return {
+    id: `m${monthIndex}-competing`,
+    type: "dialogue",
+    characterId: story.characterId,
+    speaker: story.speaker,
+    role: story.role,
+    mood: "认真",
+    text: body,
+    prompt: "点击继续，进入本月研究选择。",
+    pose: "thinking",
+    bg: "research-room",
+    bgm: "morning-loop",
+    voiceCue: "key",
+  };
+}
 
 export function buildMonthScene(
   monthIndex: number,
@@ -415,6 +599,7 @@ export function buildMonthScene(
   state?: GameState,
 ): MonthScene {
   const actualYear = year || "2025";
+  if (actualYear === "demo") return buildDemoChapter(monthIndex, state);
   const story = STORY_ARCS[monthIndex % STORY_ARCS.length];
   const monthNum = monthIndex + 1;
   const month = `${actualYear}-${String(monthNum).padStart(2, "0")}`;
@@ -508,8 +693,14 @@ export function buildMonthScene(
     Object.assign(decisionNode, decisionOverride);
   }
 
+  const competingNode: SceneNode | null =
+    state && monthIndex >= 1 && theme.competingHypotheses
+      ? buildCompetingNode(story, theme, monthIndex)
+      : null;
+
   const nodes: SceneNode[] = [
     memoryNode,
+    ...(competingNode ? [competingNode] : []),
     ...branchNodesAfterMemory,
     ...(affinityNode ? [affinityNode] : []),
     colleagueNode,
@@ -548,7 +739,8 @@ function build2025Prologue(month: string, label: string, theme: MarketTheme): Mo
       speaker: "内心独白",
       role: "只有你知道",
       mood: "警觉",
-      text: "我知道 2025 年 1 月会很不平静。某国产低成本推理模型发布后，市场会重新讨论 AI 应用、推理成本和国产算力的关系。但我不能直接说「要涨」，只能把它拆成可验证的假设。",
+      text: `我知道一个具体的事实：${theme.knownEvent ?? "有些事会真的发生，但不是以价格告诉我的方式。"}
+但我不能直接喊方向——我得把它翻译成当下能验证的研究假设，再选一个框架去落地。`,
       prompt: "点击继续，把未来记忆压成可以说出口的研究假设。",
       pose: "thinking",
       bg: "research-room",

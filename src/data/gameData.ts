@@ -2,11 +2,11 @@ import type { GameDataMap, GameDataYear, MarketSnapshot } from "../types";
 import { buildMonthScene } from "../game/content";
 
 // Build 12-month scene data for each year
-function buildYearData(year: number): GameDataYear {
+function buildYearData(year: string): GameDataYear {
   const scenes = [];
   const benchmarks: MarketSnapshot[] = [];
   for (let i = 0; i < 12; i++) {
-    const scene = buildMonthScene(i, String(year));
+    const scene = buildMonthScene(i, year);
     scenes.push(scene);
     // Placeholder benchmark — real data would come from build_data.py
     benchmarks.push({
@@ -43,9 +43,11 @@ function buildYearData(year: number): GameDataYear {
 }
 
 export const GAME_DATA: GameDataMap = {
-  "2023": buildYearData(2023),
-  "2024": buildYearData(2024),
-  "2025": buildYearData(2025),
+  "2023": buildYearData("2023"),
+  "2024": buildYearData("2024"),
+  "2025": buildYearData("2025"),
+  "demo": buildYearData("demo"),
 };
 
-export const GAME_YEARS = Object.keys(GAME_DATA).sort();
+// 年份选择器只列正式年份；demo 是示范章节，藏起来只留 ?year=demo 深链。
+export const GAME_YEARS = ["2023", "2024", "2025"];

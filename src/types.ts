@@ -40,6 +40,37 @@ export interface ResearchDecision {
   clarityLevel: number;    // 0-20: how well this makes hypotheses testable
   riskAwareness: number;   // 0-20: how much risk awareness this shows
   reflectionValue: number; // 0-15: how much self-reflection this enables
+
+  // ── New narrative-system fields (all optional so legacy JSON keeps loading) ──
+  // Which colleague's methodology this choice validates. The engine falls back
+  // to the decision's primary relation character when omitted.
+  framework?: CharacterId;
+  // An in-character teaching beat surfaced after the choice (see KnowledgeCard).
+  teaches?: KnowledgeCard;
+  // Short, plain-language framing of the business angle this choice probes.
+  businessAngle?: string;
+}
+
+// A knowledge card: a concept taught by a colleague *in their own voice*,
+// archived into the player's research notebook (the glossary). This is the
+// "platform" payoff — every meaningful choice leaves the player a little
+// sharper, not just a little higher-scored.
+export interface KnowledgeCard {
+  id: string;               // stable concept id, e.g. "factor_crowding"
+  concept: string;          // human label, e.g. "因子拥挤度"
+  mentorId: CharacterId;    // who taught it
+  mentorLine: string;       // the line they say, in their voice
+  cfaRef?: string;          // optional CFA-style reading pointer
+  tier: 1 | 2 | 3;          // surface / engaged / deep
+}
+
+// The office is the fourth character: a space that accumulates meaning across
+// the twelve months through props, not exposition.
+export interface OfficeState {
+  postIts: number;          // sticky notes colleagues (mostly 林若宁) leave
+  whiteboardMarkers: number; // framework sketches that accumulate on the board
+  coffeeCups: number;       // late nights, quietly counted
+  monthsElapsed: number;
 }
 
 export interface DecisionEffects {
@@ -56,6 +87,15 @@ export interface DecisionEffects {
 
 // ── Monthly scenario ──
 
+// Three mutually-defensible hypotheses the three colleagues would each form
+// from the same future memory. The point of CFA-style thinking is that
+// reasonable analysts disagree — truth here is plural, not single.
+export interface CompetingHypotheses {
+  lin?: string;   // 林若宁 / 基本面视角
+  chen?: string;  // 陈星禾 / 量化信号视角
+  zhou?: string;  // 周明昭 / 宏观风控视角
+}
+
 export interface MarketTheme {
   id: string;
   period: string;           // e.g. "一月"
@@ -64,6 +104,17 @@ export interface MarketTheme {
   protagonistMemory: string; // 男主知道的历史走向（但不直接给答案）
   gameHook: string;         // 本话引导
   historicalPrototype?: string; // 设计注释：参考了哪个历史事件（不在游戏内展示）
+
+  // ── New narrative-system fields ──
+  // The concrete business fact 顾行之 carries back (he knows *what happened*,
+  // not the stock price — prices are noise; business reality is the verdict).
+  knownEvent?: string;
+  // Authored business-fact settlement: what the underlying business reality
+  // turned out to be. NOT a market return. Deterministic, controllable, and
+  // honest about plural outcomes.
+  businessOutcome?: string;
+  // The three competing hypotheses the colleagues would each form.
+  competingHypotheses?: CompetingHypotheses;
 }
 
 export interface SceneNode {
@@ -203,7 +254,7 @@ export interface StyleFactorReturn {
 }
 
 export interface GameDataYear {
-  year: number;
+  year: number | string;
   currency: string;
   generatedAt: string;
   source: Record<string, string>;
@@ -265,6 +316,13 @@ export interface GameState {
   milestone: CharacterId | null;
 
   history: RoundResult[];
+
+  // ── New narrative-system state ──
+  // Collected knowledge cards (the research notebook / glossary). Keyed by id
+  // so re-teaching the same concept just re-affirms it.
+  knowledgeCards: KnowledgeCard[];
+  // The office: a space that accumulates meaning across the year.
+  office: OfficeState;
 }
 
 // ── Round result ──
@@ -280,9 +338,13 @@ export interface DecisionScore {
   evidenceScore: number;      // 0-20  证据是否充分
   clarityScore: number;       // 0-20  假设是否清晰可验证
   riskAwarenessScore: number; // 0-20  是否识别反身性和拥挤度
-  communicationScore: number; // 0-20  晨会/路演/内部讨论表现
+  communicationScore: number;  // 0-20  晨会/路演/内部讨论表现
   lifeBalanceScore: number;   // 0-15  是否守住了生活节奏
   portfolioScore: number;     // 0-5   模拟组合表现（弱权重）
+  // Reasoning quality, surfaced separately from the conclusion's correctness.
+  // High reasoning + wrong business outcome still earns respect; low reasoning
+  // + right outcome gets flagged as a "parachuted conclusion" (空降结论).
+  reasoningScore: number;     // 0-25
   total: number;              // 0-100
   grade: string;              // S/A/B/C/D
 }
@@ -312,4 +374,15 @@ export interface RoundResult {
   marketReturn: number;
 
   score?: DecisionScore;
+
+  // ── New narrative-system fields ──
+  // Business-fact settlement verdict (not a stock return).
+  businessVerdict?: string;
+  // Which colleague's methodology this choice engaged.
+  framework?: CharacterId;
+  // The knowledge card taught this month (archived into the glossary).
+  knowledgeCardId?: string;
+  // True when the grade was earned on conclusion correctness but the reasoning
+  // was thin — a "parachuted" (空降) answer the colleagues will call out.
+  isParachuted?: boolean;
 }

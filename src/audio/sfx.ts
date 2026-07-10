@@ -1,6 +1,25 @@
-import type { DialogueNode } from "../types";
+import type { CharacterId, DialogueNode } from "../types";
 
 type ResultTone = "success" | "miss" | "neutral";
+
+// ── Client-side TTS placeholder voices ──
+// Fills the blank VO slot with zero assets / zero network, mirroring ProceduralBgm.
+// Voices are OS-provided (Web Speech API). Profile is anchored to docs/CHARACTERS.md
+// Voice Pillars: 林若宁 warm+moderate, 陈星禾 precise+fast, 周明昭 calm+slow.
+type VoiceProfile = {
+  lang: string; // BCP-47, e.g. "zh-CN"
+  rate: number; // 0.1..10, 1 = normal
+  pitch: number; // 0..2, 1 = normal
+  voiceURI?: string; // preferred OS voice URI (optional; availability is OS-dependent)
+};
+
+const DEFAULT_VOICE_PROFILE: VoiceProfile = { lang: "zh-CN", rate: 1, pitch: 1 };
+
+const VOICE_PROFILES: Record<CharacterId, VoiceProfile> = {
+  lin_ruoning: { lang: "zh-CN", rate: 0.95, pitch: 1.05 },
+  chen_xinghe: { lang: "zh-CN", rate: 1.08, pitch: 1.0 },
+  zhou_mingzhao: { lang: "zh-CN", rate: 0.85, pitch: 0.9 },
+};
 
 const maxEffectVolume = 0.45;
 
@@ -24,6 +43,8 @@ export class NarrativeAudio {
   }
 
   stop() {
+    const synth = typeof window !== "undefined" ? window.speechSynthesis : undefined;
+    synth?.cancel();
     this.currentVoice?.pause();
     this.currentVoice = null;
     if (this.context) {
@@ -68,8 +89,13 @@ export class NarrativeAudio {
   }
 
   playVoiceLine(node: DialogueNode) {
-    if (!node.voice || node.voiceCue === "silent") return;
-    this.playVoiceAsset(node.voice);
+    if (node.voiceCue === "silent") return;
+    if (node.voice) {
+      this.playVoiceAsset(node.voice);
+      return;
+    }
+    // No recorded asset → synthesize an in-character placeholder voice.
+    if (node.voiceCue === "key") this.speakTTS(node.text, node.characterId);
   }
 
   private ensureReady() {
@@ -88,6 +114,50 @@ export class NarrativeAudio {
     void audio.play().catch(() => {
       this.currentVoice = null;
     });
+  }
+
+  private speakTTS(text: string, characterId: CharacterId) {
+    const synth = typeof window !== "undefined" ? window.speechSynthesis : undefined;
+    if (!synth || !text) return;
+    const profile = VOICE_PROFILES[characterId] ?? DEFAULT_VOICE_PROFILE;
+    synth.cancel(); // stop any line still playing → no overlap on fast advance
+
+    const speak = () => {
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = profile.lang;
+      utter.rate = profile.rate;
+      utter.pitch = profile.pitch;
+      utter.volume = Math.max(0, Math.min(1, this.volume));
+      const voice = this.pickVoice(profile.lang, profile.voiceURI);
+      if (voice) utter.voice = voice;
+      synth.speak(utter);
+    };
+
+    // Voices load asynchronously on first use; wait for them if needed.
+    if (this.availableVoices().length === 0) {
+      const onVoices = () => {
+        synth.removeEventListener("voiceschanged", onVoices);
+        speak();
+      };
+      synth.addEventListener("voiceschanged", onVoices);
+    } else {
+      speak();
+    }
+  }
+
+  private availableVoices(): SpeechSynthesisVoice[] {
+    const synth = typeof window !== "undefined" ? window.speechSynthesis : undefined;
+    return synth ? synth.getVoices() : [];
+  }
+
+  private pickVoice(lang: string, preferredURI?: string): SpeechSynthesisVoice | null {
+    const voices = this.availableVoices();
+    if (!voices.length) return null;
+    if (preferredURI) {
+      const exact = voices.find((v) => v.voiceURI === preferredURI);
+      if (exact) return exact;
+    }
+    return voices.find((v) => v.lang?.toLowerCase().startsWith(lang.toLowerCase())) ?? null;
   }
 
   private playPageTurn() {

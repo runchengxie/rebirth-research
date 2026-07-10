@@ -57,6 +57,8 @@ export function createInitialState(year: string): GameState {
     categoryCounts: {},
     milestone: null,
     history: [],
+    knowledgeCards: [],
+    office: { postIts: 0, whiteboardMarkers: 0, coffeeCups: 0, monthsElapsed: 0 },
   };
 }
 

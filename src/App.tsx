@@ -17,7 +17,6 @@ import {
   storyForMonth,
 } from "./game/engine";
 import type { CharacterId, GameState, ResearchDecision, RoundResult } from "./types";
-import { PortfolioChart } from "./components/PortfolioChart";
 import { EndingPanel } from "./components/EndingPanel";
 import { FocusSelector } from "./components/FocusSelector";
 import { HistoryPanel } from "./components/HistoryPanel";
@@ -569,11 +568,6 @@ export default function App() {
             <Meter label="生活平衡" value={state.lifeBalance} className="reputation" />
           </div>
           <CharacterRoutes activeId={activeCharacter.id} state={state} />
-          <PortfolioChart state={state} />
-          <div className="legend">
-            <span><i className="key" /> 推荐净值</span>
-            <span><i className="key best" /> 沪深300</span>
-          </div>
         </aside>
       </section>
 

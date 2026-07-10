@@ -1,0 +1,2091 @@
+{
+  "year": "2023",
+  "themes": [
+    {
+      "id": "2023-jan-reopen",
+      "period": "一月",
+      "title": "疫后复苏开门红",
+      "publicContext": "春节消费数据超预期，旅游、餐饮、影视院线全面回暖。北向资金单月净流入超1400亿，外资重新定价中国资产。消费龙头和出行链领涨，但市场对复苏的持续性仍有分歧。",
+      "protagonistMemory": "你知道疫后复苏的第一波是情绪驱动，第二波需要数据验证。PMI和社零都会在一季度给出信号，但中间会有预期差。关键是识别哪些行业的复苏是可持续的，哪些只是报复性反弹。",
+      "gameHook": "开门红之后是分化。你的研究框架能不能区分报复性消费和趋势性复苏。",
+      "historicalPrototype": "2023年1月春节消费回暖，北向资金单月净买入1412亿创历史新高，沪深300上涨7.4%。"
+    },
+    {
+      "id": "2023-feb-chatgpt",
+      "period": "二月",
+      "title": "ChatGPT引爆AI概念",
+      "publicContext": "ChatGPT全球用户破亿，A股AI概念全面爆发。光模块、算力服务器、大模型概念股连续涨停。但产业链各环节的受益逻辑尚不清晰，市场处于先涨再说的阶段。",
+      "protagonistMemory": "你知道AI叙事才刚刚开始，但第一阶段是概念炒作，第二阶段才是订单验证。光模块和算力会是最先兑现业绩的环节，应用端需要更长时间。关键是把产业链拆开，别被概念裹挟。",
+      "gameHook": "概念满天飞的时候，最贵的是冷静。你选择追热点，还是先画一张产业链图谱？",
+      "historicalPrototype": "2023年2月ChatGPT月活破亿，A股AI概念指数单月涨超15%，光模块龙头涨幅超60%。"
+    },
+    {
+      "id": "2023-mar-twosessions",
+      "period": "三月",
+      "title": "两会政策与中特估启幕",
+      "publicContext": "两会定调5%增长目标，数字经济、央企估值重估成为关键词。国资委提出央企考核优化，中特估概念启动。但市场对政策力度预期存在分歧，指数在3300点附近反复拉锯。",
+      "protagonistMemory": "你知道中特估不是短期题材。低估值央企的ROE改善和分红提升会形成一个中期趋势。但选股要区分真的在改善和只是名字里有央企的公司。",
+      "gameHook": "政策文件里的关键词频次变化就是信号。你能不能读出哪些方向有真实资金在跟进？",
+      "historicalPrototype": "2023年3月两会提出数字经济+央企估值重估，中字头指数月涨8%，中国移动市值一度超过茅台。"
+    },
+    {
+      "id": "2023-apr-earnings",
+      "period": "四月",
+      "title": "一季报分化与AI降温",
+      "publicContext": "一季报密集披露，消费复苏力度弱于预期，部分AI概念股业绩miss。市场开始重新审视强预期弱现实的差距。TMT板块成交占比一度突破40%后快速回落，拥挤交易出现踩踏。",
+      "protagonistMemory": "你知道一季报会是分水岭。AI概念从都涨变成涨对的那几个。真正有订单数据支撑的公司会跑赢，纯概念炒作的公司会跌回原点。毛利率和在手订单比营收增速更值得关注。",
+      "gameHook": "拥挤交易的反噬往往比上涨更快。你的止损线画在哪里？",
+      "historicalPrototype": "2023年4月TMT成交占比超40%后急跌，上证指数冲高3418后回落，AI板块内部分化加剧。"
+    },
+    {
+      "id": "2023-may-macro",
+      "period": "五月",
+      "title": "经济数据全面回落",
+      "publicContext": "4月PMI回落至收缩区间，工业增加值、社零、固定资产投资全面低于预期。地产销售再度走弱，青年失业率攀升至20%以上。市场从强预期弱现实转向弱预期更弱现实。",
+      "protagonistMemory": "你知道这轮经济下行会触发政策响应，但节奏不是直线。6月和7月会有一系列稳增长措施出台。关键是在数据最差的时候保持研究框架不被情绪扭曲。",
+      "gameHook": "宏观数据全面走弱，市场悲观情绪蔓延。你是跟着悲观卖出，还是在悲观中寻找被错杀的机会？",
+      "historicalPrototype": "2023年5月PMI回落至48.8，青年失业率突破20%，上证月跌3.6%至3200以下。"
+    },
+    {
+      "id": "2023-jun-midyear",
+      "period": "六月",
+      "title": "中报窗口与AI硬件验证",
+      "publicContext": "中报业绩预告陆续披露，AI硬件方向开始出现实质性订单验证。光模块龙头预告业绩高增，算力租赁需求爆发。但应用端仍处于烧钱期，市场开始按业绩兑现程度重新排位。",
+      "protagonistMemory": "你知道AI产业链的验证节奏：硬件先兑现（光模块、服务器）、平台其次（大模型API调用量）、应用最后（用户付费意愿）。现在市场正在按这个顺序重新定价。",
+      "gameHook": "业绩验证是区分讲故事和真成长的唯一标准。你能不能在财报数字里找到验证节点？",
+      "historicalPrototype": "2023年6月AI光模块龙头中际旭创预告业绩高增，股价月涨超40%，AI硬件方向领涨。"
+    },
+    {
+      "id": "2023-jul-pboc",
+      "period": "七月",
+      "title": "政治局定调与活跃资本市场",
+      "publicContext": "政治局会议提出活跃资本市场，提振投资者信心，超出市场预期。地产政策边际放松，金融十六条延期。券商板块单日暴涨，市场从极度悲观迅速转向亢奋。",
+      "protagonistMemory": "你知道活跃资本市场这句话会引发券商暴涨，但真正的政策落地需要时间。降印花税、IPO收紧等措施还在路上。短期情绪的爆发不等于趋势反转。",
+      "gameHook": "政策信号出现后，你是第一时间冲进去，还是先等政策落地的细节？",
+      "historicalPrototype": "2023年7月24日政治局会议首提活跃资本市场，券商指数单周涨超10%，上证反弹至3300。"
+    },
+    {
+      "id": "2023-aug-stamp",
+      "period": "八月",
+      "title": "印花税减半与政策底",
+      "publicContext": "证券交易印花税减半征收、减持新规、阶段性收紧IPO节奏、调降融资保证金比例，四箭齐发。市场在短暂冲高后再度回落，政策底与市场底的差距引发激烈讨论。",
+      "protagonistMemory": "你知道政策底之后通常还有市场底。印花税减半对成交量的刺激是短期的，真正的底部需要看到经济数据改善或者更大力度的财政政策。现在应该做的是研究哪些行业在政策工具箱里的受益最确定。",
+      "gameHook": "四箭齐发后的冲高回落让很多人失去信心。你能不能在这种时候守住研究框架？",
+      "historicalPrototype": "2023年8月27日印花税减半等四箭齐发，上证高开5%后持续回落，月内创3053低点。"
+    },
+    {
+      "id": "2023-sep-huawei",
+      "period": "九月",
+      "title": "华为链与自主可控",
+      "publicContext": "华为Mate 60系列携国产先进制程芯片发布，引发市场对半导体自主可控的重新定价。消费电子、半导体设备、卫星通信等方向轮番活跃。国产替代逻辑从隐线变成明线。",
+      "protagonistMemory": "你知道华为链会成为下半年最大的结构性机会。芯片自主可控从能不能变成了多快能。设备国产化率和先进封装的突破速度是关键验证指标。",
+      "gameHook": "自主可控的故事已经讲了三年，这次是真的有产品落地了。你能拆出产业链里最受益的三个环节吗？",
+      "historicalPrototype": "2023年8月底华为Mate 60 Pro发布，半导体设备板块月涨超10%，消费电子链持续活跃至Q4。"
+    },
+    {
+      "id": "2023-oct-huijin",
+      "period": "十月",
+      "title": "汇金增持与万亿特别国债",
+      "publicContext": "中央汇金增持四大行，中央财政增发万亿特别国债用于灾后重建和防灾减灾，财政赤字率突破3%。市场对政策的力度重新评估，基建链和周期板块开始反映增量需求。",
+      "protagonistMemory": "你知道汇金增持和特别国债是政策发力的明确信号。万亿级别的增量资金会对基建和建材形成实质性拉动，但要关注资金到位节奏和地方配套能力。",
+      "gameHook": "增持和国债两大利好叠加，市场情绪从冰点回升。这次你要判断的是：哪些行业能吃到增量资金的真实订单？",
+      "historicalPrototype": "2023年10月汇金增持四大行+万亿特别国债，上证触底2923后反弹至3000点上方。"
+    },
+    {
+      "id": "2023-nov-beijing",
+      "period": "十一月",
+      "title": "北交狂欢与微盘行情",
+      "publicContext": "北交所政策利好叠加，北证50指数单日暴涨超10%，微盘股策略收益惊人。主板成交持续萎缩，资金被分流至小市值和北交所。机构投资者被动看戏，散户和游资主导市场。",
+      "protagonistMemory": "你知道微盘股行情本质上是流动性分化——主板没有增量资金，小市值靠游资和量化策略驱动。这种行情来得快去得也快，但持续的时间可以超出多数人的预期。",
+      "gameHook": "当所有人都在讨论北交所的时候，你去不去？还是守在主板等着轮动回来？",
+      "historicalPrototype": "2023年11月北证50月涨27%，北交所日成交额从几十亿飙升至300亿+，微盘股指数全年涨超50%。"
+    },
+    {
+      "id": "2023-dec-yearend",
+      "period": "十二月",
+      "title": "年末收官与跨年博弈",
+      "publicContext": "全年主线进入结算：AI光模块全年涨幅超200%成最大赢家，北交所微盘行情年底回落。市场开始博弈跨年行情和春季躁动，但增量资金有限，存量博弈特征明显。",
+      "protagonistMemory": "你知道十二月是结算全年研究框架的时候。今年AI链的趋势判断对了，但中间的波动和回调有没有让你的研究框架走偏？写好今年的复盘笔记，明年春季躁动的布局已经在路上。",
+      "gameHook": "年终结算不只算收益，更要算研究框架的胜率和短板。你今年的研究笔记值多少分？",
+      "historicalPrototype": "2023年12月上证在2900-3000区间震荡，全年AI光模块为最大主线，沪深300全年跌11%。"
+    }
+  ],
+  "decisions": [
+    [
+      {
+        "id": "2023jan-consumption",
+        "label": "拆消费高频数据：旅游×餐饮×出行的恢复弹性",
+        "category": "data_deep_dive",
+        "description": "拆解旅游、餐饮、影视、出行等细分赛道的日度和周度高频数据，区分报复性反弹和趋势性复苏。",
+        "effects": {
+          "researchCredibility": 13,
+          "committeeAdoption": 7,
+          "portfolioNav": 0.02,
+          "viewAccuracy": 8,
+          "clientFeedback": 5,
+          "teamTrust": 6,
+          "fatigue": 9,
+          "lifeBalance": -5,
+          "characterRelations": [
+            {
+              "characterId": "lin_ruoning",
+              "value": 8
+            }
+          ]
+        },
+        "evidenceLevel": 16,
+        "clarityLevel": 14,
+        "riskAwareness": 10,
+        "reflectionValue": 6,
+        "backgroundNote": "高频数据能让你在情绪亢奋中保持量化锚点，区分报复性反弹和趋势性复苏。"
+      },
+      {
+        "id": "2023jan-flow",
+        "label": "拆北向资金流向：单月1400亿净买入的结构分析",
+        "category": "data_deep_dive",
+        "description": "北向单月净流入1400亿创历史新高。按行业和个股拆开外资的配置行为，看是全面加仓还是结构选择。",
+        "effects": {
+          "researchCredibility": 10,
+          "committeeAdoption": 5,
+          "portfolioNav": 0.015,
+          "viewAccuracy": 9,
+          "clientFeedback": 4,
+          "teamTrust": 5,
+          "fatigue": 8,
+          "lifeBalance": -4,
+          "characterRelations": [
+            {
+              "characterId": "chen_xinghe",
+              "value": 7
+            }
+          ]
+        },
+        "evidenceLevel": 14,
+        "clarityLevel": 12,
+        "riskAwareness": 12,
+        "reflectionValue": 4,
+        "backgroundNote": "外资的行为逻辑和国内资金不同，拆开他们的配置偏好能帮你在情绪面之外找到结构信号。"
+      },
+      {
+        "id": "2023jan-reopen-theme",
+        "label": "写《疫后复苏的四个阶段与A股映射》",
+        "category": "deep_research",
+        "description": "把疫后复苏分成情绪修复、数据验证、政策接力、趋势回归四个阶段，分阶段给出行业配置建议。",
+        "effects": {
+          "researchCredibility": 15,
+          "committeeAdoption": 9,
+          "portfolioNav": 0.02,
+          "viewAccuracy": 7,
+          "clientFeedback": 6,
+          "teamTrust": 7,
+          "fatigue": 12,
+          "lifeBalance": -8,
+          "characterRelations": [
+            {
+              "characterId": "lin_ruoning",
+              "value": 9
+            }
+          ]
+        },
+        "evidenceLevel": 18,
+        "clarityLevel": 17,
+        "riskAwareness": 12,
+        "reflectionValue": 8,
+        "backgroundNote": "四阶段框架能让你在复苏的每个节点都有清晰的研究锚，而不是被每天的涨跌牵着走。"
+      },
+      {
+        "id": "2023jan-field",
+        "label": "去商圈和景区做实地消费热度调研",
+        "category": "expert_interview",
+        "description": "亲自去核心商圈和热门景区观察客流、提袋率和消费意愿，用一手信息校准二手数据。",
+        "effects": {
+          "researchCredibility": 6,
+          "committeeAdoption": 5,
+          "portfolioNav": 0.005,
+          "viewAccuracy": 10,
+          "clientFeedback": 6,
+          "teamTrust": 5,
+          "fatigue": 3,
+          "lifeBalance": -1,
+          "characterRelations": [
+            {
+              "characterId": "zhou_mingzhao",
+              "value": 5
+            }
+          ]
+        },
+        "evidenceLevel": 12,
+        "clarityLevel": 8,
+        "riskAwareness": 10,
+        "reflectionValue": 4,
+        "backgroundNote": "你在商场里看到的人流密度和统计局的数据之间有微妙的差异，这个差异本身就是研究信号。"
+      },
+      {
+        "id": "2023jan-help",
+        "label": "帮林若宁更新消费板块估值表和业绩预期",
+        "category": "help_colleague",
+        "description": "复苏初期，前辈需要把各消费子行业的估值水位和一致预期整理出来做晨会材料。",
+        "effects": {
+          "researchCredibility": 4,
+          "committeeAdoption": 3,
+          "portfolioNav": 0.005,
+          "viewAccuracy": 4,
+          "clientFeedback": 3,
+          "teamTrust": 10,
+          "fatigue": 4,
+          "lifeBalance": -1,
+          "characterRelations": [
+            {
+              "characterId": "lin_ruoning",
+              "value": 10
+            }
+          ]
+        },
+        "evidenceLevel": 6,
+        "clarityLevel": 8,
+        "riskAwareness": 8,
+        "reflectionValue": 4,
+        "backgroundNote": "帮前辈整理估值表的过程让你发现：市场对消费复苏的定价已经打得很满，超额收益的空间可能不在龙头。"
+      },
+      {
+        "id": "2023jan-life",
+        "label": "节前回家，把三年没回去的年夜饭补上",
+        "category": "self_care",
+        "description": "疫情三年没回家过年，今年春节选择早点回去陪家人。",
+        "effects": {
+          "researchCredibility": 0,
+          "committeeAdoption": -1,
+          "portfolioNav": 0,
+          "viewAccuracy": 1,
+          "clientFeedback": 0,
+          "teamTrust": 2,
+          "fatigue": -15,
+          "lifeBalance": 14,
+          "characterRelations": [
+            {
+              "characterId": "lin_ruoning",
+              "value": 4
+            }
+          ]
+        },
+        "evidenceLevel": 2,
+        "clarityLevel": 2,
+        "riskAwareness": 6,
+        "reflectionValue": 12,
+        "backgroundNote": "三年没回家的年夜饭比任何研报都重要。带着被填满的心情回到工位，判断力会不一样。"
+      }
+    ],
+    [
+      {
+        "id": "2023feb-chain",
+        "label": "画AI产业链图谱：算力→模型→应用全景拆解",
+        "category": "deep_research",
+        "description": "ChatGPT引爆AI概念后，市场情绪亢奋但逻辑混乱。画一张从上游算力到下游应用的完整产业链图谱，标注每个环节的受益逻辑和验证节奏。",
+        "effects": {
+          "researchCredibility": 15,
+          "committeeAdoption": 8,
+          "portfolioNav": 0.02,
+          "viewAccuracy": 9,
+          "clientFeedback": 4,
+          "teamTrust": 6,
+          "fatigue": 12,
+          "lifeBalance": -8,
+          "characterRelations": [
+            {
+              "characterId": "lin_ruoning",
+              "value": 8
+            }
+          ]
+        },
+        "evidenceLevel": 18,
+        "clarityLevel": 18,
+        "riskAwareness": 10,
+        "reflectionValue": 6,
+        "backgroundNote": "产业链图谱能让你在市场最亢奋的时候保持结构化思维，区分谁在卖铲子谁在淘金。"
+      },
+      {
+        "id": "2023feb-order",
+        "label": "追踪光模块和AI服务器的订单与排产数据",
+        "category": "data_deep_dive",
+        "description": "AI概念漫天飞的时候，订单数据是最诚实的验证信号。追踪光模块、AI服务器和芯片的订单排产。",
+        "effects": {
+          "researchCredibility": 10,
+          "committeeAdoption": 5,
+          "portfolioNav": 0.015,
+          "viewAccuracy": 10,
+          "clientFeedback": 3,
+          "teamTrust": 5,
+          "fatigue": 9,
+          "lifeBalance": -4,
+          "characterRelations": [
+            {
+              "characterId": "chen_xinghe",
+              "value": 9
+            }
+          ]
+        },
+        "evidenceLevel": 16,
+        "clarityLevel": 14,
+        "riskAwareness": 12,
+        "reflectionValue": 4,
+        "backgroundNote": "光模块龙头的在手订单已经排到下半年，但市场还在纠结是不是纯概念。订单数据给了你信心。"
+      },
+      {
+        "id": "2023feb-roadshow",
+        "label": "给客户做AI产业链投资逻辑路演",
+        "category": "roadshow",
+        "description": "客户对AI充满好奇但缺乏系统认知。把产业链图谱变成客户能理解的投资故事。",
+        "effects": {
+          "researchCredibility": 5,
+          "committeeAdoption": 9,
+          "portfolioNav": 0.005,
+          "viewAccuracy": 5,
+          "clientFeedback": 13,
+          "teamTrust": 6,
+          "fatigue": 5,
+          "lifeBalance": -3,
+          "characterRelations": [
+            {
+              "characterId": "lin_ruoning",
+              "value": 5
+            }
+          ]
+        },
+        "evidenceLevel": 8,
+        "clarityLevel": 12,
+        "riskAwareness": 8,
+        "reflectionValue": 4,
+        "backgroundNote": "客户最关心的问题不是AI是什么，而是AI概念股什么时候会出现业绩验证，你的产业链图谱刚好回答了这个问题。"
+      },
+      {
+        "id": "2023feb-chase",
+        "label": "追最强的AI概念股，先上车再说",
+        "category": "risk_alert",
+        "description": "AI概念爆发，先追涨再说。等产业链验证出来了再调仓。",
+        "effects": {
+          "researchCredibility": -6,
+          "committeeAdoption": 2,
+          "portfolioNav": 0.01,
+          "viewAccuracy": -8,
+          "clientFeedback": 2,
+          "teamTrust": -3,
+          "fatigue": 8,
+          "lifeBalance": -5,
+          "characterRelations": [
+            {
+              "characterId": "zhou_mingzhao",
+              "value": -5
+            }
+          ]
+        },
+        "evidenceLevel": 2,
+        "clarityLevel": 2,
+        "riskAwareness": 0,
+        "reflectionValue": 2,
+        "backgroundNote": "追涨一时爽，但三周后那些没有订单验证的标的已经开始回调。你的推荐纪要被投委会标注了未经验证。"
+      },
+      {
+        "id": "2023feb-help",
+        "label": "帮陈星禾跑AI概念股的成交量结构分析",
+        "category": "help_colleague",
+        "description": "AI概念爆发，陈星禾需要帮忙拆开成交结构：大单净买主要流向哪些标的，散户和机构的买卖行为有什么差异。",
+        "effects": {
+          "researchCredibility": 3,
+          "committeeAdoption": 2,
+          "portfolioNav": 0.005,
+          "viewAccuracy": 5,
+          "clientFeedback": 2,
+          "teamTrust": 10,
+          "fatigue": 4,
+          "lifeBalance": -1,
+          "characterRelations": [
+            {
+              "characterId": "chen_xinghe",
+              "value": 9
+            }
+          ]
+        },
+        "evidenceLevel": 8,
+        "clarityLevel": 8,
+        "riskAwareness": 10,
+        "reflectionValue": 4,
+        "backgroundNote": "帮她跑成交结构时你发现：机构资金在AI硬件方向还有建仓空间，但纯概念股已经出现游资出货迹象。"
+      },
+      {
+        "id": "2023feb-life",
+        "label": "周末去看场电影，AI热潮晚两天追也不迟",
+        "category": "self_care",
+        "description": "ChatGPT刷屏的周末，选择去看场电影。",
+        "effects": {
+          "researchCredibility": 0,
+          "committeeAdoption": -1,
+          "portfolioNav": 0,
+          "viewAccuracy": 2,
+          "clientFeedback": 0,
+          "teamTrust": 1,
+          "fatigue": -10,
+          "lifeBalance": 10,
+          "characterRelations": [
+            {
+              "characterId": "chen_xinghe",
+              "value": 3
+            }
+          ]
+        },
+        "evidenceLevel": 2,
+        "clarityLevel": 4,
+        "riskAwareness": 8,
+        "reflectionValue": 10,
+        "backgroundNote": "信息过载的时候，最好的研究决策有时是暂时关机。清醒的头脑比熬夜追热点更值钱。"
+      }
+    ],
+    [
+      {
+        "id": "2023mar-soe",
+        "label": "写《中特估：央企ROE改善与估值重定价》",
+        "category": "deep_research",
+        "description": "国资委提出央企考核优化。拆解低估值央企的ROE、分红率和资产质量，找出真正在改善而非仅靠标签的公司。",
+        "effects": {
+          "researchCredibility": 15,
+          "committeeAdoption": 10,
+          "portfolioNav": 0.02,
+          "viewAccuracy": 8,
+          "clientFeedback": 5,
+          "teamTrust": 6,
+          "fatigue": 11,
+          "lifeBalance": -7,
+          "characterRelations": [
+            {
+              "characterId": "lin_ruoning",
+              "value": 8
+            }
+          ]
+        },
+        "evidenceLevel": 18,
+        "clarityLevel": 17,
+        "riskAwareness": 10,
+        "reflectionValue": 6,
+        "backgroundNote": "中特估不是炒作标签。通过ROE杜邦拆解，你找到了几家经营效率确实在改善的央企，它们的估值修复有基本面支撑。"
+      },
+      {
+        "id": "2023mar-digital",
+        "label": "做数字经济政策专题：关键词频次变化分析",
+        "category": "data_deep_dive",
+        "description": "对比今年和去年两会报告中的数字经济关键词频次变化，量化政策力度。",
+        "effects": {
+          "researchCredibility": 10,
+          "committeeAdoption": 7,
+          "portfolioNav": 0.015,
+          "viewAccuracy": 8,
+          "clientFeedback": 5,
+          "teamTrust": 6,
+          "fatigue": 8,
+          "lifeBalance": -4,
+          "characterRelations": [
+            {
+              "characterId": "chen_xinghe",
+              "value": 7
+            }
+          ]
+        },
+        "evidenceLevel": 16,
+        "clarityLevel": 14,
+        "riskAwareness": 10,
+        "reflectionValue": 4,
+        "backgroundNote": "今年的数字经济和人工智能相关关键词频次比去年翻了接近一倍，政策底牌比市场想的更重。"
+      },
+      {
+        "id": "2023mar-defense",
+        "label": "在投委会做中特估框架答辩",
+        "category": "committee_defense",
+        "description": "把你的央企估值重估框架拿到投委会过一遍，接受交叉提问。",
+        "effects": {
+          "researchCredibility": 8,
+          "committeeAdoption": 14,
+          "portfolioNav": 0.005,
+          "viewAccuracy": 6,
+          "clientFeedback": 6,
+          "teamTrust": 8,
+          "fatigue": 6,
+          "lifeBalance": -3,
+          "characterRelations": [
+            {
+              "characterId": "zhou_mingzhao",
+              "value": 8
+            }
+          ]
+        },
+        "evidenceLevel": 10,
+        "clarityLevel": 16,
+        "riskAwareness": 12,
+        "reflectionValue": 6,
+        "backgroundNote": "投委会对你的ROE拆解框架表示认可，但追问了两个问题：央企分红率的可持续性和行业间估值差异。这恰好是你下一步的研究方向。"
+      },
+      {
+        "id": "2023mar-chase-soe",
+        "label": "追逐每一个被贴上中特估标签的公司",
+        "category": "risk_alert",
+        "description": "只要名字里有中字头或者央企背景，全部快速覆盖。",
+        "effects": {
+          "researchCredibility": -4,
+          "committeeAdoption": 3,
+          "portfolioNav": 0.005,
+          "viewAccuracy": -6,
+          "clientFeedback": 2,
+          "teamTrust": -2,
+          "fatigue": 10,
+          "lifeBalance": -5,
+          "characterRelations": [
+            {
+              "characterId": "lin_ruoning",
+              "value": -4
+            }
+          ]
+        },
+        "evidenceLevel": 2,
+        "clarityLevel": 2,
+        "riskAwareness": 2,
+        "reflectionValue": 2,
+        "backgroundNote": "标签式覆盖让你的研报看起来很全面，但有三处出现了逻辑跳跃。林若宁在你的笔记上贴了便签：选股要经得起反问。"
+      },
+      {
+        "id": "2023mar-help",
+        "label": "帮周明昭整理全球央行政策日历和资金流向",
+        "category": "help_colleague",
+        "description": "中特估背后的宏观逻辑需要全球资金配置视角支撑，帮前辈整理各国央行的政策节奏和全球资金流向数据。",
+        "effects": {
+          "researchCredibility": 4,
+          "committeeAdoption": 4,
+          "portfolioNav": 0.005,
+          "viewAccuracy": 5,
+          "clientFeedback": 3,
+          "teamTrust": 10,
+          "fatigue": 4,
+          "lifeBalance": -1,
+          "characterRelations": [
+            {
+              "characterId": "zhou_mingzhao",
+              "value": 9
+            }
+          ]
+        },
+        "evidenceLevel": 8,
+        "clarityLevel": 8,
+        "riskAwareness": 12,
+        "reflectionValue": 4,
+        "backgroundNote": "帮周明昭整理数据时你发现：全球配置型资金对中国资产的低配程度已经接近历史极值，反转的赔率在累积。"
+      },
+      {
+        "id": "2023mar-life",
+        "label": "周末去公园跑步，政策解读不急这一时",
+        "category": "self_care",
+        "description": "两会期间政策信息密集轰炸，但很多细节要等后续文件落地。先保持状态。",
+        "effects": {
+          "researchCredibility": 0,
+          "committeeAdoption": -2,
+          "portfolioNav": 0,
+          "viewAccuracy": 0,
+          "clientFeedback": 0,
+          "teamTrust": -1,
+          "fatigue": -12,
+          "lifeBalance": 12,
+          "characterRelations": [
+            {
+              "characterId": "zhou_mingzhao",
+              "value": 4
+            }
+          ]
+        },
+        "evidenceLevel": 2,
+        "clarityLevel": 2,
+        "riskAwareness": 6,
+        "reflectionValue": 10,
+        "backgroundNote": "错过了政策解读的第一波讨论，但带着清晰的头脑回到周一晨会，你的问题反而比一直在会议室里的人更精准。"
+      }
+    ],
+    [
+      {
+        "id": "2023apr-cross",
+        "label": "做一季报交叉验证：毛利率×现金流×在手订单",
+        "category": "deep_research",
+        "description": "不只看同比增速，把一季报拆成毛利率、经营现金流和在手订单三个维度交叉验证。把前期的AI研究假设和实际财报逐条对照。",
+        "effects": {
+          "researchCredibility": 16,
+          "committeeAdoption": 8,
+          "portfolioNav": 0.02,
+          "viewAccuracy": 12,
+          "clientFeedback": 4,
+          "teamTrust": 6,
+          "fatigue": 10,
+          "lifeBalance": -5,
+          "characterRelations": [
+            {
+              "characterId": "lin_ruoning",
+              "value": 10
+            }
+          ]
+        },
+        "evidenceLevel": 18,
+        "clarityLevel": 18,
+        "riskAwareness": 12,
+        "reflectionValue": 8,
+        "backgroundNote": "交叉验证让你发现：AI硬件方向的毛利率在改善但现金流改善幅度小于市场预期，这意味着库存周期的影响可能被低估了。"
+      },
+      {
+        "id": "2023apr-crowding",
+        "label": "拆TMT板块的拥挤度：成交占比和换手率信号",
+        "category": "data_deep_dive",
+        "description": "TMT成交占比突破40%后快速回落。拆开各子行业的拥挤度指标，判断哪些方向还有增量资金空间。",
+        "effects": {
+          "researchCredibility": 10,
+          "committeeAdoption": 5,
+          "portfolioNav": 0.01,
+          "viewAccuracy": 9,
+          "clientFeedback": 4,
+          "teamTrust": 5,
+          "fatigue": 8,
+          "lifeBalance": -4,
+          "characterRelations": [
+            {
+              "characterId": "chen_xinghe",
+              "value": 9
+            }
+          ]
+        },
+        "evidenceLevel": 16,
+        "clarityLevel": 14,
+        "riskAwareness": 16,
+        "reflectionValue": 4,
+        "backgroundNote": "拥挤度数据显示AI应用方向的拥挤程度已经接近2021年的新能源，但AI硬件方向还有建仓空间。"
+      },
+      {
+        "id": "2023apr-consumer",
+        "label": "写消费数据反思：强预期为什么撞上了弱现实",
+        "category": "deep_research",
+        "description": "一季度消费数据低于预期。回溯你的消费复苏框架，找出哪个阶段的假设出了问题。",
+        "effects": {
+          "researchCredibility": 12,
+          "committeeAdoption": 6,
+          "portfolioNav": 0.01,
+          "viewAccuracy": 6,
+          "clientFeedback": 4,
+          "teamTrust": 8,
+          "fatigue": 9,
+          "lifeBalance": -4,
+          "characterRelations": [
+            {
+              "characterId": "zhou_mingzhao",
+              "value": 7
+            }
+          ]
+        },
+        "evidenceLevel": 14,
+        "clarityLevel": 14,
+        "riskAwareness": 14,
+        "reflectionValue": 12,
+        "backgroundNote": "复盘笔记里你诚实记录了：复苏第二阶段的数据验证假设过于乐观，居民收入预期这个变量被低估了。这份笔记比任何正确的判断都值钱。"
+      },
+      {
+        "id": "2023apr-defend",
+        "label": "在投委会为你年初的AI推荐做回溯答辩",
+        "category": "committee_defense",
+        "description": "一季报之后投委会要审视每个人的研究推荐质量。把你的AI产业链图谱和实际财报对照，解释哪些假设被验证、哪些需要修正。",
+        "effects": {
+          "researchCredibility": 8,
+          "committeeAdoption": 12,
+          "portfolioNav": 0.005,
+          "viewAccuracy": 5,
+          "clientFeedback": 5,
+          "teamTrust": 7,
+          "fatigue": 7,
+          "lifeBalance": -3,
+          "characterRelations": [
+            {
+              "characterId": "zhou_mingzhao",
+              "value": 7
+            }
+          ]
+        },
+        "evidenceLevel": 10,
+        "clarityLevel": 16,
+        "riskAwareness": 14,
+        "reflectionValue": 8,
+        "backgroundNote": "投委会对你的诚实回溯表示认可。一位老基金经理说：知道哪错了比知道哪对了更值钱。"
+      },
+      {
+        "id": "2023apr-help",
+        "label": "帮林若宁更新AI板块业绩对照表",
+        "category": "help_colleague",
+        "description": "一季报密集出，帮前辈把AI概念股的实际业绩和市场预期逐条对照。",
+        "effects": {
+          "researchCredibility": 4,
+          "committeeAdoption": 3,
+          "portfolioNav": 0.005,
+          "viewAccuracy": 5,
+          "clientFeedback": 3,
+          "teamTrust": 10,
+          "fatigue": 4,
+          "lifeBalance": -1,
+          "characterRelations": [
+            {
+              "characterId": "lin_ruoning",
+              "value": 9
+            }
+          ]
+        },
+        "evidenceLevel": 8,
+        "clarityLevel": 10,
+        "riskAwareness": 8,
+        "reflectionValue": 4,
+        "backgroundNote": "帮前辈做业绩对照时你发现：业绩miss最多的恰恰是那些年初被追捧最猛的AI概念股，泡沫出清比预期快得多。"
+      },
+      {
+        "id": "2023apr-life",
+        "label": "财报季太累了，周末关机睡觉",
+        "category": "self_care",
+        "description": "一季报高峰期每天工作14小时，周末选择彻底休息。",
+        "effects": {
+          "researchCredibility": 0,
+          "committeeAdoption": -2,
+          "portfolioNav": 0,
+          "viewAccuracy": 2,
+          "clientFeedback": 0,
+          "teamTrust": 1,
+          "fatigue": -14,
+          "lifeBalance": 12,
+          "characterRelations": [
+            {
+              "characterId": "lin_ruoning",
+              "value": 3
+            }
+          ]
+        },
+        "evidenceLevel": 2,
+        "clarityLevel": 4,
+        "riskAwareness": 8,
+        "reflectionValue": 10,
+        "backgroundNote": "财报季的疲劳累积会影响判断力。关机睡了一天之后，周一你看那些数字的眼光清晰了很多。"
+      }
+    ],
+    [
+      {
+        "id": "2023may-macro-report",
+        "label": "写《弱现实下的行业配置：防御与错杀》",
+        "category": "deep_research",
+        "description": "宏观数据全面低于预期，市场悲观情绪蔓延。梳理各行业在弱现实下的防御属性，同时找出被情绪错杀的方向。",
+        "effects": {
+          "researchCredibility": 14,
+          "committeeAdoption": 8,
+          "portfolioNav": 0.015,
+          "viewAccuracy": 7,
+          "clientFeedback": 6,
+          "teamTrust": 7,
+          "fatigue": 11,
+          "lifeBalance": -6,
+          "characterRelations": [
+            {
+              "characterId": "zhou_mingzhao",
+              "value": 8
+            }
+          ]
+        },
+        "evidenceLevel": 16,
+        "clarityLevel": 15,
+        "riskAwareness": 18,
+        "reflectionValue": 8,
+        "backgroundNote": "悲观的时候最考验框架。你用估值-盈利-情绪的三角模型筛出了一批被错杀的制造业标的，它们的在手订单其实没有恶化。"
+      },
+      {
+        "id": "2023may-pmi",
+        "label": "拆PMI和工业企业利润的结构性变化",
+        "category": "data_deep_dive",
+        "description": "PMI虽然回落但结构有分化。拆开大型企业和中小企业、制造业和服务业的PMI差异，找出结构性机会。",
+        "effects": {
+          "researchCredibility": 10,
+          "committeeAdoption": 5,
+          "portfolioNav": 0.01,
+          "viewAccuracy": 8,
+          "clientFeedback": 4,
+          "teamTrust": 5,
+          "fatigue": 8,
+          "lifeBalance": -3,
+          "characterRelations": [
+            {
+              "characterId": "chen_xinghe",
+              "value": 6
+            }
+          ]
+        },
+        "evidenceLevel": 14,
+        "clarityLevel": 12,
+        "riskAwareness": 12,
+        "reflectionValue": 4,
+        "backgroundNote": "PMI的结构拆解显示：大型制造业企业的景气度并没有市场想的那么差，中小企业才是拖累PMI的主力。"
+      },
+      {
+        "id": "2023may-field",
+        "label": "去制造业企业实地调研：订单和开工率",
+        "category": "expert_interview",
+        "description": "宏观数据差，但微观层面可能有好转信号。去江浙的制造业聚集区做实地调研，了解真实的订单和开工率。",
+        "effects": {
+          "researchCredibility": 7,
+          "committeeAdoption": 5,
+          "portfolioNav": 0.005,
+          "viewAccuracy": 10,
+          "clientFeedback": 5,
+          "teamTrust": 6,
+          "fatigue": 4,
+          "lifeBalance": -2,
+          "characterRelations": [
+            {
+              "characterId": "lin_ruoning",
+              "value": 5
+            }
+          ]
+        },
+        "evidenceLevel": 14,
+        "clarityLevel": 10,
+        "riskAwareness": 10,
+        "reflectionValue": 6,
+        "backgroundNote": "调研回来的路上你写了一条笔记：小企业主们最担心的是订单，不是成本。这意味着需求端的问题可能比供给端更严重。"
+      },
+      {
+        "id": "2023may-housing",
+        "label": "写地产链风险专题：从销售到开工的传导",
+        "category": "risk_alert",
+        "description": "地产销售再度走弱，提醒投委会注意地产链对银行、建材、家电的传导风险。",
+        "effects": {
+          "researchCredibility": 8,
+          "committeeAdoption": 6,
+          "portfolioNav": 0,
+          "viewAccuracy": 7,
+          "clientFeedback": 5,
+          "teamTrust": 8,
+          "fatigue": 6,
+          "lifeBalance": -2,
+          "characterRelations": [
+            {
+              "characterId": "zhou_mingzhao",
+              "value": 8
+            }
+          ]
+        },
+        "evidenceLevel": 12,
+        "clarityLevel": 14,
+        "riskAwareness": 20,
+        "reflectionValue": 6,
+        "backgroundNote": "你的地产风险提示在投委会上引起了共鸣。周明昭补了一组数据：地产链的信用风险还没有完全暴露。"
+      },
+      {
+        "id": "2023may-help",
+        "label": "帮陈星禾回测历史宏观下行期的行业表现",
+        "category": "help_colleague",
+        "description": "在宏观最悲观的时候，帮她回测历史上类似的下行期中各行业的相对表现。",
+        "effects": {
+          "researchCredibility": 3,
+          "committeeAdoption": 2,
+          "portfolioNav": 0.005,
+          "viewAccuracy": 4,
+          "clientFeedback": 2,
+          "teamTrust": 10,
+          "fatigue": 5,
+          "lifeBalance": -1,
+          "characterRelations": [
+            {
+              "characterId": "chen_xinghe",
+              "value": 8
+            }
+          ]
+        },
+        "evidenceLevel": 8,
+        "clarityLevel": 8,
+        "riskAwareness": 10,
+        "reflectionValue": 6,
+        "backgroundNote": "回测数据给了你一线希望：历史上类似的下行期平均持续2.5个月，之后往往伴随政策转向。"
+      },
+      {
+        "id": "2023may-life",
+        "label": "市场跌的时候去健身房发泄",
+        "category": "self_care",
+        "description": "宏观数据全面走弱，与其在屏幕前焦虑，不如去健身房把负面情绪消耗掉。",
+        "effects": {
+          "researchCredibility": 0,
+          "committeeAdoption": -1,
+          "portfolioNav": 0,
+          "viewAccuracy": 1,
+          "clientFeedback": 0,
+          "teamTrust": 1,
+          "fatigue": -12,
+          "lifeBalance": 14,
+          "characterRelations": [
+            {
+              "characterId": "chen_xinghe",
+              "value": 3
+            }
+          ]
+        },
+        "evidenceLevel": 2,
+        "clarityLevel": 4,
+        "riskAwareness": 6,
+        "reflectionValue": 10,
+        "backgroundNote": "负面情绪是研究的天敌。健身回来之后你翻看自己昨天写的笔记，发现有两个判断明显被情绪污染了。"
+      }
+    ],
+    [
+      {
+        "id": "2023jun-semicon",
+        "label": "写《AI硬件验证：从订单到业绩的三个季度》",
+        "category": "deep_research",
+        "description": "AI硬件方向开始出现实质性业绩验证。把光模块、服务器和芯片三个环节的订单数据和财报交叉验证，预判中报季的胜率。",
+        "effects": {
+          "researchCredibility": 16,
+          "committeeAdoption": 9,
+          "portfolioNav": 0.025,
+          "viewAccuracy": 10,
+          "clientFeedback": 5,
+          "teamTrust": 6,
+          "fatigue": 10,
+          "lifeBalance": -5,
+          "characterRelations": [
+            {
+              "characterId": "lin_ruoning",
+              "value": 8
+            }
+          ]
+        },
+        "evidenceLevel": 18,
+        "clarityLevel": 18,
+        "riskAwareness": 10,
+        "reflectionValue": 6,
+        "backgroundNote": "订单到业绩的传导节奏不是你猜的，而是你通过产业链调研和财报拆解一步步验证出来的。这份研报会成为你和投委会之间信任的基石。"
+      },
+      {
+        "id": "2023jun-flow",
+        "label": "拆AI板块的大单流向和因子暴露",
+        "category": "data_deep_dive",
+        "description": "陈星禾教你怎么用Barra归因拆AI概念股的收益来源，看看是基本面因子在贡献还是动量因子在驱动。",
+        "effects": {
+          "researchCredibility": 10,
+          "committeeAdoption": 5,
+          "portfolioNav": 0.01,
+          "viewAccuracy": 8,
+          "clientFeedback": 3,
+          "teamTrust": 6,
+          "fatigue": 7,
+          "lifeBalance": -3,
+          "characterRelations": [
+            {
+              "characterId": "chen_xinghe",
+              "value": 10
+            }
+          ]
+        },
+        "evidenceLevel": 16,
+        "clarityLevel": 14,
+        "riskAwareness": 14,
+        "reflectionValue": 4,
+        "backgroundNote": "Barra归因显示AI硬件方向的收益里基本面因子的贡献率已经超过动量因子，这是从炒作到验证的质变信号。"
+      },
+      {
+        "id": "2023jun-roadshow",
+        "label": "给大客户做中报前瞻：AI硬件vs应用",
+        "category": "roadshow",
+        "description": "中报季之前，客户需要知道AI产业链各环节的业绩兑现概率。把硬件和应用两端的验证节奏讲清楚。",
+        "effects": {
+          "researchCredibility": 6,
+          "committeeAdoption": 9,
+          "portfolioNav": 0.005,
+          "viewAccuracy": 5,
+          "clientFeedback": 12,
+          "teamTrust": 6,
+          "fatigue": 5,
+          "lifeBalance": -3,
+          "characterRelations": [
+            {
+              "characterId": "lin_ruoning",
+              "value": 5
+            }
+          ]
+        },
+        "evidenceLevel": 8,
+        "clarityLevel": 14,
+        "riskAwareness": 8,
+        "reflectionValue": 4,
+        "backgroundNote": "客户最关心中报季AI方向的业绩验证，你的产业链拆解框架帮他们画出了一条清晰的验证路径。"
+      },
+      {
+        "id": "2023jun-app",
+        "label": "追AI应用概念：大模型API调用量爆发了",
+        "category": "risk_alert",
+        "description": "有数据说大模型API调用量暴增，市场开始炒应用端。你判断应用端的业绩拐点到了。",
+        "effects": {
+          "researchCredibility": -4,
+          "committeeAdoption": 4,
+          "portfolioNav": 0.01,
+          "viewAccuracy": -7,
+          "clientFeedback": 3,
+          "teamTrust": -2,
+          "fatigue": 8,
+          "lifeBalance": -4,
+          "characterRelations": [
+            {
+              "characterId": "zhou_mingzhao",
+              "value": -4
+            }
+          ]
+        },
+        "evidenceLevel": 2,
+        "clarityLevel": 4,
+        "riskAwareness": 4,
+        "reflectionValue": 2,
+        "backgroundNote": "API调用量增长不等于收入增长，收入增长不等于盈利。你的判断跳过了两个关键验证环节，被周明昭在白板上圈了出来。"
+      },
+      {
+        "id": "2023jun-help",
+        "label": "帮周明昭做全球AI产业链的估值横向比较",
+        "category": "help_colleague",
+        "description": "全球AI概念都在涨，A股的AI标的到底贵不贵？帮前辈把中美AI产业链的估值做横向对比。",
+        "effects": {
+          "researchCredibility": 4,
+          "committeeAdoption": 5,
+          "portfolioNav": 0.005,
+          "viewAccuracy": 5,
+          "clientFeedback": 4,
+          "teamTrust": 9,
+          "fatigue": 4,
+          "lifeBalance": -1,
+          "characterRelations": [
+            {
+              "characterId": "zhou_mingzhao",
+              "value": 9
+            }
+          ]
+        },
+        "evidenceLevel": 10,
+        "clarityLevel": 10,
+        "riskAwareness": 12,
+        "reflectionValue": 4,
+        "backgroundNote": "横向对比做完后发现：A股AI硬件方向的估值比美股低30-40%，但应用方向的估值比美股高了一倍。这个发现会在下半年得到验证。"
+      },
+      {
+        "id": "2023jun-life",
+        "label": "中报季前请一天年假去爬山",
+        "category": "self_care",
+        "description": "中报季即将到来，在加班潮开始之前先给自己放一天假。",
+        "effects": {
+          "researchCredibility": 0,
+          "committeeAdoption": -2,
+          "portfolioNav": 0,
+          "viewAccuracy": 1,
+          "clientFeedback": 0,
+          "teamTrust": 1,
+          "fatigue": -12,
+          "lifeBalance": 12,
+          "characterRelations": [
+            {
+              "characterId": "lin_ruoning",
+              "value": 3
+            }
+          ]
+        },
+        "evidenceLevel": 2,
+        "clarityLevel": 4,
+        "riskAwareness": 8,
+        "reflectionValue": 10,
+        "backgroundNote": "站在山顶往下看，城市里的K线焦虑突然变远了。你想起周明昭说过：研究框架最好的校正方式，是暂时从市场里抽离。"
+      }
+    ],
+    [
+      {
+        "id": "2023jul-broker",
+        "label": "写《活跃资本市场的政策工具箱与受益链》",
+        "category": "deep_research",
+        "description": "政治局会议提出活跃资本市场。梳理历次类似表述后的政策节奏和市场反应，拆解券商、金融IT和保险的受益顺序。",
+        "effects": {
+          "researchCredibility": 14,
+          "committeeAdoption": 10,
+          "portfolioNav": 0.02,
+          "viewAccuracy": 8,
+          "clientFeedback": 6,
+          "teamTrust": 6,
+          "fatigue": 10,
+          "lifeBalance": -6,
+          "characterRelations": [
+            {
+              "characterId": "zhou_mingzhao",
+              "value": 8
+            }
+          ]
+        },
+        "evidenceLevel": 16,
+        "clarityLevel": 16,
+        "riskAwareness": 12,
+        "reflectionValue": 6,
+        "backgroundNote": "历史复盘显示类似表述后政策落地通常在3-8周内，但首周的情绪爆发后往往会出现回调。你的框架在两者的时间差里找机会。"
+      },
+      {
+        "id": "2023jul-securities",
+        "label": "拆券商板块的估值分位和ROE弹性",
+        "category": "data_deep_dive",
+        "description": "券商板块单日暴涨。拆开各家券商的经纪、投行、资管、自营收入结构，计算在不同市场假设下的ROE弹性。",
+        "effects": {
+          "researchCredibility": 10,
+          "committeeAdoption": 6,
+          "portfolioNav": 0.015,
+          "viewAccuracy": 8,
+          "clientFeedback": 4,
+          "teamTrust": 5,
+          "fatigue": 7,
+          "lifeBalance": -3,
+          "characterRelations": [
+            {
+              "characterId": "chen_xinghe",
+              "value": 7
+            }
+          ]
+        },
+        "evidenceLevel": 14,
+        "clarityLevel": 12,
+        "riskAwareness": 12,
+        "reflectionValue": 4,
+        "backgroundNote": "ROE弹性分析显示：佣金收入占比较高的券商弹性最大，但自营占比较高的券商风险也最大。市场在亢奋中把这两类混为一谈了。"
+      },
+      {
+        "id": "2023jul-call",
+        "label": "约券商朋友聊真实的市场情绪和两融变化",
+        "category": "expert_interview",
+        "description": "政策喊话之后，市场情绪从冰点转到沸点。约几个券商营业部和两融部门的朋友聊聊一线感受。",
+        "effects": {
+          "researchCredibility": 6,
+          "committeeAdoption": 5,
+          "portfolioNav": 0.005,
+          "viewAccuracy": 9,
+          "clientFeedback": 6,
+          "teamTrust": 5,
+          "fatigue": 3,
+          "lifeBalance": -1,
+          "characterRelations": [
+            {
+              "characterId": "lin_ruoning",
+              "value": 5
+            }
+          ]
+        },
+        "evidenceLevel": 10,
+        "clarityLevel": 8,
+        "riskAwareness": 12,
+        "reflectionValue": 4,
+        "backgroundNote": "营业部的朋友说散户开户数在暴涨，但两融的加仓节奏并没有跟上。这是典型的有激情没资金的信号。"
+      },
+      {
+        "id": "2023jul-chase",
+        "label": "政策喊话就是最好的买入信号，全仓券商",
+        "category": "risk_alert",
+        "description": "政治局会议提活跃资本市场，上次这么提还是2018年。这波不能踏空。",
+        "effects": {
+          "researchCredibility": -5,
+          "committeeAdoption": 4,
+          "portfolioNav": 0.015,
+          "viewAccuracy": -7,
+          "clientFeedback": 3,
+          "teamTrust": -3,
+          "fatigue": 6,
+          "lifeBalance": -3,
+          "characterRelations": [
+            {
+              "characterId": "zhou_mingzhao",
+              "value": -6
+            }
+          ]
+        },
+        "evidenceLevel": 2,
+        "clarityLevel": 2,
+        "riskAwareness": 2,
+        "reflectionValue": 2,
+        "backgroundNote": "情绪交易在首周赚了，但第二周券商板块的回调来得比预期更快。周明昭提醒你：政策底之后还有市场底，政策喊话的保质期比你想的短。"
+      },
+      {
+        "id": "2023jul-help",
+        "label": "帮林若宁整理券商板块的投资逻辑和风险矩阵",
+        "category": "help_colleague",
+        "description": "券商暴涨让很多人兴奋，但前辈想冷静地做一个券商板块的风险收益矩阵。帮她整理数据。",
+        "effects": {
+          "researchCredibility": 4,
+          "committeeAdoption": 3,
+          "portfolioNav": 0.005,
+          "viewAccuracy": 5,
+          "clientFeedback": 3,
+          "teamTrust": 10,
+          "fatigue": 4,
+          "lifeBalance": -1,
+          "characterRelations": [
+            {
+              "characterId": "lin_ruoning",
+              "value": 9
+            }
+          ]
+        },
+        "evidenceLevel": 8,
+        "clarityLevel": 10,
+        "riskAwareness": 14,
+        "reflectionValue": 4,
+        "backgroundNote": "帮她整理风险矩阵时你发现：券商板块当前的隐含波动率已经接近历史90分位，潜在收益已经被定价了。"
+      },
+      {
+        "id": "2023jul-life",
+        "label": "政策喊话后大家都在加班，你选择按时走",
+        "category": "self_care",
+        "description": "所有研究员都在加班解读政治局会议，你选择按时下班。政策的细节要等后续文件，今晚不熬夜。",
+        "effects": {
+          "researchCredibility": 0,
+          "committeeAdoption": -3,
+          "portfolioNav": 0,
+          "viewAccuracy": 2,
+          "clientFeedback": 0,
+          "teamTrust": -1,
+          "fatigue": -10,
+          "lifeBalance": 10,
+          "characterRelations": [
+            {
+              "characterId": "zhou_mingzhao",
+              "value": 5
+            }
+          ]
+        },
+        "evidenceLevel": 2,
+        "clarityLevel": 4,
+        "riskAwareness": 10,
+        "reflectionValue": 10,
+        "backgroundNote": "你错过了第一时间的市场解读，但第二天早上你带着清醒的头脑把政策拆得比其他人更清晰。周明昭说：好判断需要好状态。"
+      }
+    ],
+    [
+      {
+        "id": "2023aug-policy",
+        "label": "写《四箭齐发：政策工具箱的力度与节奏评估》",
+        "category": "deep_research",
+        "description": "印花税减半、减持新规、IPO收紧、融资保证金调降。逐条分析每条政策的短期冲击和中期影响，评估政策底向市场底传导的时间窗口。",
+        "effects": {
+          "researchCredibility": 15,
+          "committeeAdoption": 10,
+          "portfolioNav": 0.015,
+          "viewAccuracy": 8,
+          "clientFeedback": 7,
+          "teamTrust": 7,
+          "fatigue": 11,
+          "lifeBalance": -6,
+          "characterRelations": [
+            {
+              "characterId": "zhou_mingzhao",
+              "value": 9
+            }
+          ]
+        },
+        "evidenceLevel": 18,
+        "clarityLevel": 17,
+        "riskAwareness": 16,
+        "reflectionValue": 8,
+        "backgroundNote": "历史复盘显示印花税调降后的第一个月市场平均涨3%但三个月后平均跌2%。你的框架把短中期的节奏差写进了研报里。"
+      },
+      {
+        "id": "2023aug-ipo",
+        "label": "拆IPO收紧对市场流动性的量化影响",
+        "category": "data_deep_dive",
+        "description": "IPO收紧减少了供给压力。量化计算历史上IPO收紧对市场流动性的影响幅度和持续时间。",
+        "effects": {
+          "researchCredibility": 10,
+          "committeeAdoption": 6,
+          "portfolioNav": 0.01,
+          "viewAccuracy": 7,
+          "clientFeedback": 4,
+          "teamTrust": 5,
+          "fatigue": 8,
+          "lifeBalance": -3,
+          "characterRelations": [
+            {
+              "characterId": "chen_xinghe",
+              "value": 6
+            }
+          ]
+        },
+        "evidenceLevel": 14,
+        "clarityLevel": 12,
+        "riskAwareness": 10,
+        "reflectionValue": 4,
+        "backgroundNote": "IPO收紧每年大约节省2000-3000亿的流动性消耗，但这个效果要2-3个月才能完全显现。短期冲高后的回落是正常的。"
+      },
+      {
+        "id": "2023aug-buyback",
+        "label": "做减持新规受益标的筛选",
+        "category": "deep_research",
+        "description": "减持新规让一大批公司的减持压力被锁住。筛选出减持压力最大、新规受益最明显的标的池。",
+        "effects": {
+          "researchCredibility": 12,
+          "committeeAdoption": 8,
+          "portfolioNav": 0.015,
+          "viewAccuracy": 7,
+          "clientFeedback": 5,
+          "teamTrust": 6,
+          "fatigue": 9,
+          "lifeBalance": -4,
+          "characterRelations": [
+            {
+              "characterId": "lin_ruoning",
+              "value": 7
+            }
+          ]
+        },
+        "evidenceLevel": 14,
+        "clarityLevel": 14,
+        "riskAwareness": 10,
+        "reflectionValue": 4,
+        "backgroundNote": "减持新规锁住了近5000亿的潜在减持压力。但你在筛选池里标注了一条备忘：锁住不等于消失，市场底才是真正的信心底。"
+      },
+      {
+        "id": "2023aug-buy",
+        "label": "四箭齐发就是抄底信号，满仓等反弹",
+        "category": "risk_alert",
+        "description": "四箭齐发力度空前，市场一定会反转。现在不买就是最大的风险。",
+        "effects": {
+          "researchCredibility": -5,
+          "committeeAdoption": 3,
+          "portfolioNav": 0.02,
+          "viewAccuracy": -9,
+          "clientFeedback": 2,
+          "teamTrust": -4,
+          "fatigue": 5,
+          "lifeBalance": -4,
+          "characterRelations": [
+            {
+              "characterId": "zhou_mingzhao",
+              "value": -7
+            }
+          ]
+        },
+        "evidenceLevel": 2,
+        "clarityLevel": 2,
+        "riskAwareness": 0,
+        "reflectionValue": 2,
+        "backgroundNote": "冲高买入的头寸在随后的回撤中损失惨重。你低估了市场底和政策底之间的时差，也高估了政策对市场信心的即时修复能力。"
+      },
+      {
+        "id": "2023aug-help",
+        "label": "帮周明昭做政策力度国际横向比较",
+        "category": "help_colleague",
+        "description": "把中国的四箭齐发和历史上美国、日本、韩国在类似阶段的救市政策做横向对比。",
+        "effects": {
+          "researchCredibility": 5,
+          "committeeAdoption": 6,
+          "portfolioNav": 0.005,
+          "viewAccuracy": 5,
+          "clientFeedback": 5,
+          "teamTrust": 10,
+          "fatigue": 5,
+          "lifeBalance": -1,
+          "characterRelations": [
+            {
+              "characterId": "zhou_mingzhao",
+              "value": 10
+            }
+          ]
+        },
+        "evidenceLevel": 12,
+        "clarityLevel": 12,
+        "riskAwareness": 14,
+        "reflectionValue": 6,
+        "backgroundNote": "国际比较做完后你发现：中国的四箭齐发相当于日本2012年组合拳的60%力度。够猛但还不够猛。"
+      },
+      {
+        "id": "2023aug-life",
+        "label": "四箭齐发后市场冲高回落，你选择不看盘",
+        "category": "self_care",
+        "description": "市场在政策刺激后的剧烈波动让情绪高度紧张。选择关掉行情软件，等市场稳定下来再做判断。",
+        "effects": {
+          "researchCredibility": 0,
+          "committeeAdoption": -2,
+          "portfolioNav": 0,
+          "viewAccuracy": 3,
+          "clientFeedback": 0,
+          "teamTrust": 2,
+          "fatigue": -10,
+          "lifeBalance": 10,
+          "characterRelations": [
+            {
+              "characterId": "lin_ruoning",
+              "value": 4
+            }
+          ]
+        },
+        "evidenceLevel": 2,
+        "clarityLevel": 4,
+        "riskAwareness": 12,
+        "reflectionValue": 12,
+        "backgroundNote": "关掉行情软件的那两天你没有错过任何真正的投资机会，但避开了两个因为情绪波动而做出的错误判断。冷静是最稀缺的研究工具。"
+      }
+    ],
+    [
+      {
+        "id": "2023sep-huawei-chain",
+        "label": "写《华为链全景：从芯片到生态的受益梯队》",
+        "category": "deep_research",
+        "description": "华为Mate 60携国产先进制程芯片发布。拆解从芯片制造、先进封装、消费电子到卫星通信的全产业链受益梯队。",
+        "effects": {
+          "researchCredibility": 16,
+          "committeeAdoption": 9,
+          "portfolioNav": 0.025,
+          "viewAccuracy": 10,
+          "clientFeedback": 5,
+          "teamTrust": 6,
+          "fatigue": 11,
+          "lifeBalance": -6,
+          "characterRelations": [
+            {
+              "characterId": "lin_ruoning",
+              "value": 8
+            }
+          ]
+        },
+        "evidenceLevel": 18,
+        "clarityLevel": 18,
+        "riskAwareness": 10,
+        "reflectionValue": 6,
+        "backgroundNote": "华为链不会是一阵风。先进制程的突破意味着国产化从能不能变成了多快能。你的产业链拆解框架在这里找到了最好的应用场景。"
+      },
+      {
+        "id": "2023sep-equipment",
+        "label": "拆半导体设备的国产化率曲线和订单弹性",
+        "category": "data_deep_dive",
+        "description": "华为突破之后半导体设备的国产替代会加速。追踪国内主要设备商的在手订单和国产化率变化。",
+        "effects": {
+          "researchCredibility": 12,
+          "committeeAdoption": 6,
+          "portfolioNav": 0.02,
+          "viewAccuracy": 9,
+          "clientFeedback": 4,
+          "teamTrust": 5,
+          "fatigue": 8,
+          "lifeBalance": -4,
+          "characterRelations": [
+            {
+              "characterId": "chen_xinghe",
+              "value": 8
+            }
+          ]
+        },
+        "evidenceLevel": 16,
+        "clarityLevel": 14,
+        "riskAwareness": 12,
+        "reflectionValue": 4,
+        "backgroundNote": "光刻设备之外，刻蚀、沉积和检测设备的国产化率还有巨大的提升空间。你在订单数据里找到了三条确定性最高的受益线路。"
+      },
+      {
+        "id": "2023sep-roadshow",
+        "label": "给客户做自主可控投资主题路演",
+        "category": "roadshow",
+        "description": "华为突破让自主可控从隐线变成明线。帮客户理清半导体国产化、信创和卫星通信的投资逻辑。",
+        "effects": {
+          "researchCredibility": 6,
+          "committeeAdoption": 9,
+          "portfolioNav": 0.005,
+          "viewAccuracy": 5,
+          "clientFeedback": 12,
+          "teamTrust": 6,
+          "fatigue": 5,
+          "lifeBalance": -3,
+          "characterRelations": [
+            {
+              "characterId": "lin_ruoning",
+              "value": 5
+            }
+          ]
+        },
+        "evidenceLevel": 8,
+        "clarityLevel": 14,
+        "riskAwareness": 8,
+        "reflectionValue": 4,
+        "backgroundNote": "客户听完路演后问了三个关于国产化率时间表的问题，这三个问题后来成了你Q4的研究主线。"
+      },
+      {
+        "id": "2023sep-chase-huawei",
+        "label": "华为概念全线追击：蹭上的都先覆盖",
+        "category": "risk_alert",
+        "description": "华为链太热了，凡是和华为沾边的概念股全部快速覆盖。",
+        "effects": {
+          "researchCredibility": -5,
+          "committeeAdoption": 3,
+          "portfolioNav": 0.01,
+          "viewAccuracy": -8,
+          "clientFeedback": 2,
+          "teamTrust": -3,
+          "fatigue": 9,
+          "lifeBalance": -5,
+          "characterRelations": [
+            {
+              "characterId": "zhou_mingzhao",
+              "value": -5
+            }
+          ]
+        },
+        "evidenceLevel": 2,
+        "clarityLevel": 2,
+        "riskAwareness": 2,
+        "reflectionValue": 2,
+        "backgroundNote": "有三个标的你覆盖了但是逻辑跳跃严重。周明昭在你的研报上圈出了「华为概念」和「华为收入」之间的裂缝——概念不等于收入。"
+      },
+      {
+        "id": "2023sep-help",
+        "label": "帮陈星禾回测华为链概念的因子有效性",
+        "category": "help_colleague",
+        "description": "陈星禾想测试华为概念股在因子层面的特征：动量持续性、波动率结构和流动性溢价。帮她跑数据和回测。",
+        "effects": {
+          "researchCredibility": 4,
+          "committeeAdoption": 2,
+          "portfolioNav": 0.005,
+          "viewAccuracy": 5,
+          "clientFeedback": 2,
+          "teamTrust": 10,
+          "fatigue": 5,
+          "lifeBalance": -1,
+          "characterRelations": [
+            {
+              "characterId": "chen_xinghe",
+              "value": 10
+            }
+          ]
+        },
+        "evidenceLevel": 10,
+        "clarityLevel": 10,
+        "riskAwareness": 12,
+        "reflectionValue": 4,
+        "backgroundNote": "因子回测结果显示华为概念股的动量持续性高于历史均值30%，但波动率溢价也在升高。这是典型的主题驱动行情特征。"
+      },
+      {
+        "id": "2023sep-life",
+        "label": "周末去科技馆，从另一个角度看半导体",
+        "category": "self_care",
+        "description": "每天都在看半导体研报，这周末去科技馆看看实际的芯片是怎么做出来的。",
+        "effects": {
+          "researchCredibility": 0,
+          "committeeAdoption": 0,
+          "portfolioNav": 0,
+          "viewAccuracy": 2,
+          "clientFeedback": 0,
+          "teamTrust": 2,
+          "fatigue": -8,
+          "lifeBalance": 8,
+          "characterRelations": [
+            {
+              "characterId": "lin_ruoning",
+              "value": 3
+            }
+          ]
+        },
+        "evidenceLevel": 4,
+        "clarityLevel": 4,
+        "riskAwareness": 6,
+        "reflectionValue": 10,
+        "backgroundNote": "在科技馆看到真实的晶圆和光刻演示之后，你对国产替代的三个技术瓶颈有了更直观的理解。有些东西财报和K线里看不出来。"
+      }
+    ],
+    [
+      {
+        "id": "2023oct-infra",
+        "label": "写《万亿特别国债的受益产业链与订单传导》",
+        "category": "deep_research",
+        "description": "万亿特别国债打开了财政空间。拆解从建材、工程机械到施工和运营的受益产业链，计算订单的传导节奏和弹性。",
+        "effects": {
+          "researchCredibility": 15,
+          "committeeAdoption": 10,
+          "portfolioNav": 0.02,
+          "viewAccuracy": 8,
+          "clientFeedback": 6,
+          "teamTrust": 7,
+          "fatigue": 11,
+          "lifeBalance": -6,
+          "characterRelations": [
+            {
+              "characterId": "zhou_mingzhao",
+              "value": 8
+            }
+          ]
+        },
+        "evidenceLevel": 18,
+        "clarityLevel": 17,
+        "riskAwareness": 12,
+        "reflectionValue": 6,
+        "backgroundNote": "万亿级别的增量资金会对基建链形成实质性拉动。你的订单传导模型显示：建材受益在先、施工其次、运营最后，时间差大约1-3个月。"
+      },
+      {
+        "id": "2023oct-huijin-flow",
+        "label": "拆汇金增持后银行板块的估值修复路径",
+        "category": "data_deep_dive",
+        "description": "汇金增持四大行是政策性抄底信号。复盘历史上汇金增持后银行板块的估值修复路径和平均涨幅。",
+        "effects": {
+          "researchCredibility": 10,
+          "committeeAdoption": 7,
+          "portfolioNav": 0.01,
+          "viewAccuracy": 8,
+          "clientFeedback": 5,
+          "teamTrust": 5,
+          "fatigue": 7,
+          "lifeBalance": -3,
+          "characterRelations": [
+            {
+              "characterId": "chen_xinghe",
+              "value": 6
+            }
+          ]
+        },
+        "evidenceLevel": 14,
+        "clarityLevel": 12,
+        "riskAwareness": 12,
+        "reflectionValue": 4,
+        "backgroundNote": "历史上汇金增持后银行板块平均在3个月内跑赢大盘8-12%。但这次增持的规模和估值水位和2008-2015年有本质不同。"
+      },
+      {
+        "id": "2023oct-cement",
+        "label": "去建材市场做实地调研：价格和出货量",
+        "category": "expert_interview",
+        "description": "特别国债的基建效应最终会体现在建材价格和出货量上。去周边的建材市场做实地调研。",
+        "effects": {
+          "researchCredibility": 7,
+          "committeeAdoption": 5,
+          "portfolioNav": 0.005,
+          "viewAccuracy": 10,
+          "clientFeedback": 5,
+          "teamTrust": 5,
+          "fatigue": 3,
+          "lifeBalance": -1,
+          "characterRelations": [
+            {
+              "characterId": "lin_ruoning",
+              "value": 5
+            }
+          ]
+        },
+        "evidenceLevel": 12,
+        "clarityLevel": 8,
+        "riskAwareness": 10,
+        "reflectionValue": 4,
+        "backgroundNote": "你去的那家建材市场老板说今年的出货量比去年同期还差，但最近接了两个大项目的询价。政策传导到基层需要时间。"
+      },
+      {
+        "id": "2023oct-chase-infra",
+        "label": "特别国债刺激下全面追基建链",
+        "category": "risk_alert",
+        "description": "万亿国债肯定能拉动基建，基建股现在就是底部。先建仓再说。",
+        "effects": {
+          "researchCredibility": -4,
+          "committeeAdoption": 4,
+          "portfolioNav": 0.01,
+          "viewAccuracy": -6,
+          "clientFeedback": 3,
+          "teamTrust": -2,
+          "fatigue": 7,
+          "lifeBalance": -3,
+          "characterRelations": [
+            {
+              "characterId": "zhou_mingzhao",
+              "value": -4
+            }
+          ]
+        },
+        "evidenceLevel": 2,
+        "clarityLevel": 2,
+        "riskAwareness": 4,
+        "reflectionValue": 2,
+        "backgroundNote": "基建链的涨幅远低于你的预期。你忽略了两个关键细节：特别国债的资金到位节奏和地方政府的配套能力。周明昭说：政策力度的翻译不是一比一。"
+      },
+      {
+        "id": "2023oct-help",
+        "label": "帮林若宁整理基建链各环节的估值水位和ROE",
+        "category": "help_colleague",
+        "description": "特别国债带来的基建预期让前辈需要快速更新基建链的估值和ROE数据。帮她整理。",
+        "effects": {
+          "researchCredibility": 4,
+          "committeeAdoption": 4,
+          "portfolioNav": 0.005,
+          "viewAccuracy": 5,
+          "clientFeedback": 3,
+          "teamTrust": 10,
+          "fatigue": 4,
+          "lifeBalance": -1,
+          "characterRelations": [
+            {
+              "characterId": "lin_ruoning",
+              "value": 9
+            }
+          ]
+        },
+        "evidenceLevel": 8,
+        "clarityLevel": 10,
+        "riskAwareness": 10,
+        "reflectionValue": 4,
+        "backgroundNote": "在帮前辈整理数据时你发现：基建链目前的估值分位并不低，市场已经把特别国债的利好定价了相当一部分。"
+      },
+      {
+        "id": "2023oct-life",
+        "label": "十月的周末去看红叶，把市场触底焦虑放一放",
+        "category": "self_care",
+        "description": "上证触底2923之后市场情绪极度悲观。周末去郊外看红叶，让自己的情绪从市场里抽离。",
+        "effects": {
+          "researchCredibility": 0,
+          "committeeAdoption": -1,
+          "portfolioNav": 0,
+          "viewAccuracy": 2,
+          "clientFeedback": 0,
+          "teamTrust": 1,
+          "fatigue": -10,
+          "lifeBalance": 12,
+          "characterRelations": [
+            {
+              "characterId": "zhou_mingzhao",
+              "value": 4
+            }
+          ]
+        },
+        "evidenceLevel": 2,
+        "clarityLevel": 4,
+        "riskAwareness": 10,
+        "reflectionValue": 12,
+        "backgroundNote": "看到漫山红叶的时候你突然想通了一件事：市场底部不是一个点，是一段时间。你不需要在最低点买入，只需要在底部区间保持研究框架的稳定。"
+      }
+    ],
+    [
+      {
+        "id": "2023nov-micro",
+        "label": "写《微盘行情：流动性分化下的机会与风险》",
+        "category": "deep_research",
+        "description": "北交所和微盘股暴涨而主板缩量。分析这轮流动性分化的驱动力、持续性和反转条件。",
+        "effects": {
+          "researchCredibility": 14,
+          "committeeAdoption": 7,
+          "portfolioNav": 0.015,
+          "viewAccuracy": 8,
+          "clientFeedback": 5,
+          "teamTrust": 7,
+          "fatigue": 10,
+          "lifeBalance": -5,
+          "characterRelations": [
+            {
+              "characterId": "chen_xinghe",
+              "value": 8
+            }
+          ]
+        },
+        "evidenceLevel": 16,
+        "clarityLevel": 15,
+        "riskAwareness": 18,
+        "reflectionValue": 8,
+        "backgroundNote": "你的分析显示微盘行情本质是主板流动性不足环境下的资金溢出效应。一旦主板放量，微盘的流动性溢价会快速收缩。"
+      },
+      {
+        "id": "2023nov-beijing-exchange",
+        "label": "拆北交所的标的池：估值、流动性和基本面",
+        "category": "data_deep_dive",
+        "description": "北交50暴涨，但大多数人对北交所的标的池缺乏了解。把北交所的优质标的按行业和财务指标做一个基础筛选。",
+        "effects": {
+          "researchCredibility": 8,
+          "committeeAdoption": 4,
+          "portfolioNav": 0.01,
+          "viewAccuracy": 7,
+          "clientFeedback": 4,
+          "teamTrust": 4,
+          "fatigue": 8,
+          "lifeBalance": -3,
+          "characterRelations": [
+            {
+              "characterId": "lin_ruoning",
+              "value": 5
+            }
+          ]
+        },
+        "evidenceLevel": 14,
+        "clarityLevel": 12,
+        "riskAwareness": 12,
+        "reflectionValue": 4,
+        "backgroundNote": "筛选后发现北交所大约有15-20家公司具备了主板小市值股票的基本面水准，但估值已经比主板同类型公司贵了一倍以上。"
+      },
+      {
+        "id": "2023nov-skip",
+        "label": "北交所太热了，这波不参与，等回调",
+        "category": "risk_alert",
+        "description": "北证50单日涨超10%的时候你决定不跟。你认为这种流动性驱动的行情来得快去得也快。",
+        "effects": {
+          "researchCredibility": 6,
+          "committeeAdoption": 2,
+          "portfolioNav": 0,
+          "viewAccuracy": 6,
+          "clientFeedback": 0,
+          "teamTrust": 4,
+          "fatigue": 0,
+          "lifeBalance": 2,
+          "characterRelations": [
+            {
+              "characterId": "zhou_mingzhao",
+              "value": 6
+            }
+          ]
+        },
+        "evidenceLevel": 8,
+        "clarityLevel": 10,
+        "riskAwareness": 18,
+        "reflectionValue": 8,
+        "backgroundNote": "不参与的判断最后被验证是正确的：11月下旬北证50开始剧烈波动。但你也在复盘笔记里写了：机会成本也是成本，完全回避不一定是最优。"
+      },
+      {
+        "id": "2023nov-chase-beijing",
+        "label": "北交所行情不能踏空，全力追",
+        "category": "risk_alert",
+        "description": "北证50涨疯了，同事和同行都在追。这种级别的行情一年就一次，不能错过。",
+        "effects": {
+          "researchCredibility": -7,
+          "committeeAdoption": 2,
+          "portfolioNav": 0.02,
+          "viewAccuracy": -10,
+          "clientFeedback": 1,
+          "teamTrust": -4,
+          "fatigue": 10,
+          "lifeBalance": -6,
+          "characterRelations": [
+            {
+              "characterId": "zhou_mingzhao",
+              "value": -7
+            }
+          ]
+        },
+        "evidenceLevel": 2,
+        "clarityLevel": 2,
+        "riskAwareness": 0,
+        "reflectionValue": 2,
+        "backgroundNote": "追在高位的头寸在随后的回调中损失惨重。你忽略了北交所流动性的脆弱性——极小的体量意味着进出都很难。"
+      },
+      {
+        "id": "2023nov-help",
+        "label": "帮陈星禾回测微盘策略的因子归因",
+        "category": "help_colleague",
+        "description": "陈星禾想把微盘行情拆成因子层面的归因：到底是规模因子、动量因子还是反转因子在贡献收益。帮她跑数据。",
+        "effects": {
+          "researchCredibility": 4,
+          "committeeAdoption": 2,
+          "portfolioNav": 0.005,
+          "viewAccuracy": 5,
+          "clientFeedback": 2,
+          "teamTrust": 10,
+          "fatigue": 6,
+          "lifeBalance": -1,
+          "characterRelations": [
+            {
+              "characterId": "chen_xinghe",
+              "value": 10
+            }
+          ]
+        },
+        "evidenceLevel": 12,
+        "clarityLevel": 12,
+        "riskAwareness": 14,
+        "reflectionValue": 6,
+        "backgroundNote": "因子归因结果显示微盘行情中反转因子贡献了超过50%的收益，动量因子贡献不足20%。这是典型的情绪驱动行情，不是趋势。"
+      },
+      {
+        "id": "2023nov-life",
+        "label": "微盘狂欢的时候去图书馆看了一下午书",
+        "category": "self_care",
+        "description": "所有人都在刷北交所行情的时候，你去图书馆看了一下午金融史和投资哲学。",
+        "effects": {
+          "researchCredibility": 0,
+          "committeeAdoption": -1,
+          "portfolioNav": 0,
+          "viewAccuracy": 2,
+          "clientFeedback": 0,
+          "teamTrust": 1,
+          "fatigue": -10,
+          "lifeBalance": 14,
+          "characterRelations": [
+            {
+              "characterId": "zhou_mingzhao",
+              "value": 6
+            }
+          ]
+        },
+        "evidenceLevel": 4,
+        "clarityLevel": 4,
+        "riskAwareness": 10,
+        "reflectionValue": 14,
+        "backgroundNote": "你在图书馆翻到一本讲1970年代美国漂亮50泡沫的书，里面的很多描述和当下的微盘行情出奇地相似。历史不会重复但会押韵。"
+      }
+    ],
+    [
+      {
+        "id": "2023dec-review",
+        "label": "写年度研究复盘：从复苏到AI再到微盘的三次判断",
+        "category": "deep_research",
+        "description": "全年三波大行情：疫后复苏、AI主线、华为链/微盘。诚实复盘每次判断的逻辑链、证据质量和偏差来源。",
+        "effects": {
+          "researchCredibility": 14,
+          "committeeAdoption": 8,
+          "portfolioNav": 0.01,
+          "viewAccuracy": 6,
+          "clientFeedback": 5,
+          "teamTrust": 8,
+          "fatigue": 9,
+          "lifeBalance": -4,
+          "characterRelations": [
+            {
+              "characterId": "lin_ruoning",
+              "value": 10
+            }
+          ]
+        },
+        "evidenceLevel": 14,
+        "clarityLevel": 16,
+        "riskAwareness": 14,
+        "reflectionValue": 20,
+        "backgroundNote": "复盘笔记是整个年度最有价值的研究成果。你诚实记录了两次判断成功（AI硬件、华为链）和一次偏差（消费复苏的节奏），每一次偏差都对应着一个可以改进的研究框架。"
+      },
+      {
+        "id": "2023dec-spring",
+        "label": "做春季躁动前瞻：明年什么方向最有可能躁动",
+        "category": "deep_research",
+        "description": "年末是布局春季躁动的最佳时机。用历史数据和当前景气度做春季躁动的行业筛选。",
+        "effects": {
+          "researchCredibility": 12,
+          "committeeAdoption": 9,
+          "portfolioNav": 0.015,
+          "viewAccuracy": 7,
+          "clientFeedback": 7,
+          "teamTrust": 6,
+          "fatigue": 8,
+          "lifeBalance": -4,
+          "characterRelations": [
+            {
+              "characterId": "chen_xinghe",
+              "value": 6
+            }
+          ]
+        },
+        "evidenceLevel": 14,
+        "clarityLevel": 14,
+        "riskAwareness": 10,
+        "reflectionValue": 6,
+        "backgroundNote": "历史数据显示春季躁动在AI硬件方向上的胜率超过70%，在消费方向上的胜率只有55%。但这个统计规律会不会因为2024年的特殊宏观环境而改变？"
+      },
+      {
+        "id": "2023dec-client",
+        "label": "给客户做年度总结和明年策略路演",
+        "category": "roadshow",
+        "description": "把全年的投研发现整理成客户能理解的年度策略观点。重点讲三个东西：今年的复盘、明年的框架、最被低估的机会。",
+        "effects": {
+          "researchCredibility": 6,
+          "committeeAdoption": 7,
+          "portfolioNav": 0.005,
+          "viewAccuracy": 4,
+          "clientFeedback": 14,
+          "teamTrust": 7,
+          "fatigue": 6,
+          "lifeBalance": -3,
+          "characterRelations": [
+            {
+              "characterId": "lin_ruoning",
+              "value": 6
+            }
+          ]
+        },
+        "evidenceLevel": 8,
+        "clarityLevel": 14,
+        "riskAwareness": 8,
+        "reflectionValue": 6,
+        "backgroundNote": "客户对你的年度复盘框架的评价是：诚实但不悲观，乐观但不盲目。这种平衡感是一个好分析师的标志。"
+      },
+      {
+        "id": "2023dec-bet",
+        "label": "年终排名压力下赌明年大方向",
+        "category": "risk_alert",
+        "description": "年终排名比去年差了不少。必须在最后一刻赌一个大方向把排名拉回来。",
+        "effects": {
+          "researchCredibility": -6,
+          "committeeAdoption": 2,
+          "portfolioNav": 0.01,
+          "viewAccuracy": -8,
+          "clientFeedback": 1,
+          "teamTrust": -4,
+          "fatigue": 8,
+          "lifeBalance": -6,
+          "characterRelations": [
+            {
+              "characterId": "zhou_mingzhao",
+              "value": -6
+            }
+          ]
+        },
+        "evidenceLevel": 2,
+        "clarityLevel": 2,
+        "riskAwareness": 2,
+        "reflectionValue": 2,
+        "backgroundNote": "排名压力下的赌博式判断在年底没有产生你期望的回报。周明昭说：排名是过程的沉淀，不是目的。这句话你现在懂了。"
+      },
+      {
+        "id": "2023dec-help",
+        "label": "帮三位同事分别整理年度研究贡献",
+        "category": "help_colleague",
+        "description": "年终总结周，帮林若宁、陈星禾和周明昭分别整理她们各自研究框架的年度贡献和重点发现。",
+        "effects": {
+          "researchCredibility": 3,
+          "committeeAdoption": 4,
+          "portfolioNav": 0.005,
+          "viewAccuracy": 3,
+          "clientFeedback": 3,
+          "teamTrust": 12,
+          "fatigue": 5,
+          "lifeBalance": -1,
+          "characterRelations": [
+            {
+              "characterId": "lin_ruoning",
+              "value": 6
+            },
+            {
+              "characterId": "chen_xinghe",
+              "value": 5
+            },
+            {
+              "characterId": "zhou_mingzhao",
+              "value": 5
+            }
+          ]
+        },
+        "evidenceLevel": 6,
+        "clarityLevel": 8,
+        "riskAwareness": 8,
+        "reflectionValue": 6,
+        "backgroundNote": "在整理三位同事的年度贡献时你发现：林若宁的框架帮你识别了消费复苏的节奏偏差，陈星禾的成交数据帮你确认了AI硬件的趋势，周明昭的估值框架帮你避开了微盘追涨的陷阱。你的成长离不开她们。"
+      },
+      {
+        "id": "2023dec-life",
+        "label": "年末给自己放三天假，回顾这一年的生活",
+        "category": "self_care",
+        "description": "研究员的年终不只是数收益率，也是数数这一年有没有好好生活。",
+        "effects": {
+          "researchCredibility": 0,
+          "committeeAdoption": -2,
+          "portfolioNav": 0,
+          "viewAccuracy": 2,
+          "clientFeedback": 0,
+          "teamTrust": 2,
+          "fatigue": -15,
+          "lifeBalance": 16,
+          "characterRelations": [
+            {
+              "characterId": "lin_ruoning",
+              "value": 5
+            }
+          ]
+        },
+        "evidenceLevel": 2,
+        "clarityLevel": 4,
+        "riskAwareness": 8,
+        "reflectionValue": 14,
+        "backgroundNote": "三天的空白让你看清了一件事：好的研究框架需要好的生活状态做底座。明年的策略会在你的复盘笔记里发芽，但前提是你自己先充满了电。"
+      }
+    ]
+  ]
+}

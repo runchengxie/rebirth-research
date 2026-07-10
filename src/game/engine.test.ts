@@ -12,12 +12,12 @@ import {
   hasFlag,
   makeDecision,
   nextMonth,
-  sceneForMonth,
   selectFocus,
   setFlag,
   totalRelations,
 } from "./engine";
 import { buildMonthScene } from "./content";
+import { evaluateBranchCondition } from "./branching";
 import type { GameDataYear, GameState } from "../types";
 
 function emptyYear(): GameDataYear {
@@ -86,7 +86,7 @@ describe("game engine", () => {
 
   it("walks scripted dialogue into the decision node", () => {
     const data = emptyYear();
-    const scene = sceneForMonth(0, "2025");
+    const scene = buildMonthScene(0, "2025");
     const decisionIndex = scene.nodes.findIndex((node) => node.type === "decision");
     let state = makeTestState();
 
@@ -101,7 +101,7 @@ describe("game engine", () => {
 
   it("continues to next month after decision and scene end", () => {
     const data = emptyYear();
-    const scene = sceneForMonth(0, "2025");
+    const scene = buildMonthScene(0, "2025");
     const decisionIndex = scene.nodes.findIndex((node) => node.type === "decision")!;
     let state = makeTestState();
 
@@ -261,14 +261,80 @@ describe("affection system & branching", () => {
     const flat = buildMonthScene(0, "2024"); // no relations -> 3 nodes
     expect(flat.nodes).toHaveLength(3);
     const warm = buildMonthScene(0, "2024", {
-      lin_ruoning: 70,
-      chen_xinghe: 10,
-      zhou_mingzhao: 10,
+      ...createInitialState("2024"),
+      relations: { lin_ruoning: 70, chen_xinghe: 10, zhou_mingzhao: 10 },
     });
     expect(warm.nodes).toHaveLength(4);
     const inserted = warm.nodes.find((n) => n.id === "m0-affinity");
     expect(inserted).toBeDefined();
     expect(inserted!.characterId).toBe("lin_ruoning");
     expect(inserted!.type).toBe("dialogue");
+  });
+
+  describe("conditional branching layer", () => {
+    it("evaluates branch conditions against game state", () => {
+      const base = createInitialState("2025");
+      const s: GameState = { ...base, fatigue: 80, lifeBalance: 70 };
+      expect(evaluateBranchCondition({ kind: "metric", key: "fatigue", gte: 75 }, s)).toBe(true);
+      expect(evaluateBranchCondition({ kind: "metricAtMost", key: "fatigue", lte: 50 }, s)).toBe(false);
+      expect(
+        evaluateBranchCondition(
+          { kind: "and", of: [
+            { kind: "metric", key: "lifeBalance", gte: 60 },
+            { kind: "metricAtMost", key: "fatigue", lte: 50 },
+          ] },
+          s,
+        ),
+      ).toBe(false);
+      expect(
+        evaluateBranchCondition(
+          { kind: "or", of: [
+            { kind: "metric", key: "fatigue", gte: 75 },
+            { kind: "metric", key: "lifeBalance", gte: 60 },
+          ] },
+          s,
+        ),
+      ).toBe(true);
+      expect(evaluateBranchCondition({ kind: "not", of: { kind: "metric", key: "fatigue", gte: 75 } }, s)).toBe(false);
+      expect(evaluateBranchCondition({ kind: "categoryStreak", category: "deep_research", gte: 4 }, { ...s, categoryCounts: { deep_research: 5 } })).toBe(true);
+      expect(
+        evaluateBranchCondition(
+          { kind: "affinityAny", gte: 60 },
+          { ...s, relations: { lin_ruoning: 70, chen_xinghe: 10, zhou_mingzhao: 10 } },
+        ),
+      ).toBe(true);
+    });
+
+    it("accumulates categoryCounts on each decision", () => {
+      let state = createInitialState("2025");
+      const dec = buildMonthScene(1, "2025", state).nodes.find((n) => n.type === "decision")!.decisions![0];
+      state = makeDecision(state, emptyYear(), dec);
+      expect(state.categoryCounts[dec.category]).toBe(1);
+      state = nextMonth(state);
+      state = makeDecision(state, emptyYear(), dec);
+      expect(state.categoryCounts[dec.category]).toBe(2);
+    });
+
+    it("injects a burnout branch scene and decision when fatigue is high", () => {
+      const s = { ...createInitialState("2025"), fatigue: 80 };
+      const scene = buildMonthScene(1, "2025", s);
+      expect(scene.nodes.find((n) => n.id === "route-burnout-node")).toBeDefined();
+      const decisionNode = scene.nodes.find((n) => n.type === "decision")!;
+      expect(decisionNode.decisions?.some((d) => d.id === "burnout-route-rest")).toBe(true);
+    });
+
+    it("records the active route flag through makeDecision", () => {
+      let state = { ...createInitialState("2025"), fatigue: 80 };
+      const dec = buildMonthScene(1, "2025", state)
+        .nodes.find((n) => n.type === "decision")!
+        .decisions!.find((d) => d.id === "burnout-route-rest")!;
+      state = makeDecision(state, emptyYear(), dec);
+      expect(state.flags.route_burnout).toBe(true);
+    });
+
+    it("does not inject branches when no state is passed (static build)", () => {
+      const scene = buildMonthScene(1, "2025");
+      expect(scene.nodes.find((n) => n.id === "route-burnout-node")).toBeUndefined();
+    });
   });
 });

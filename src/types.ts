@@ -118,6 +118,64 @@ export interface MonthScene {
   nodes: SceneNode[];
 }
 
+// ── Conditional branching layer ──
+//
+// A `Branch` lets accumulated run state (affection, career metrics, which
+// decision categories the player keeps favouring, story flags) reshape the
+// month's scene — not just inject one affinity-flavoured dialogue node, but
+// add genuinely different scene nodes, unlock extra decision options, and
+// rewrite the decision prompt. This is the "real multi-route" layer on top of
+// the affinity-gate bridge and the affection-driven endings.
+
+// Career metrics a branch condition may read.
+export type BranchMetricKey =
+  | "researchCredibility"
+  | "committeeAdoption"
+  | "portfolioNav"
+  | "viewAccuracy"
+  | "clientFeedback"
+  | "teamTrust"
+  | "fatigue"
+  | "lifeBalance";
+
+export type BranchCondition =
+  | { kind: "always" }
+  | { kind: "affinity"; characterId: CharacterId; gte: number }
+  | { kind: "affinityAny"; gte: number }
+  | { kind: "metric"; key: BranchMetricKey; gte: number }
+  | { kind: "metricAtMost"; key: BranchMetricKey; lte: number }
+  | { kind: "flag"; key: string; equals?: boolean | number }
+  | { kind: "categoryStreak"; category: DecisionCategory; gte: number }
+  | { kind: "month"; gte: number }
+  | { kind: "and"; of: BranchCondition[] }
+  | { kind: "or"; of: BranchCondition[] }
+  | { kind: "not"; of: BranchCondition };
+
+// What a matched branch contributes to the month it is active in.
+export interface BranchContribution {
+  // Scene nodes injected just before the decision node.
+  nodes?: SceneNode[];
+  // Extra research decisions appended to the month's decision pool.
+  decisions?: ResearchDecision[];
+  // Flags written back to GameState when this branch is active for the month.
+  setFlags?: Record<string, boolean | number>;
+  // Overrides applied to the month's decision node (text/prompt/briefs).
+  overrideDecision?: Partial<Pick<SceneNode, "text" | "prompt" | "decisionPrompt" | "briefTitle" | "briefs">>;
+}
+
+export interface Branch {
+  id: string;
+  label: string;            // human-readable, for debugging
+  when: BranchCondition;
+  contribute: BranchContribution;
+  // If true, the branch fires at most once across the whole run (tracked by a
+  // `seen_<id>` flag). Scene-flavour branches use this; route-unlocking
+  // branches usually leave it false so the route stays live while active.
+  once?: boolean;
+  // Where nodes are injected relative to the decision node.
+  injectAt?: "before-decision" | "after-memory";
+}
+
 // ── Game month data (market post-mortem from real data) ──
 
 export interface MarketSnapshot {
@@ -196,6 +254,12 @@ export interface GameState {
 
   // Branching / progression flags (affinity gates, story beats, etc.)
   flags: Record<string, boolean | number>;
+
+  // Cumulative count of each decision category the player has chosen so far.
+  // This is the primary signal that distinguishes "routes" (research-obsessed,
+  // relationship-focused, self-care-balanced, ...) without hard-coding per-month
+  // logic. Drives categoryStreak branch conditions.
+  categoryCounts: Partial<Record<DecisionCategory, number>>;
 
   // Transient: the character whose affinity crossed a gate on the most recent decision
   milestone: CharacterId | null;

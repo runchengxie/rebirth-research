@@ -244,7 +244,7 @@ export default function App() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [state, setState] = useState<GameState>(() => createState());
   const data = GAME_DATA[state.year];
-  const scene = sceneForMonth(state.monthIndex, state.year, state.relations);
+  const scene = sceneForMonth(state);
   const sceneNode = currentSceneNode(state);
   const decisionNode = sceneNode.type === "decision" ? sceneNode : null;
   const isDecision = Boolean(decisionNode);

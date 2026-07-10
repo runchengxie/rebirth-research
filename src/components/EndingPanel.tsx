@@ -22,6 +22,18 @@ export function EndingPanel({ state }: { state: GameState }) {
   } else if (state.researchCredibility >= 60 && state.lifeBalance >= 50) {
     title = `好结局：${lead.name}的闪耀研究员线`;
     copy = `研究可信度和生活平衡同时在线，${lead.name}开始把你的名字和主线研究放在一起。`;
+  } else if (state.flags.route_research && state.researchCredibility >= 70) {
+    title = "研究宗师线：深度即壁垒";
+    copy = "这一年你几乎把所有夜晚都押在了深度研究上。圈内开始用你的框架命名现象——当研究本身成了招牌，捷径反而成了最远的路。";
+  } else if (state.flags.route_relation && leadRelation >= AFFINITY_GATE) {
+    title = `圈子线：自己人·${lead.name}的人脉网`;
+    copy = "你不是单打独斗的研究员。那些顺手帮的忙、那些闭门路演的席位，最终织成了一张只属于「自己人」的网。";
+  } else if (state.flags.route_balanced && state.lifeBalance >= 60) {
+    title = "清醒线：不透支的研究者";
+    copy = "你守住了生活，也守住了判断力。别人在熬夜里把信号熬成了噪声，你却在下午茶里看穿了缝。";
+  } else if (state.flags.route_burnout && state.fatigue >= 80) {
+    title = "透支警示线：研究还在，人快没了";
+    copy = "你一次次把休息推到明天。研究札记很漂亮，体检报告很难看。下一周目，先把人留住。";
   } else if (state.fatigue >= 85) {
     title = "疲劳结局：深夜复盘线";
     copy = "你完成了很多研究，也把自己逼到极限。下一周目前，先让疲劳值降下来。";

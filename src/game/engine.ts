@@ -1,4 +1,5 @@
-import { AFFINITY_GATE, FOCUS_ACTIONS, GRADE_REVIEWS, STORY_ARCS, buildMonthScene, getTheme } from "./content";
+import { AFFINITY_GATE, BRANCHES, FOCUS_ACTIONS, GRADE_REVIEWS, STORY_ARCS, buildMonthScene, getTheme } from "./content";
+import { branchFlagsForMonth } from "./branching";
 import type {
   CharacterId,
   DecisionCategory,
@@ -75,12 +76,12 @@ export function storyForMonth(index: number, year?: string): StoryArc {
   return arc;
 }
 
-export function sceneForMonth(index: number, year?: string, relations?: Record<CharacterId, number>): MonthScene {
-  return buildMonthScene(index, year, relations);
+export function sceneForMonth(state: GameState): MonthScene {
+  return buildMonthScene(state.monthIndex, state.year, state);
 }
 
 export function currentSceneNode(state: GameState): MonthScene["nodes"][number] {
-  const scene = sceneForMonth(state.monthIndex, state.year, state.relations);
+  const scene = sceneForMonth(state);
   return scene.nodes[state.sceneNodeIndex] || scene.nodes[scene.nodes.length - 1];
 }
 
@@ -122,6 +123,7 @@ export function createInitialState(year: string): GameState {
       zhou_mingzhao: 12,
     },
     flags: {},
+    categoryCounts: {},
     milestone: null,
     history: [],
   };
@@ -316,6 +318,14 @@ export function makeDecision(state: GameState, _data: GameDataYear, decision: Re
     adjustAffection(nextRelations, characterId, focusTrustToArc, `focus:${focus.id}`);
   }
 
+  // Accumulate the chosen decision category so route branches can read a
+  // "category streak" — the primary signal distinguishing research-obsessed,
+  // relationship-focused, self-care-balanced, ... playstyles.
+  const nextCategoryCounts: Partial<Record<DecisionCategory, number>> = {
+    ...state.categoryCounts,
+    [decision.category]: (state.categoryCounts[decision.category] ?? 0) + 1,
+  };
+
   // Affinity gates: record which characters crossed the relationship threshold,
   // and surface a one-time milestone for the UI.
   const nextFlags: Record<string, boolean | number> = { ...state.flags };
@@ -326,6 +336,10 @@ export function makeDecision(state: GameState, _data: GameDataYear, decision: Re
     if (after >= AFFINITY_GATE) nextFlags[`affinity_${cid}`] = after;
     if (before < AFFINITY_GATE && after >= AFFINITY_GATE && !milestone) milestone = cid;
   });
+
+  // Record the route branches that were active while playing this month (they
+  // were already evaluated to build the scene, so this just persists them).
+  Object.assign(nextFlags, branchFlagsForMonth(state, BRANCHES));
 
   const score = scoreDecision(decision, story, focus);
 
@@ -343,6 +357,7 @@ export function makeDecision(state: GameState, _data: GameDataYear, decision: Re
     lifeBalance: nextLifeBalance,
     relations: nextRelations,
     flags: nextFlags,
+    categoryCounts: nextCategoryCounts,
     milestone,
     finished: state.monthIndex >= 11,
     history: [
@@ -397,7 +412,7 @@ export function canAdvanceScene(state: GameState): boolean {
 
 export function advanceScene(state: GameState, _data: GameDataYear): GameState {
   void _data;
-  const scene = sceneForMonth(state.monthIndex, state.year, state.relations);
+  const scene = sceneForMonth(state);
   const node = currentSceneNode(state);
   if (node.type === "decision" && !state.locked) return state;
   if (state.sceneNodeIndex < scene.nodes.length - 1) {

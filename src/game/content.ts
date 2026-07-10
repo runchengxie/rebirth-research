@@ -1,5 +1,6 @@
-import type { CharacterId, CharacterProfile, FocusAction, MarketTheme, MonthScene, ResearchDecision, SceneNode, StoryArc as StoryArcType } from "../types";
+import type { Branch, CharacterId, CharacterProfile, FocusAction, GameState, MarketTheme, MonthScene, ResearchDecision, SceneNode, StoryArc as StoryArcType } from "../types";
 import { d } from "./decisionFactory";
+import { activeBranches } from "./branching";
 import { THEMES_2025, makeDecisions2025 } from "./content2025";
 import { THEMES_2023, makeDecisions2023 } from "./content2023";
 // Re-export StoryArc for engine.ts
@@ -1106,10 +1107,197 @@ function makeResearchDecisions(year: string, monthIndex: number): ResearchDecisi
 // Scene Scripts
 // ═══════════════════════════════════════════════════════════
 
+// ═══════════════════════════════════════════════════════════
+// Conditional branching — the "real multi-route" layer
+//
+// Each branch is evaluated against the live GameState (affection, career
+// metrics, which decision categories the player keeps favouring, story flags).
+// A matched branch injects scene nodes, appends decision options, can rewrite
+// the decision prompt, and marks a `route_*` flag. This sits on top of the
+// affinity-gate bridge node and the affection-driven endings — together they
+// make the player's accumulated choices visibly reshape the story.
+// ═══════════════════════════════════════════════════════════
+
+export const BRANCHES: Branch[] = [
+  {
+    id: "route-research",
+    label: "研究狂热线",
+    when: {
+      kind: "or",
+      of: [
+        { kind: "categoryStreak", category: "deep_research", gte: 4 },
+        { kind: "categoryStreak", category: "data_deep_dive", gte: 4 },
+      ],
+    },
+    contribute: {
+      nodes: [
+        {
+          id: "route-research-node",
+          type: "dialogue",
+          characterId: "lin_ruoning",
+          speaker: "林若宁",
+          role: "投研部前辈",
+          mood: "认真",
+          text: "林若宁把一份还冒热气的早餐推到你手边：你这一周第三次半夜把研报发我了。我不是嫌烦——我是怕你先把身体熬没了。不过…你这版框架，确实比上个月利落。",
+          prompt: "点击继续。",
+          pose: "soft",
+          bg: "research-room",
+          bgm: "morning-loop",
+          voiceCue: "key",
+        },
+      ],
+      decisions: [
+        d({
+          id: "research-route-confidential",
+          label: "接下组里加密的专项深度课题",
+          category: "deep_research",
+          description: "有个不能写进公开报告的课题，点名要你。回报是研究可信度大涨，代价是更深的熬夜。",
+          to: "lin_ruoning",
+          val: 3,
+          fx: { researchCredibility: 16, committeeAdoption: 6, portfolioNav: 0.02, viewAccuracy: 6, fatigue: 14, lifeBalance: -10 },
+          ev: 18, cl: 16, rk: 10, rf: 6,
+          note: "越深的课题越孤独，但也越早被大佬看见。",
+        }),
+      ],
+      setFlags: { route_research: true },
+    },
+  },
+  {
+    id: "route-burnout",
+    label: "过度透支线",
+    when: { kind: "metric", key: "fatigue", gte: 75 },
+    contribute: {
+      nodes: [
+        {
+          id: "route-burnout-node",
+          type: "dialogue",
+          characterId: "zhou_mingzhao",
+          speaker: "周明昭",
+          role: "宏观策略师",
+          mood: "警觉",
+          text: "周明昭盯着你看了两秒：你脸色比上周的回撤还难看。研究是长跑，不是拿命填K线。我见过太多聪明人，栽在「再熬一夜就出成果」上。",
+          prompt: "点击继续。",
+          pose: "serious",
+          bg: "research-room",
+          bgm: "morning-loop",
+          voiceCue: "key",
+        },
+      ],
+      overrideDecision: {
+        text: "你盯着屏幕，眼睛发酸。也许今天该先把自己救回来，再谈研究。",
+        prompt: "先安排本话日程——这一次，别再无视身体。",
+        decisionPrompt: "这一话，要不要给自己留一条退路？",
+      },
+      decisions: [
+        d({
+          id: "burnout-route-rest",
+          label: "今天准时下班，强制休息",
+          category: "self_care",
+          description: "把电脑合上。明天的清醒，比今晚多敲两千字值钱。",
+          fx: { lifeBalance: 14, fatigue: -18, researchCredibility: 2, teamTrust: 2 },
+          ev: 4, cl: 4, rk: 8, rf: 12,
+          note: "休息不是偷懒，是给判断力续命。",
+        }),
+      ],
+      setFlags: { route_burnout: true },
+    },
+  },
+  {
+    id: "route-relation",
+    label: "关系深耕线",
+    when: {
+      kind: "and",
+      of: [
+        { kind: "affinityAny", gte: AFFINITY_GATE },
+        {
+          kind: "or",
+          of: [
+            { kind: "categoryStreak", category: "help_colleague", gte: 3 },
+            { kind: "categoryStreak", category: "roadshow", gte: 3 },
+          ],
+        },
+      ],
+    },
+    contribute: {
+      nodes: [
+        {
+          id: "route-relation-node",
+          type: "dialogue",
+          characterId: "chen_xinghe",
+          speaker: "陈星禾",
+          role: "量化/资金信号研究员",
+          mood: "俏皮",
+          text: "陈星禾压低声音：你帮我把那版模型兜底之后，我欠你一个人情。下周的闭门路演，我偷偷给你留了个席位——别声张，算是「自己人」的待遇。",
+          prompt: "点击继续。",
+          pose: "excited",
+          bg: "research-room",
+          bgm: "morning-loop",
+          voiceCue: "key",
+        },
+      ],
+      decisions: [
+        d({
+          id: "relation-route-insight",
+          label: "赴约闭门路演，混个「自己人」",
+          category: "roadshow",
+          description: "不是正式路演，是圈内人的小范围交流。信息密度高，人情也重。",
+          to: "chen_xinghe",
+          val: 5,
+          fx: { researchCredibility: 8, committeeAdoption: 4, clientFeedback: 4, teamTrust: 8, fatigue: 6, lifeBalance: -4 },
+          ev: 10, cl: 10, rk: 8, rf: 8,
+          note: "圈子的门，往往是被「顺手帮的忙」悄悄推开。",
+        }),
+      ],
+      setFlags: { route_relation: true },
+    },
+  },
+  {
+    id: "route-balanced",
+    label: "平衡生活线",
+    when: {
+      kind: "and",
+      of: [
+        { kind: "metric", key: "lifeBalance", gte: 60 },
+        { kind: "metricAtMost", key: "fatigue", lte: 50 },
+      ],
+    },
+    contribute: {
+      nodes: [
+        {
+          id: "route-balanced-node",
+          type: "dialogue",
+          characterId: "lin_ruoning",
+          speaker: "林若宁",
+          role: "投研部前辈",
+          mood: "温柔",
+          text: "林若宁笑了笑：你最近状态不太一样，不像上个月那样绷着。下午茶的时候你突然说「其实动量因子在退潮」，我愣了一下——那是只有脑子清亮的人才看得到的缝。",
+          prompt: "点击继续。",
+          pose: "smile",
+          bg: "research-room",
+          bgm: "morning-loop",
+          voiceCue: "key",
+        },
+      ],
+      decisions: [
+        d({
+          id: "balanced-route-insight",
+          label: "顺着清亮的脑子，写一份冷静的周度观察",
+          category: "data_deep_dive",
+          description: "不追热点，只把本周信号理清楚。状态好的时候，这种冷静最有杀伤力。",
+          fx: { viewAccuracy: 10, researchCredibility: 8, portfolioNav: 0.015, lifeBalance: 2, fatigue: 4 },
+          ev: 12, cl: 14, rk: 10, rf: 10,
+          note: "生活平衡不是研究的对立面，它是判断力的底色。",
+        }),
+      ],
+      setFlags: { route_balanced: true },
+    },
+  },
+];
+
 export function buildMonthScene(
   monthIndex: number,
   year?: string,
-  relations?: Record<CharacterId, number>,
+  state?: GameState,
 ): MonthScene {
   const actualYear = year || "2025";
   const story = STORY_ARCS[monthIndex % STORY_ARCS.length];
@@ -1123,67 +1311,95 @@ export function buildMonthScene(
   }
 
   // Affinity gate: if the month's arc character has crossed the relationship
-  // threshold, inject a one-time "relationship moment" node. This is what
-  // makes affection actually change the script — not just a number on a meter.
+  // threshold, inject a "relationship moment" node. Now reads the live state.
   const affinityNode: SceneNode | null =
-    relations && (relations[story.characterId] ?? 0) >= AFFINITY_GATE
+    state && (state.relations[story.characterId] ?? 0) >= AFFINITY_GATE
       ? buildAffinityMoment(story, monthIndex)
       : null;
 
+  // Evaluate route branches against the live state.
+  const branches = state ? activeBranches(state, BRANCHES) : [];
+  const branchNodesAfterMemory: SceneNode[] = [];
+  const branchNodesBeforeDecision: SceneNode[] = [];
+  const extraDecisions: ResearchDecision[] = [];
+  let decisionOverride: Branch["contribute"]["overrideDecision"] | undefined;
+  for (const b of branches) {
+    const at = b.injectAt ?? "before-decision";
+    if (at === "after-memory") branchNodesAfterMemory.push(...(b.contribute.nodes ?? []));
+    else branchNodesBeforeDecision.push(...(b.contribute.nodes ?? []));
+    extraDecisions.push(...(b.contribute.decisions ?? []));
+    if (b.contribute.overrideDecision) {
+      decisionOverride = { ...decisionOverride, ...b.contribute.overrideDecision };
+    }
+  }
+
   // Default scene for non-prologue months
   const decisions = makeResearchDecisions(actualYear, monthIndex);
+
+  const memoryNode: SceneNode = {
+    id: `m${monthIndex}-memory`,
+    type: "dialogue",
+    characterId: story.characterId,
+    speaker: "内心独白",
+    role: "只有你知道",
+    mood: "判断",
+    text: theme.protagonistMemory,
+    prompt: "点击继续，把未来记忆整理成当下说得通的研究假设。",
+    pose: "thinking",
+    bg: "research-room",
+    bgm: "morning-loop",
+    voiceCue: "silent",
+  };
+
+  const colleagueNode: SceneNode = {
+    id: `m${monthIndex}-colleague`,
+    type: "dialogue",
+    characterId: story.characterId,
+    speaker: story.speaker,
+    role: story.role,
+    mood: story.mood,
+    text: `${story.line} ${theme.publicContext}`,
+    prompt: "点击继续，进入本月研究选择。",
+    pose: "soft",
+    bg: "research-room",
+    bgm: "morning-loop",
+    voiceCue: "key",
+  };
+
+  const decisionNode: SceneNode = {
+    id: `m${monthIndex}-decision`,
+    type: "decision",
+    characterId: story.characterId,
+    speaker: story.speaker,
+    role: story.role,
+    mood: story.mood,
+    text: `先安排本话日程，然后选择一个你愿意负责到底的研究方向。`,
+    prompt: story.mission,
+    pose: "smile",
+    bg: "briefing-room",
+    bgm: "morning-loop",
+    voiceCue: "key",
+    decisions: [...decisions, ...extraDecisions],
+    decisionPrompt: story.mission,
+    briefTitle: `${theme.period}：${theme.title}`,
+    briefs: [
+      { characterId: "lin_ruoning", label: "基本面视角", text: theme.publicContext.split("。")[0] + "。" },
+      { characterId: "chen_xinghe", label: "量化信号", text: "成交结构和大单流向会先于价格给出方向确认，量比价诚实。" },
+      { characterId: "zhou_mingzhao", label: "宏观风控", text: "别只盯机会。能说清楚风险边界、估值分位和反身性，才有资格入场。" },
+    ],
+  };
+
+  if (decisionOverride) {
+    Object.assign(decisionNode, decisionOverride);
+  }
+
   const nodes: SceneNode[] = [
-    {
-      id: `m${monthIndex}-memory`,
-      type: "dialogue",
-      characterId: story.characterId,
-      speaker: "内心独白",
-      role: "只有你知道",
-      mood: "判断",
-      text: theme.protagonistMemory,
-      prompt: "点击继续，把未来记忆整理成当下说得通的研究假设。",
-      pose: "thinking",
-      bg: "research-room",
-      bgm: "morning-loop",
-      voiceCue: "silent",
-    },
+    memoryNode,
+    ...branchNodesAfterMemory,
     ...(affinityNode ? [affinityNode] : []),
-    {
-      id: `m${monthIndex}-colleague`,
-      type: "dialogue",
-      characterId: story.characterId,
-      speaker: story.speaker,
-      role: story.role,
-      mood: story.mood,
-      text: `${story.line} ${theme.publicContext}`,
-      prompt: "点击继续，进入本月研究选择。",
-      pose: "soft",
-      bg: "research-room",
-      bgm: "morning-loop",
-      voiceCue: "key",
-    },
-    {
-      id: `m${monthIndex}-decision`,
-      type: "decision",
-      characterId: story.characterId,
-      speaker: story.speaker,
-      role: story.role,
-      mood: story.mood,
-      text: `先安排本话日程，然后选择一个你愿意负责到底的研究方向。`,
-      prompt: story.mission,
-      pose: "smile",
-      bg: "briefing-room",
-      bgm: "morning-loop",
-      voiceCue: "key",
-      decisions,
-      decisionPrompt: story.mission,
-      briefTitle: `${theme.period}：${theme.title}`,
-      briefs: [
-        { characterId: "lin_ruoning", label: "基本面视角", text: theme.publicContext.split("。")[0] + "。" },
-        { characterId: "chen_xinghe", label: "量化信号", text: "成交结构和大单流向会先于价格给出方向确认，量比价诚实。" },
-        { characterId: "zhou_mingzhao", label: "宏观风控", text: "别只盯机会。能说清楚风险边界、估值分位和反身性，才有资格入场。" },
-      ],
-    },
+    colleagueNode,
+    ...branchNodesBeforeDecision,
+    decisionNode,
   ];
 
   return { id: `${year || "default"}-m${monthIndex}`, year, monthIndex, month, label, theme, nodes };

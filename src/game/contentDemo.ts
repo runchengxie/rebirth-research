@@ -222,9 +222,9 @@ function pool0(): ResearchDecision[] {
     {
       ...d({
         id: "demo-a-peer",
-        label: "午休时跟赵承宇去交易台看盘",
+        label: "午休时跟赵承宇去量化组对数据",
         category: "data_deep_dive",
-        description: "研究说得再漂亮，没承接就是纸上谈兵。去看看真实买单怎么说话。",
+        description: "研究说得再漂亮，回测不收敛就是空中楼阁。去量化组看看真实成交怎么说话。",
         to: "zhao_chengyu",
         val: 5,
         fx: { viewAccuracy: 7, teamTrust: 8, researchCredibility: 3, fatigue: 3, lifeBalance: -2 },
@@ -534,9 +534,9 @@ export function buildDemoChapter(monthIndex: number, state?: GameState): MonthSc
     type: "dialogue",
     characterId: "zhao_chengyu",
     speaker: "赵承宇",
-    role: "交易台同级同事",
+    role: "量化组同级同事",
     mood: "随意",
-    text: "交易台那边的赵承宇探进头来：顾研究员，你又在会议室拆框架啦？你那套逻辑我信一半——另一半得看盘口认不认。回头带你看笔真实成交？",
+    text: "量化组的赵承宇探进头来：顾研究员，你又在会议室拆框架啦？你那套逻辑我信一半——另一半得看数据认不认。回头一起过回测？",
     prompt: "点击继续，进入本月研究选择。",
     pose: "soft",
     bg: "research-room",

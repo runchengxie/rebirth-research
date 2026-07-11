@@ -86,13 +86,13 @@ const DEBT_BRANCH: Branch = {
 
 // 赵承宇「分歧张力」线：把原来单次 once 的数据插话，升级成带走向的多节点弧。
 // 赵现为量化组同事，张力从「研究框架 vs 交易盘口」改为「研究框架 vs 量化数据」。
-// 全程不进浪漫线、不进图鉴，framework 借给陈星禾；基调是同级同事「能掐架也能兜底」。
+// 全程不进浪漫线、不进图鉴，framework 借给陈星禾；基调是同级好兄弟「该较真较真、该兜底兜底」。
 
-// 分歧 beat：赵承宇和你在一笔数据上掐起来。三个选项各自带 setsFlags，把「你这
+// 分歧 beat：赵承宇和你在一笔数据上意见相左。三个选项各自带 setsFlags，把「你这
 // 次的立场」写进 peer_stand / peer_yield / peer_fence，并统一置 peer_tension 防重复触发。
 const PEER_CLASH_BRANCH: Branch = {
   id: "peer-zhao-clash",
-  label: "赵承宇和你掐起来了",
+  label: "赵承宇和你意见相左",
   when: {
     kind: "and",
     of: [
@@ -112,7 +112,7 @@ const PEER_CLASH_BRANCH: Branch = {
         speaker: "赵承宇",
         role: "量化组同级同事",
         mood: "认真",
-        text: "赵承宇把平板往你桌上一扣：你这因子我复算了一遍，样本区间挑得巧，幸存者偏差没剔干净。你信你的框架，我信我的数据——这次咱俩必有一错。你打算怎么收场？",
+        text: "赵承宇把平板往你桌上一扣：你这因子我复算了一遍，样本区间挑得巧，幸存者偏差没剔干净。你认你的框架，我认我的数据——咱俩得对一遍才能落槌。你说怎么收？",
         prompt: "点击继续。",
         pose: "soft",
         bg: "research-room",
@@ -124,9 +124,9 @@ const PEER_CLASH_BRANCH: Branch = {
       {
         ...d({
           id: "peer-clash-stand",
-          label: "当场用框架驳他：样本剔除是口径问题，先等交叉验证",
+          label: "当场把框架摊开跟他核对：样本剔除是口径问题，先等交叉验证",
           category: "committee_defense",
-          description: "你坚持框架，把数据的扰动当成噪声。他皱了眉，但没再压你。这一下有点僵，但锚不能丢。",
+          description: "你坚持框架，把数据的扰动当成噪声。他皱了眉，但点头说有道理。锚不能丢，他也记下了你的坚持。",
           to: "zhao_chengyu",
           val: 10,
           fx: { researchCredibility: 4, teamTrust: 2, fatigue: 2 },
@@ -174,7 +174,7 @@ const PEER_CLASH_BRANCH: Branch = {
 // 每条 only 在对应立场旗标为真、且进入下半年（month>=7）时触发一次。
 const PEER_RESOLVE_STAND: Branch = {
   id: "peer-zhao-resolve-stand",
-  label: "赵承宇服了你的框架",
+  label: "赵承宇认了你的框架",
   when: { kind: "and", of: [{ kind: "flag", key: "peer_stand" }, { kind: "month", gte: 7 }] },
   once: true,
   injectAt: "after-memory",
@@ -208,7 +208,7 @@ const PEER_RESOLVE_STAND: Branch = {
 
 const PEER_RESOLVE_YIELD: Branch = {
   id: "peer-zhao-resolve-yield",
-  label: "赵承宇得意，但你也不亏",
+  label: "赵承宇乐了，但你也稳",
   when: { kind: "and", of: [{ kind: "flag", key: "peer_yield" }, { kind: "month", gte: 7 }] },
   once: true,
   injectAt: "after-memory",
@@ -277,7 +277,7 @@ const PEER_RESOLVE_FENCE: Branch = {
 // ── 赵承宇（量化组同级同事）全年「在场」+ 延迟后果弧 ──
 // 三处分支共同构成一条干净的 peer 线：第一话求助（埋种）→ 年中数据压力测试
 // （再加一次在场）→ 第九话还人情（延迟后果兑现）。全部不进浪漫线、不进图鉴，
-// framework 一律借给陈星禾；基调是同级同事之间「记人情、互相兜底」的正向友情。
+// framework 一律借给陈星禾；基调是同级好兄弟之间「记人情、互相兜底」的正向友谊。
 
 // 第一话：赵承宇卡在一笔因子回测上，玩家可抽半天帮一把。选了则好感给赵承宇，
 // 并在引擎里埋下 helped_zhao 旗标（第九话还人情）。month gte 1 = 第一话（序章为 0）。
@@ -296,7 +296,7 @@ const PEER_HELP_BRANCH: Branch = {
         speaker: "赵承宇",
         role: "量化组同级同事",
         mood: "随意",
-        text: "赵承宇端着咖啡蹭到你工位：有个因子回测卡住了，分组收益怎么都对不齐基准。你们研究员不是最会抠这种细节吗？帮我把这口气顺了，下回你那份研报要过投委会，我帮你把数据先核一遍。",
+        text: "赵承宇端着咖啡蹭到你工位：有个因子回测卡住了，分组收益怎么都对不齐基准。你们研究员最会抠这种细节，对吧？帮我把这口气顺了，下回你那份研报要过投委会，我帮你把数据先核一遍。",
         prompt: "点击继续。",
         pose: "soft",
         bg: "research-room",

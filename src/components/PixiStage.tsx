@@ -12,8 +12,8 @@ import misakiNeutralSprite from "../../assets/vn/characters/misaki-neutral.png";
 import rinaSmileSprite from "../../assets/vn/characters/rina-smile.png";
 import rinaSoftSprite from "../../assets/vn/characters/rina-soft.png";
 import rinaThinkingSprite from "../../assets/vn/characters/rina-thinking.png";
-// 赵承宇占位立绘（真图由 杂鱼 后续补，当前仅作休眠彩蛋，不在 route 中激活）。
-import zhaoChengyuPlaceholder from "../../assets/vn/characters/zhao-placeholder.png";
+// 赵承宇立绘（已生成统一画风；当前仍为休眠彩蛋，不激活 route）。
+import zhaoNeutralSprite from "../../assets/vn/characters/zhao-neutral.png";
 import type { CharacterId, CharacterProfile } from "../types";
 
 interface PixiStageProps {
@@ -69,9 +69,9 @@ const characterAssets: Partial<Record<CharacterId, Record<string, string>>> = {
     serious: meiSeriousSprite,
     soft: meiSoftSprite,
   },
-  // 同级同事占位：赵承宇当前不进入 route，sprite 恒为不可见，仅作未来彩蛋。
+  // 同级同事立绘：赵承宇真图已生成，仍保留未来可被 route 唤醒的插槽。
   zhao_chengyu: {
-    neutral: zhaoChengyuPlaceholder,
+    neutral: zhaoNeutralSprite,
   },
 };
 
@@ -239,7 +239,7 @@ export function PixiStage({ activeCharacter, backgroundId = "research-room", act
         lin_ruoning: new Sprite(characterTextures.lin_ruoning![defaultPose.lin_ruoning!]),
         chen_xinghe: new Sprite(characterTextures.chen_xinghe![defaultPose.chen_xinghe!]),
         zhou_mingzhao: new Sprite(characterTextures.zhou_mingzhao![defaultPose.zhou_mingzhao!]),
-        // 占位 sprite：赵承宇恒不可见（非 active），仅保留在未来可被 route 唤醒。
+        // 赵承宇 sprite：真图已生成，当前仍为休眠彩蛋，仅保留在未来可被 route 唤醒。
         zhao_chengyu: new Sprite(characterTextures.zhao_chengyu![defaultPose.zhao_chengyu!]),
       };
 

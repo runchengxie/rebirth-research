@@ -12,6 +12,8 @@ import misakiNeutralSprite from "../../assets/vn/characters/misaki-neutral.png";
 import rinaSmileSprite from "../../assets/vn/characters/rina-smile.png";
 import rinaSoftSprite from "../../assets/vn/characters/rina-soft.png";
 import rinaThinkingSprite from "../../assets/vn/characters/rina-thinking.png";
+// 赵承宇占位立绘（真图由 杂鱼 后续补，当前仅作休眠彩蛋，不在 route 中激活）。
+import zhaoChengyuPlaceholder from "../../assets/vn/characters/zhao-placeholder.png";
 import type { CharacterId, CharacterProfile } from "../types";
 
 interface PixiStageProps {
@@ -67,12 +69,17 @@ const characterAssets: Partial<Record<CharacterId, Record<string, string>>> = {
     serious: meiSeriousSprite,
     soft: meiSoftSprite,
   },
+  // 同级同事占位：赵承宇当前不进入 route，sprite 恒为不可见，仅作未来彩蛋。
+  zhao_chengyu: {
+    neutral: zhaoChengyuPlaceholder,
+  },
 };
 
 const defaultPose: Partial<Record<CharacterId, string>> = {
   lin_ruoning: "smile",
   chen_xinghe: "neutral",
   zhou_mingzhao: "neutral",
+  zhao_chengyu: "neutral",
 };
 
 const routeTint: Record<CharacterProfile["color"], number> = {
@@ -232,6 +239,8 @@ export function PixiStage({ activeCharacter, backgroundId = "research-room", act
         lin_ruoning: new Sprite(characterTextures.lin_ruoning![defaultPose.lin_ruoning!]),
         chen_xinghe: new Sprite(characterTextures.chen_xinghe![defaultPose.chen_xinghe!]),
         zhou_mingzhao: new Sprite(characterTextures.zhou_mingzhao![defaultPose.zhou_mingzhao!]),
+        // 占位 sprite：赵承宇恒不可见（非 active），仅保留在未来可被 route 唤醒。
+        zhao_chengyu: new Sprite(characterTextures.zhao_chengyu![defaultPose.zhao_chengyu!]),
       };
 
       (Object.values(characterSprites) as Sprite[]).forEach((sprite) => {

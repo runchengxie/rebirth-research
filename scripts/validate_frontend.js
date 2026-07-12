@@ -70,6 +70,8 @@ for (const script of [
 for (const file of [
   "src/main.tsx",
   "src/App.tsx",
+  "src/app/GameScreen.tsx",
+  "src/app/useGameController.ts",
   "src/types.ts",
   "src/styles.css",
   "src/components/PixiStage.tsx",
@@ -124,18 +126,18 @@ for (const file of [
   requireFile(file);
 }
 
-const app = requireText("src/App.tsx", [
+requireText("src/App.tsx", ["GameScreen", "Chapter1Spike", "pixivn"]);
+requireText("src/app/GameScreen.tsx", [
   "PixiStage",
   "FocusSelector",
   "CharacterRoutes",
+  "GAME_YEARS",
+]);
+requireText("src/app/useGameController.ts", [
   "ProceduralBgm",
   "NarrativeAudio",
-  "pixivn",
   "staticStage",
 ]);
-if (!app.includes("GAME_YEARS")) {
-  fail("src/App.tsx 没有使用正式年份列表");
-}
 
 requireText("src/components/PixiStage.tsx", [
   "pixi.js",

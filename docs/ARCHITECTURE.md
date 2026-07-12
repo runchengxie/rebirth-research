@@ -1,43 +1,49 @@
 # 架构说明
 
-本文档说明项目当前的模块边界、状态流转、数据关系和部署方式。历史迁移过程可以从提交记录查看，这里只保留维护代码时需要知道的现状。
+本文档说明项目当前的模块边界、状态流转、数据关系和部署方式。历史调整从提交记录查看，这里只保留维护代码时需要知道的现状。
 
 ## 总体结构
 
-项目是纯前端静态应用。React 负责页面和交互，PixiJS 负责剧情舞台，`src/game/` 负责剧情装配、状态推进和数值结算。
+项目是纯前端静态应用。React 负责页面和交互，PixiJS 与 Canvas 负责剧情舞台，`src/game/` 负责剧情装配、状态推进和数值结算。
 
 ```text
 浏览器
   │
-  ├── React 页面和组件
+  ├── React 单视口页面
   │     ├── 设置、年份选择和流程控制
-  │     ├── 对话、研究方案、评分和结局
-  │     └── 研究札记、知识卡和研究室状态
+  │     ├── 对白、观点卡、日程和研究方案
+  │     └── 记录抽屉、知识卡和结局
   │
-  ├── PixiJS 舞台
-  │     ├── 场景背景
-  │     ├── 角色立绘
+  ├── 舞台层
+  │     ├── PixiJS 常规角色舞台
+  │     ├── 赵承宇 Canvas 舞台
   │     └── WebGL 失败时的静态回退
   │
-  └── 游戏层
-        ├── 内容数据
-        ├── 场景装配
-        ├── 剧情运行时
-        ├── 结算引擎
-        └── 条件分支
+  ├── 游戏层
+  │     ├── 内容数据
+  │     ├── 场景装配
+  │     ├── 剧情运行时
+  │     ├── 结算引擎
+  │     └── 条件分支
+  │
+  └── 浏览器本地存储
+        └── 按年份保存完整 GameState
 ```
 
 构建产物位于 `dist/`，可以部署到 GitHub Pages，也可以通过离线分享包直接打开。
 
 ## 前端入口
 
-`src/main.tsx` 创建 React 根节点并加载 `src/App.tsx`。
+`src/main.tsx` 创建 React 根节点，依次加载基础样式和单视口覆盖样式。
 
-前端入口分为三层：
+前端入口分为四层：
 
 - `src/App.tsx`：顶层组合，负责默认游戏和 Pixi'VN 原型入口切换
-- `src/app/useGameController.ts`：年份深链、周目状态、场景推进、决策结算、设置、主题和音频控制
-- `src/app/GameScreen.tsx`：PixiJS 舞台、状态栏、研究方案、复盘、札记和结局页面装配
+- `src/app/useGameController.ts`：年份深链、存档恢复、场景推进、决策结算、设置、主题和音频控制
+- `src/app/ImmersiveGameScreen.tsx`：单视口舞台、对白、观点卡、研究选择和档案抽屉
+- `src/immersive.css`：主流程布局和响应式约束
+
+`src/app/GameScreen.tsx` 是旧版长页面装配，当前没有从默认入口挂载，暂时保留用于对照。
 
 应用没有路由库。年份和原型入口通过 URL 查询参数控制。
 
@@ -51,7 +57,7 @@
 
 ### 内容模块
 
-`src/game/content.ts` 只负责重新导出以下模块：
+`src/game/content.ts` 重新导出以下模块：
 
 - `characters.ts`：角色资料、关系门槛、日程和评分评语
 - `storyArcs.ts`：公共故事线、年份主题入口和轮换文案
@@ -60,16 +66,9 @@
 
 年份内容位于 `src/game/content/*.json`。加载器分布在 `content2023.ts`、`content2024.ts` 和 `content2025.ts`。`contentDemo.ts` 保留示范章节。
 
-`src/game/content/schema.ts` 会校验：
+`src/game/content/schema.ts` 校验年份字段、12 个月度主题、12 组研究方案、研究方案类别、效果字段、角色编号和重复编号。
 
-- 年份字段
-- 12 个月度主题
-- 12 组研究方案
-- 研究方案类别
-- 效果字段和角色编号
-- 重复的研究方案编号
-
-2025 年加载器还会补充已知事件、业务事实和三位导师的分歧假设。
+2025 年加载器还会补充已知事件、业务事实和三位导师的分歧假设。分歧假设保持角色方法论边界，页面直接从 `MarketTheme.competingHypotheses` 生成三张观点卡。
 
 ### 场景装配
 
@@ -77,11 +76,12 @@
 
 场景通常包含：
 
-1. 当月主题和人物对白。
-2. 未来记忆节点。
+1. 未来记忆节点。
+2. 三种研究假设节点。
 3. 条件分支注入的额外对白。
-4. 研究方案节点。
-5. 关系门槛和后续旗标触发的桥段。
+4. 关系门槛触发的桥段。
+5. 当月同事对白。
+6. 研究方案节点。
 
 调用方没有提供状态时，场景仍然可以静态生成。测试和运行时都会依赖这个能力。
 
@@ -94,9 +94,19 @@
 - `currentSceneNode`：取得当前节点
 - `canAdvanceScene`：判断能否继续
 - `advanceScene`：推进节点或进入下一话
+- `canRewindScene`：判断能否回看上一段对白
+- `rewindScene`：在结算前把游标后退一个节点
 - `nextMonth`：清理本月锁定状态并进入下一月
 
-运行时只管理流程，不计算评分和关系变化。当前状态保存在 React 内存中，没有持久化存档。
+运行时只管理流程，不计算评分和关系变化。回看在 `locked` 为 `true` 时禁用，避免撤销已经写入的结算结果。
+
+### 状态持久化
+
+`src/app/useGameController.ts` 以 `rebirthGameState:v1:<year>` 为键保存完整 `GameState`。
+
+读取存档时会先创建当前版本的初始状态，再合并可用字段。关系、旗标、类别计数、知识卡和研究室状态分别处理，旧存档缺少字段时使用当前默认值。年份、月份和剧情游标不合法时放弃该存档。
+
+每次状态变化都会写回当前年份。切换年份时优先恢复该年份存档，重新开始则创建当前年份的新状态并覆盖旧存档。
 
 ### 结算引擎
 
@@ -111,22 +121,13 @@
 - 月度评分和业务事实结算
 - 导师关系路线和赵承宇最佳搭档结局判定
 
-评分由证据、清晰度、风险意识、沟通、生活平衡、推荐跟踪和反思加成组成。短期市场价格当前不参与判断，`makeDecision` 也没有读取传入年份数据中的真实涨跌幅。
+评分由证据、清晰度、风险意识、沟通、生活平衡、推荐跟踪和反思加成组成。短期市场价格当前不参与判断。
 
 ### 条件分支
 
 `src/game/branching.ts` 负责判断分支条件。`src/game/branches.ts` 定义分支内容。
 
-条件可以读取：
-
-- 指标上下限
-- 角色关系
-- 决策类别累计次数
-- 月份
-- 旗标
-- 与、或、非组合条件
-
-命中的分支可以插入对白、追加研究方案、改写提示语并记录路线旗标。
+条件可以读取指标上下限、角色关系、决策类别累计次数、月份、旗标，以及与、或、非组合条件。命中的分支可以插入对白、追加研究方案、改写提示语并记录路线旗标。
 
 ## 数据关系
 
@@ -137,36 +138,26 @@
 | 年份剧情内容 | `src/game/content/*.json` | 前端实际使用 | `schema.ts` 和 Vitest |
 | 运行时年份数据 | `src/data/gameData.ts` | 装配场景和叙事快照 | TypeScript 和 Vitest |
 | 静态股票选项数据 | `data/` | 独立数据包，当前不接入 React | `validate_data.py` |
-| 市场复盘生成结果 | `market-review-*.json` | 独立研究工具输出，当前不接入 React | `test_build_data.py` 覆盖生成逻辑 |
-
-### 年份剧情内容
-
-这是运行时真正消费的数据。每年包含主题和研究方案，经过 TypeScript 加载器后进入场景装配层。
-
-### 运行时年份数据
+| 市场复盘生成结果 | `market-review-*.json` | 独立研究工具输出，当前不接入 React | `test_build_data.py` |
 
 `src/data/gameData.ts` 为每个正式年份和 `demo` 创建 12 个月场景。当前市场快照由剧情主题派生，收益字段为 0，行业和风格数据为空。
 
-### 静态股票选项数据
+`data/YYYY.json`、`data/game-data.js` 和 `data/manifest.json` 当前只由校验脚本和前端结构检查读取。
 
-`data/YYYY.json` 每月包含四个股票选项和一个最佳选项。`data/game-data.js` 是同一数据的浏览器全局变量版本。`data/manifest.json` 记录年份和文件清单。
-
-这些文件当前只由校验脚本和前端结构检查读取。
-
-### 市场复盘生成结果
-
-`scripts/build_data.py` 读取本地 Parquet 数据并输出月度代理指数、行业轮动和风格因子。输出使用 `benchmarks` 字段，文件名带 `market-review-` 前缀。
-
-生成器默认输出到 `data/`，维护时建议通过 `--out-dir generated/market-review` 使用单独目录，以免和静态股票选项数据混放。
+`scripts/build_data.py` 读取本地 Parquet 数据并输出月度代理指数、行业轮动和风格因子。维护时建议通过 `--out-dir generated/market-review` 使用单独目录。
 
 ## 舞台与资源
 
-`src/components/PixiStage.tsx` 使用 PixiJS 加载：
+`src/components/PixiStage.tsx` 加载常规背景和角色立绘。`src/app/useGameController.ts` 会先检测 WebGL，失败时页面使用静态舞台。
 
-- `assets/vn/backgrounds/` 下的场景背景
-- `assets/vn/characters/` 下的角色立绘
+`src/components/ZhaoStage.tsx` 通过 Canvas 加载赵承宇三张立绘。处理步骤包括：
 
-`src/app/useGameController.ts` 会先检测 WebGL。设备不支持 WebGL、驱动不稳定或初始化失败时，页面会使用静态舞台。
+1. 把中性近白色像素的透明度降为 0。
+2. 对阈值边缘做透明度羽化。
+3. 轻度降低饱和度和对比度。
+4. 使用和其他立绘接近的舞台缩放、底部锚点与阴影。
+
+该处理是源资源重绘前的运行时修复。替换为透明背景和统一画风的新资源后，应删掉色键处理。
 
 可用查询参数：
 
@@ -180,7 +171,7 @@
 
 `src/audio/sfx.ts` 提供翻页、选择和结算提示音。对白节点带有录音地址时会播放录音。没有录音且节点标记为关键语音时，会尝试使用 Web Speech API 调用系统中文语音。
 
-语音效果依赖操作系统和浏览器提供的语音列表，项目本身不下载在线语音模型。
+观点交锋节点由页面显示三张观点卡，控制器不会让当前角色朗读拼接后的三人对白。
 
 ## Pixi'VN 原型
 
@@ -188,12 +179,10 @@
 
 只有 URL 包含 `?pixivn=1` 时，`App.tsx` 才会动态加载该模块。默认游戏流程仍使用 `src/game/runtime.ts`。原型复用现有研究方案和结算引擎。
 
-该入口用于验证替换叙事运行时的可行性。修改原型时不能改变默认线路行为。
-
 ## 测试边界
 
 - `src/game/content/content.test.ts`：年份 JSON 和加载器
-- `src/game/runtime.test.ts`：剧情游标和跨月流程
+- `src/game/runtime.test.ts`：剧情游标、回看和跨月流程
 - `src/game/engine.test.ts`：评分、状态变化、关系、旗标、分支和结局
 - `src/data/gameData.test.ts`：正式年份和 `demo` 深链约束
 - `scripts/test_build_data.py`：市场复盘生成器
@@ -207,9 +196,9 @@
 
 `vite.config.ts` 将 `base` 设置为 `./`，构建产物可以从相对路径加载资源。
 
-`.github/workflows/ci.yml` 在拉取请求和 `main` 分支推送时运行 Python 与前端完整质量检查。Ruff、BasedPyright、ty、Pytest、零警告 ESLint、TypeScript、Vitest、数据校验和生产构建均为阻塞项。
+仓库当前没有拉取请求代码检查工作流。维护者需要在提交前本地运行 `npm run check` 和 `uv run python scripts/check.py`。`scripts/check.py` 中的 BasedPyright 和 ty 当前作为非阻塞诊断。
 
-`.github/workflows/pages.yml` 在 `main` 分支有新提交时运行 `npm ci` 和 `npm run check`，通过后发布 `dist/`。
+`.github/workflows/pages.yml` 在 `main` 分支有新提交时运行 `npm ci` 和 `npm run build`，通过后发布 `dist/`。
 
 ## 常见改动位置
 
@@ -220,13 +209,11 @@
 | 新增条件分支 | `src/game/branches.ts` |
 | 调整场景顺序和研究方案路由 | `src/game/sceneBuilders.ts` |
 | 修改年份主题和研究方案 | `src/game/content/*.json` |
-| 修改 2025 年业务事实 | `src/game/content2025.ts` |
+| 修改 2025 年业务事实和分歧假设 | `src/game/content2025.ts` |
 | 修改评分和状态结算 | `src/game/engine.ts` |
-| 修改剧情推进 | `src/game/runtime.ts` |
+| 修改剧情推进和回看 | `src/game/runtime.ts` |
+| 修改状态持久化和控制器 | `src/app/useGameController.ts` |
+| 修改主页面展示 | `src/app/ImmersiveGameScreen.tsx` |
+| 修改单视口布局 | `src/immersive.css` |
+| 修改赵承宇透明底处理 | `src/components/ZhaoStage.tsx` |
 | 修改顶层入口和原型切换 | `src/App.tsx` |
-| 修改页面展示 | `src/app/GameScreen.tsx` |
-| 修改游戏状态、设置、主题和音频控制 | `src/app/useGameController.ts` |
-| 修改舞台和图片映射 | `src/components/PixiStage.tsx` |
-| 修改音频 | `src/audio/` |
-| 更新静态股票数据校验 | `scripts/validate_data.py` |
-| 更新市场复盘生成器 | `scripts/build_data.py` |

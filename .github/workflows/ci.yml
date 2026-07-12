@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install frontend dependencies
+        run: npm ci
+      - name: Install Python dependencies
+        run: uv sync --only-dev
+
+      - name: Ruff lint
+        run: uv run ruff check .
+      - name: Ruff format
+        run: uv run ruff format --check .
+      - name: Python compile
+        run: uv run python -m compileall scripts
+      - name: BasedPyright
+        run: uv run basedpyright scripts
+      - name: Pytest
+        run: uv run pytest scripts/ -v
+      - name: Validate static data
+        run: uv run python scripts/validate_data.py
+
+      - name: Validate frontend structure
+        run: node scripts/validate_frontend.js
+      - name: ESLint
+        run: npm run lint:ci
+      - name: Typecheck frontend
+        run: npm run typecheck
+      - name: Unit tests
+        run: npm run test:run
+      - name: Build frontend
+        run: npm run build

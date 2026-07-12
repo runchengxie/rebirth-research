@@ -12,7 +12,6 @@ import misakiNeutralSprite from "../../assets/vn/characters/misaki-neutral.png";
 import rinaSmileSprite from "../../assets/vn/characters/rina-smile.png";
 import rinaSoftSprite from "../../assets/vn/characters/rina-soft.png";
 import rinaThinkingSprite from "../../assets/vn/characters/rina-thinking.png";
-// 赵承宇立绘（已生成统一画风；当前仍为休眠彩蛋，不激活 route）。
 import zhaoNeutralSprite from "../../assets/vn/characters/zhao-neutral.png";
 import zhaoReliefSprite from "../../assets/vn/characters/zhao-relief.png";
 import zhaoThinkingSprite from "../../assets/vn/characters/zhao-thinking.png";
@@ -53,8 +52,6 @@ const backgroundAssets: Record<string, string> = {
   "night-cafe": bgNightCafe,
 };
 
-// Map new CharacterId → old asset paths (image files not renamed yet).
-// 同级同事（如赵承宇）暂无立绘资源，故用 Partial——renderScene 对缺失 sprite 做 guard。
 const characterAssets: Partial<Record<CharacterId, Record<string, string>>> = {
   lin_ruoning: {
     smile: rinaSmileSprite,
@@ -71,7 +68,6 @@ const characterAssets: Partial<Record<CharacterId, Record<string, string>>> = {
     serious: meiSeriousSprite,
     soft: meiSoftSprite,
   },
-  // 同级同事立绘：赵承宇真图已生成，仍保留未来可被 route 唤醒的插槽。
   zhao_chengyu: {
     neutral: zhaoNeutralSprite,
     relief: zhaoReliefSprite,
@@ -85,6 +81,13 @@ const defaultPose: Partial<Record<CharacterId, string>> = {
   zhou_mingzhao: "neutral",
   zhao_chengyu: "neutral",
 };
+
+const stageCharacterIds: readonly CharacterId[] = [
+  "lin_ruoning",
+  "chen_xinghe",
+  "zhou_mingzhao",
+  "zhao_chengyu",
+];
 
 const routeTint: Record<CharacterProfile["color"], number> = {
   pink: 0xff8ec3,
@@ -107,6 +110,18 @@ async function loadCharacterTextureMap(): Promise<Partial<Record<CharacterId, Re
     ),
   );
   return Object.fromEntries(entries) as Partial<Record<CharacterId, Record<string, Texture>>>;
+}
+
+function createCharacterSprites(
+  textures: Partial<Record<CharacterId, Record<string, Texture>>>,
+): Partial<Record<CharacterId, Sprite>> {
+  const sprites: Partial<Record<CharacterId, Sprite>> = {};
+  for (const characterId of stageCharacterIds) {
+    const pose = defaultPose[characterId];
+    const texture = pose ? textures[characterId]?.[pose] : undefined;
+    if (texture) sprites[characterId] = new Sprite(texture);
+  }
+  return sprites;
 }
 
 function normalizePose(characterId: CharacterId, pose: string): string {
@@ -161,7 +176,7 @@ function renderScene(scene: StageScene, props: StagePropsSnapshot): void {
   const bottom = compactStage ? height - Math.min(26, height * 0.045) : height + Math.min(26, height * 0.05);
   (Object.keys(scene.characterSprites) as CharacterId[]).forEach((characterId) => {
     const sprite = scene.characterSprites[characterId];
-    if (!sprite) return; // 无立绘角色（如同级同事）只在 React 文字层出现
+    if (!sprite) return;
     const active = characterId === props.activeCharacter.id;
     const pose = active ? normalizePose(characterId, props.activePose) : defaultPose[characterId] || "neutral";
     const textures = scene.characterTextures[characterId];
@@ -244,15 +259,10 @@ export function PixiStage({ activeCharacter, backgroundId = "research-room", act
       if (disposed) return;
 
       const background = new Sprite(backgroundTextures["research-room"]);
-      const characterSprites: Partial<Record<CharacterId, Sprite>> = {
-        lin_ruoning: new Sprite(characterTextures.lin_ruoning![defaultPose.lin_ruoning!]),
-        chen_xinghe: new Sprite(characterTextures.chen_xinghe![defaultPose.chen_xinghe!]),
-        zhou_mingzhao: new Sprite(characterTextures.zhou_mingzhao![defaultPose.zhou_mingzhao!]),
-        // 赵承宇 sprite：真图已生成，当前仍为休眠彩蛋，仅保留在未来可被 route 唤醒。
-        zhao_chengyu: new Sprite(characterTextures.zhao_chengyu![defaultPose.zhao_chengyu!]),
-      };
+      const characterSprites = createCharacterSprites(characterTextures);
 
-      (Object.values(characterSprites) as Sprite[]).forEach((sprite) => {
+      Object.values(characterSprites).forEach((sprite) => {
+        if (!sprite) return;
         sprite.anchor.set(0.5, 1);
         characters.addChild(sprite);
       });

@@ -25,7 +25,7 @@ jobs:
       - name: Install frontend dependencies
         run: npm ci
       - name: Install Python dependencies
-        run: uv sync --only-dev
+        run: uv sync --frozen --only-dev
       - name: Prepare diagnostic logs
         run: mkdir -p ci-logs
 
@@ -37,6 +37,8 @@ jobs:
         run: set -o pipefail; uv run python -m compileall scripts 2>&1 | tee ci-logs/compileall.log
       - name: BasedPyright
         run: set -o pipefail; uv run basedpyright scripts 2>&1 | tee ci-logs/basedpyright.log
+      - name: Ty
+        run: set -o pipefail; uv run ty check scripts 2>&1 | tee ci-logs/ty.log
       - name: Pytest
         run: set -o pipefail; uv run pytest scripts/ -v 2>&1 | tee ci-logs/pytest.log
       - name: Validate static data

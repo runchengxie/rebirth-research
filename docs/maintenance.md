@@ -1,122 +1,219 @@
 # 维护说明
 
+## 环境准备
+
+前端建议使用 Node.js 22，与 GitHub Pages 工作流保持一致。Python 工具要求 Python 3.11 或更高版本。
+
+```bash
+npm ci
+uv sync --only-dev
+```
+
+启动开发服务器：
+
+```bash
+npm run dev
+```
+
+生产构建和本地预览：
+
+```bash
+npm run build
+npm run preview
+```
+
 ## 日常开发流程
 
-1. 修改 `src/` 源码或数据生成脚本。
-2. 需要更新市场复盘数据时，运行 `uv run python scripts/build_data.py`。
-3. 运行本地验证命令。
-4. 需要离线分享包时，运行 `scripts/package.ps1`。
-5. 提交并推送到 `main`，GitHub Pages 会自动发布。
+1. 先确认改动属于界面、运行时、结算引擎、剧情内容还是独立数据工具。
+2. 修改源码或数据后，补充对应测试。
+3. 运行前端检查和 Python 检查。
+4. 核对 README、`AGENTS.md` 和相关设计文档是否仍然准确。
+5. 需要离线分享包时运行 `scripts/package.ps1`。
+6. 推送到 `main` 后确认 GitHub Pages 构建和线上页面。
 
-## 数据生成
+## 剧情内容维护
 
-`scripts/build_data.py` 从本地 market-data-platform 的 A 股清洗数据中提取每月市场复盘指标：
+正式年份内容位于：
 
-- 沪深 300 代理指数（成交额前 300 只等权平均）
-- 中证 500 代理指数（成交额 301-800 只等权平均）
-- 行业轮动（月度成交额加权行业收益，取前 5 和后 5 名）
-- 风格因子近似（规模溢价、动量溢价）
+- `src/game/content/2023.json`
+- `src/game/content/2024.json`
+- `src/game/content/2025.json`
 
-默认命令：
-
-```bash
-uv run python scripts/build_data.py
-```
-
-默认年份为 2023、2024、2025。生成脚本会输出：
-
-- 每年一个 `market-review-YYYY.json` 文件。
-- `market-review-manifest.json`，记录生成时间和文件清单。
-
-公开数据中的 `source` 字段只保留数据集名称和价格字段，不写入本机路径。
-
-## 验证脚本
-
-`scripts/validate_data.py` 会检查已发布数据文件：
-
-- manifest 与年份 JSON 是否一致。
-- 每个年份是否有 12 个月。
-- 每月数据字段是否完整合法。
-- 公开数据里是否出现本机路径。
-
-`scripts/validate_frontend.js` 会检查：
-
-- `index.html` 是否是 Vite 入口。
-- `package.json` 是否包含 Vite、React、TypeScript 和 PixiJS。
-- `src/` 是否包含 React 应用、Pixi 舞台、玩法引擎、程序化背景音乐、轻音效和数据入口。
-- `assets/vn/` 下的场景背景和角色立绘是否存在。
-- `assets/galgame-key-art.png` 是否存在。
-- 内联脚本和 `game-data.js` 是否能通过基础语法检查。
-
-`scripts/test_build_data.py` 提供 pytest 单元测试：
-
-- `duckdb_path` 路径转换。
-- `as_float` 浮点数处理（含 NaN/Inf 边界）。
-- `parse_args` 命令行参数解析。
-
-`src/game/engine.test.ts` 提供 Vitest 玩法引擎测试。
-
-前端质量检查：
-
-- `npm run lint`：ESLint 检查 TypeScript 与 React。
-- `npm run typecheck`：TypeScript 类型检查。
-- `npm run test:run`：Vitest 单元测试。
-- `npm run build`：Vite 生产构建。
-
-Python 质量检查：
-
-- `uv run ruff check .`：Ruff 代码检查。
-- `uv run ruff format --check .`：Ruff 格式检查。
-- `uv run python -m compileall scripts`：Python 编译检查。
-- `uv run pytest scripts/ -v`：pytest 单元测试。
-- `uv run basedpyright scripts`：静态类型检查（非阻塞）。
-- `uv run ty check scripts`：快速类型检查（非阻塞）。
-
-一键运行所有检查：
+每份文件包含 12 个月度主题和 12 组研究方案。加载器会调用 `src/game/content/schema.ts` 校验内容。修改后至少运行：
 
 ```bash
-uv run python scripts/check.py          # 阻塞检查
-uv run python scripts/check.py --all     # 含非阻塞类型检查
+npm run test:run
+npm run typecheck
+npm run build
 ```
 
-## 文案风格
+`npm run dump:2023` 和 `npm run dump:2024` 会通过 Vite 加载现有内容，再重写对应 JSON。它们适合做格式整理和一致性核对。运行前先提交或备份未保存的内容，运行后检查差异。
 
-剧情和说明文档以中文为主。写新内容时优先使用自然、直接的表达，少用翻译腔和生硬术语。角色对白要像人在说话，金融知识尽量藏在事件、冲突和复盘里。
+`npm run dump:content` 会依次处理 2023 和 2024。
 
-常用约定：
+2025 年的 `knownEvent`、`businessOutcome` 和 `competingHypotheses` 目前在 `src/game/content2025.ts` 中补充。修改 2025 年主题时，需要同时检查该文件中的月份顺序。
 
-- 主线叫历史金融事件或主线事件。
-- 每月的结果结算叫月度复盘。
-- 中文段落使用中文标点。保留必要的行内代码引用，例如 `npm run check`。
-- 避免堆叠强调符号、双引号、分号和长破折号。
-- 遇到转折句时，直接写结论。
+## 角色与分支维护
 
-## 音频策略
+角色资料位于 `src/game/characters.ts`，角色语言规范见 `docs/CHARACTERS.md`。
 
-当前背景音乐和轻音效由浏览器音频接口生成，仓库不提交第三方音频文件，避免授权风险。角色对白默认不播放电子拟声，真实角色语音处于待接入状态。后续如果替换为音频素材，只接受自制、CC0、公有领域或明确允许商用分发的循环音频和关键句语音文件，并在 README 中记录来源和授权。
+条件分支位于 `src/game/branches.ts`，条件判断位于 `src/game/branching.ts`。新增分支时需要检查：
 
-## GitHub Pages
+- 分支条件是否会重复触发
+- `once` 分支是否有稳定编号
+- 决策写入的旗标是否有后续读取方
+- 角色关系是否只累计一次
+- 导师路线与赵承宇搭档路线是否保持分离
+- 静态场景构建时是否仍能在没有状态参数的情况下运行
 
-仓库通过 GitHub Pages 发布。`.github/workflows/pages.yml` 会在 `main` 分支构建 `dist/`，并上传 Pages 发布产物。
+相关测试主要位于 `src/game/engine.test.ts`。
+
+## 数据维护
+
+### 运行时数据
+
+`src/data/gameData.ts` 根据剧情内容生成运行时场景和市场快照。当前市场快照只提供叙事背景，真实涨跌幅没有接入结算。
+
+正式年份列表由 `GAME_YEARS` 控制。`demo` 保留在 `GAME_DATA` 中，只供 `?year=demo` 深链访问。修改年份时同步更新 `src/data/gameData.test.ts`。
+
+### 独立静态股票数据
+
+`data/2023.json`、`data/2024.json`、`data/2025.json`、`data/game-data.js` 和 `data/manifest.json` 是一套独立静态数据。它们当前不被 React 运行时消费。
+
+校验命令：
+
+```bash
+uv run python scripts/validate_data.py
+```
+
+校验内容包括：
+
+- `manifest.json` 中的年份和文件清单
+- 每年 12 个月是否完整并按顺序排列
+- 每月是否有四个不重复选项
+- 最佳选项与 `isBest` 标记是否一致
+- 理论资金曲线是否可以从月度最佳收益重新计算
+- `data/game-data.js` 是否与年份 JSON 完全一致
+- 公开字段是否包含本机绝对路径
+
+### 市场复盘生成器
+
+`scripts/build_data.py` 从本地清洗行情生成 `market-review-YYYY.json` 和 `market-review-manifest.json`。输出字段为 `benchmarks`，与 `data/YYYY.json` 的 `months` 格式不同。
+
+推荐使用单独目录：
+
+```bash
+uv run python scripts/build_data.py \
+  --years 2023 2024 2025 \
+  --daily-clean-dir /path/to/a_share_daily_clean \
+  --instruments /path/to/a_share_instruments_latest.parquet \
+  --out-dir generated/market-review \
+  --price-column adj_close
+```
+
+也可以设置：
+
+```bash
+export REBIRTH_DAILY_CLEAN_DIR=/path/to/a_share_daily_clean
+export REBIRTH_INSTRUMENTS_FILE=/path/to/a_share_instruments_latest.parquet
+```
+
+生成器当前不会把结果接入前端，也不会由 `scripts/validate_data.py` 校验。更新算法或输出格式时，应同步更新 `scripts/test_build_data.py` 和说明文档。
+
+## 测试与检查
+
+### 前端检查
+
+```bash
+npm run check
+```
+
+该命令包含：
+
+- `npm run lint`
+- `npm run typecheck`
+- `npm run test:run`
+- `npm run validate:frontend`
+- `npm run build`
+
+### 联合检查
+
+```bash
+uv run python scripts/check.py
+```
+
+默认执行阻塞检查。可用参数：
+
+```bash
+uv run python scripts/check.py --python
+uv run python scripts/check.py --frontend
+uv run python scripts/check.py --all
+```
+
+`--all` 会额外运行 `basedpyright` 和 `ty`，这两项按非阻塞结果处理。
+
+### 测试分工
+
+- `scripts/test_build_data.py`：市场复盘生成器的辅助函数、参数、输出结构和文件写入
+- `scripts/test_validate_data.py`：静态股票数据的结构、资金计算、路径检查和 JavaScript 数据包
+- `scripts/test_docs_style.py`：说明文档的中文标点和常见表达约定
+- `src/game/content/content.test.ts`：三个正式年份的内容校验和加载器
+- `src/game/runtime.test.ts`：状态初始化、节点推进和跨月流程
+- `src/game/engine.test.ts`：评分、关系、旗标、条件分支、延迟后果和结局
+- `src/data/gameData.test.ts`：正式年份和隐藏示范线路
+- `scripts/validate_frontend.js`：入口、依赖、主要模块、资源和数据文件的静态检查
+
+## 自动化与发布
+
+`.github/workflows/pages.yml` 在 `main` 分支有新提交时执行：
+
+1. 安装 Node.js 22。
+2. 运行 `npm ci`。
+3. 运行 `npm run build`。
+4. 上传并发布 `dist/`。
+
+质量工作流当前停用，文件名为 `.github/workflows/ci.yml.disabled`。它不会在推送或拉取请求中自动运行。恢复时需要改回 `.github/workflows/ci.yml`，并核对其中的命令和依赖版本。
+
+发布后检查：
+
+- 首页可以打开
+- `dist/assets/` 资源请求成功
+- 2023、2024、2025 年份可以切换
+- 浅色和暗色主题可以切换
+- WebGL 不可用时能看到静态舞台
+- 完成一次研究选择后可以继续剧情
 
 线上地址：
 
 <https://runchengxie.github.io/rebirth-research/>
 
-推送到 `main` 后，GitHub 会运行持续集成和 Pages 发布流程。持续集成成功后，再确认线上页面和 `dist/assets/` 静态资源返回 200。
-
 ## 离线分享包
 
-运行：
+在 PowerShell 中运行：
 
 ```powershell
 .\scripts\package.ps1
 ```
 
-生成：
+脚本会先构建项目，再把 `index.html`、`assets/` 和 README 打包到：
 
 ```text
 dist/rebirth-research-share.zip
 ```
 
-脚本会先运行 `npm run build`，再把 `dist/` 产物打包。解压后打开 `index.html` 即可游玩。
+解压后直接打开 `index.html`。由于 Vite 的 `base` 为 `./`，静态资源可以使用相对路径加载。
+
+## 文档维护
+
+文档只描述当前实现。以下变化发生后需要同步更新说明：
+
+- 年份、章节数、角色或结局条件变化
+- 新增或移除 URL 参数
+- 运行时开始读取真实市场数据
+- 存档方式变化
+- 音频方式变化
+- 数据格式或生成命令变化
+- 测试命令和工作流状态变化
+- 目录结构或关键模块变化
+
+中文说明尽量使用自然、直接的表达。命令、路径和字段名保留行内代码。减少英文小标题、粗体、中文双引号、分号、长破折号和成对否定转折句。

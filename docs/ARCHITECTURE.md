@@ -1,152 +1,234 @@
-# 架构说明（ARCHITECTURE）
+# 架构说明
 
-本文档讲清 rebirth-research（心动 K 线：重生投研部）的工程结构、双数据管线、模块依赖图，以及原型代码（spike）如何与正式路由隔离。读完应能在不翻源码的情况下判断「该改哪个文件、动了会不会牵一发动全身」。
+本文档说明项目当前的模块边界、状态流转、数据关系和部署方式。历史迁移过程可以从提交记录查看，这里只保留维护代码时需要知道的现状。
 
-## 1. 一句话定位
+## 总体结构
 
-一个 **Vite + TypeScript + React + PixiJS** 的静态网页游戏，纯前端、无后端。投研部的每月选择由一套纯函数引擎按真实 A 股月度数据结算，剧情、角色、分支都从这层引擎驱动。发布产物是 `dist/`，部署到 GitHub Pages。
+项目是纯前端静态应用。React 负责页面和交互，PixiJS 负责剧情舞台，`src/game/` 负责剧情装配、状态推进和数值结算。
 
-## 2. 目录总览
-
-```
-rebirth-research/
-├─ src/                      # 前端源码（TypeScript + React + Pixi）
-│  ├─ main.tsx               # 入口
-│  ├─ App.tsx                # 路由与页面装配（含 ?pixivn=1 原型门控）
-│  ├─ components/            # React 组件（对话框、月度选择、结局、复盘等）
-│  ├─ audio/                 # 浏览器音频接口生成的 BGM / 音效
-│  ├─ data/                  # gameData.ts（运行时初始数据 + 基准）
-│  ├─ spike/                # 原型代码（见 §6，默认不挂载）
-│  ├─ types.ts              # 全局类型唯一来源（CharacterId 等）
-│  └─ game/                  # 游戏引擎层
-│     ├─ engine.ts           # 结算引擎（纯函数）
-│     ├─ runtime.ts          # 初始状态与存档/回放
-│     ├─ branching.ts        # 分支激活条件求值
-│     ├─ decisionFactory.ts  # 决策节点工厂（d）
-│     ├─ characters.ts       # 角色纯数据层（拆分后）
-│     ├─ storyArcs.ts        # 故事线 + 年份轮换文案（拆分后）
-│     ├─ branches.ts         # 分支定义 + 单/多节点（拆分后）
-│     ├─ sceneBuilders.ts    # 月度场景 / 研究决策装配（拆分后）
-│     ├─ content.ts          # 薄 barrel（拆分后，仅 re-export）
-│     ├─ content2023.ts / content2024.ts / content2025.ts / contentDemo.ts
-│     └─ content/            # TS 侧数据管线（见 §4）
-│        ├─ 2023.json / 2024.json / 2025.json
-│        ├─ schema.ts        # 年份 JSON 校验（运行时可失败抛出）
-│        └─ content.test.ts  # 校验 + 数据自洽测试
-├─ data/                     # Python 侧数据管线（见 §4）
-│  ├─ 2023.json / 2024.json / 2025.json
-│  ├─ game-data.js           # 同数据打包成 window.REBIRTH_GAME_DATA
-│  └─ manifest.json
-├─ scripts/                  # Python 工具链（见 §4、§7）
-│  ├─ build_data.py          # 从本机清洗数据生成 data/*.json
-│  ├─ validate_data.py       # 校验 data/ 与 game-data.js 自洽
-│  ├─ check.py               # 统一检查运行器（lint→typecheck→test→validate→build）
-│  └─ validate_frontend.js   # 前端发布产物静态检查
-└─ docs/                     # 设计 / 架构文档
+```text
+浏览器
+  │
+  ├── React 页面和组件
+  │     ├── 设置、年份选择和流程控制
+  │     ├── 对话、研究方案、评分和结局
+  │     └── 研究札记、知识卡和研究室状态
+  │
+  ├── PixiJS 舞台
+  │     ├── 场景背景
+  │     ├── 角色立绘
+  │     └── WebGL 失败时的静态回退
+  │
+  └── 游戏层
+        ├── 内容数据
+        ├── 场景装配
+        ├── 剧情运行时
+        ├── 结算引擎
+        └── 条件分支
 ```
 
-## 3. 模块依赖图（TS 引擎层）
+构建产物位于 `dist/`，可以部署到 GitHub Pages，也可以通过离线分享包直接打开。
 
-箭头表示「依赖 / 导入」。纯数据层在底部，装配层在顶部，引擎居中。
+## 前端入口
 
-```
-                    types.ts  (全局类型，被所有人 import type)
-                         ▲
-                         │
-   characters.ts ──► storyArcs.ts ──► branches.ts ──► sceneBuilders.ts
-        │                │                │                │
-        └────────────────┴────────────────┴────────────────┘
-                          ▲
-                          │  (content.ts 仅做 export * 转发，不引入新依赖)
-                     content.ts (barrel)
-                          ▲
-        ┌─────────────────┼─────────────────┐
-   engine.ts          runtime.ts          App.tsx / components
-        │                │                     │
-        └──────── branching.ts ────────────────┘
-                     decisionFactory.ts
+`src/main.tsx` 创建 React 根节点并加载 `src/App.tsx`。
 
-   content2023/2024/2025/demo.ts  ← 年份专属决策池，被 sceneBuilders 路由调用
-   content/*.json + schema.ts      ← TS 侧数据管线，被 content.test 校验
-```
+`src/App.tsx` 负责：
 
-要点：
-- **`content.ts` 现在是薄 barrel**，不再承担逻辑。它只做 `export * from "./characters" | "./storyArcs" | "./branches" | "./sceneBuilders"`。拆分前它是一个 ~1395 行的「巨型模块」，扇入扇出高度集中；拆分后 8 个依赖方（App、各组件、engine、runtime 等）的 import 路径**完全不用改**——它们仍从 `game/content` 取 `CHARACTERS / AFFINITY_GATE / AFFINITY_TRUE / MENTOR_TEACHINGS / FOCUS_ACTIONS / buildMonthScene` 等，这些名字在四个子模块里都保留着。
-- **`types.ts` 是类型唯一来源**，位于 `src/types.ts`（不在 `src/game/` 下）。引擎层各模块用 `import type { ... } from "../types"` 引用，彼此之间只有数据/装配依赖，没有循环依赖。
-- **年份路由**：`sceneBuilders.makeResearchDecisions(year, month)` 按 `year` 参数（`demo`/`2023`/`2024`/`2025`）分流到对应 `content*.ts` 的 `makeDecisions*`。`buildMonthScene` 是中央场景装配器，`actualYear = year || "2025"`。
+- 读取年份深链和主题设置
+- 初始化当前周目状态
+- 取得当前场景和当前节点
+- 调用运行时推进剧情
+- 调用结算引擎处理研究选择
+- 控制 PixiJS 舞台、背景音乐、音效和系统语音
+- 组合状态栏、研究方案、复盘、札记和结局组件
 
-## 4. 双数据管线（关键）
+应用没有路由库。年份和原型入口通过 URL 查询参数控制。
 
-项目里有**两套并行但独立**的数据管线。它们互相不消费，都由 CI 校验，但服务不同目的。
+## 游戏模块
 
-### 管线 A — Python 侧（`data/` + `scripts/`）
-| 产物 | 作用 | 校验方 |
-|------|------|--------|
-| `data/2023.json` `2024.json` `2025.json` | 每月市场复盘指标（代理指数、行业轮动、风格因子） | `scripts/validate_data.py` |
-| `data/game-data.js` | 上述 JSON 打包成 `window.REBIRTH_GAME_DATA` | 同上加交叉校验 |
-| `data/manifest.json` | 数据集清单 | 同上加交叉校验 |
+### 类型定义
 
-- 由 `scripts/build_data.py` 生成。**本机路径已改为可配置**：默认回退到作者本机 Z 盘路径，但可用环境变量 `REBIRTH_DAILY_CLEAN_DIR` / `REBIRTH_INSTRUMENTS_FILE` 覆盖，避免把本机路径写死进仓库。
-- `scripts/validate_data.py` 断言 `data/*.json` 与 `game-data.js` 内容一致、且不含任何本机绝对路径（发布安全）。
-- 这是**发布数据管线**，CI 用它对「真实行情数据」做一致性与脱敏校验。**它不接入运行时引擎**——引擎不读 `window.REBIRTH_GAME_DATA`。
+`src/types.ts` 是跨模块类型的统一来源。角色编号、游戏状态、场景节点、研究方案、评分、分支条件和年份数据都在这里定义。
 
-### 管线 B — TS 侧（`src/game/content/`）
-| 产物 | 作用 | 校验方 |
-|------|------|--------|
-| `src/game/content/2023.json` 等 | 年份剧情/市场上下文数据 | `src/game/content/schema.ts` |
-| `schema.ts` | 年份 JSON 的结构校验（导入失败即抛 `ContentValidationError`） | `content.test.ts` 单测 |
+新增角色或字段时，先改类型，再检查初始状态、内容校验、资源映射和测试。
 
-- 这是**剧情/配置数据管线**，被前端 `import raw from "./2025.json"` 直接消费，并由 TS schema 在构建期/测试期校验。
-- `content.test.ts` 同时校验「JSON 通过 schema」与「TS 年份决策池（`content2025.ts` 的 `THEMES_2025 / makeDecisions2025`）与 JSON 自洽」。
+### 内容模块
 
-### 为什么是两套而不是一套
-管线 A 处理**真实市场数据**（体积大、来自外部清洗库、需脱敏），管线 B 处理**剧情配置数据**（随代码演进、需 TS 类型安全）。让它们各自用最合适的工具（Python 批处理 + ruff/basedpyright；TS + schema）。两者在仓库里**并存且都进 git**——`data/game-data.js`+`manifest.json` 不是死产物，而是管线 A 的校验锚点。
+`src/game/content.ts` 只负责重新导出以下模块：
 
-## 5. 结算引擎（engine.ts）
+- `characters.ts`：角色资料、关系门槛、日程和评分评语
+- `storyArcs.ts`：公共故事线、年份主题入口和轮换文案
+- `branches.ts`：条件分支和赵承宇搭档线
+- `sceneBuilders.ts`：场景装配、知识卡和年份研究方案路由
 
-纯函数，无副作用。输入 `GameState` + 玩家选择，输出新的 `GameState` 与 `businessOutcome`（业务事实结算，非 K 线收益——真实行情/股价不仲裁对错）。关键约定：
-- `relations: Record<CharacterId, number>`，取值用 `?? 0` 守护，避免未初始化角色报错。
-- `buildBusinessVerdict(theme, score)`——已裁剪掉无用的 `decision / story` 参数，仅留真正参与计算的 `theme` 与 `score`。
+年份内容位于 `src/game/content/*.json`。加载器分布在 `content2023.ts`、`content2024.ts` 和 `content2025.ts`。`contentDemo.ts` 保留示范章节。
 
-## 6. 原型门控（spike 不进生产路由）
+`src/game/content/schema.ts` 会校验：
 
-`src/spike/pixivn/Chapter1Spike.tsx` 是 Phase 3 的原型代码（用 `@drincs/pixi-vn` 接管第一话的 VN runtime）。
+- 年份字段
+- 12 个月度主题
+- 12 组研究方案
+- 研究方案类别
+- 效果字段和角色编号
+- 重复的研究方案编号
 
-- **默认不挂载**。仅在 URL 带 `?pixivn=1` 时，由 `App.tsx` 动态 `import()` 注入：
-  ```ts
-  () => new URLSearchParams(window.location.search).get("pixivn") === "1"
-  ```
-- 因此原型代码**不会**出现在生产默认路径里，也不会拖慢正常构建（Vite 把它拆成独立 chunk `Chapter1Spike-*.js`）。这是刻意隔离，避免「原型进生产路由」带来的团队不友好。
+2025 年加载器还会补充已知事件、业务事实和三位导师的分歧假设。
 
-## 7. 校验与提交约定
+### 场景装配
 
-### 本地一键检查（推荐每次提交前跑）
-```bash
-npm run check
-```
-`check` = `lint` (eslint .) → `typecheck` (tsc -b) → `test:run` (vitest run) → `validate:frontend` (node scripts/validate_frontend.js) → `build` (tsc -b && vite build)。
+`src/game/sceneBuilders.ts` 根据年份、月份和当前状态生成 `MonthScene`。
 
-Python 侧单独跑：`uv run python scripts/check.py`（内含 `validate_data.py`）。
+场景通常包含：
 
-### 规范等级
-- **TS**：ESLint 已从 `recommended` 升到 `strict`，并加 `complexity` warn（max 15）、`no-explicit-any` / `no-non-null-assertion` 降为 warn（团队习惯——strict 盯住真正的浮动 Promise / 不安全操作风险，而不是逼着改几十处机械的 `!`）。`tsconfig` 已开 `noUnusedLocals` / `noUnusedParameters`。
-- **Python**：ruff + basedpyright，超 PEP8 / Google 标准。
+1. 当月主题和人物对白。
+2. 未来记忆节点。
+3. 条件分支注入的额外对白。
+4. 研究方案节点。
+5. 关系门槛和后续旗标触发的桥段。
 
-### 提交约定
-- 每个里程碑改动跑完整检查（lint / typecheck / test / build）后 `git add src docs scripts` 再 commit，**不 push**。
-- `.workbuddy/` 已写进 `.gitignore`，绝不进仓库。
-- 周目/年份选择器隐藏 demo，仅留 `?year=demo` 深链。
+调用方没有提供状态时，场景仍然可以静态生成。测试和运行时都会依赖这个能力。
 
-## 8. 常见改动落在哪
+### 剧情运行时
 
-| 你想改的东西 | 文件 |
-|------|------|
-| 角色属性 / 好感门槛 / 专注动作 / 评级评语 | `src/game/characters.ts` |
-| 年份主题 / 故事线 / 同事闲聊轮换文案 / 导师视角短句 | `src/game/storyArcs.ts` |
-| 单/多节点分支、peer 冲突与和解线 | `src/game/branches.ts` |
-| 月度场景装配、研究决策路由、导师教学、prologue | `src/game/sceneBuilders.ts` |
-| 某一年份专属决策池 | `content2023/2024/2025/demo.ts` |
-| 结算规则 | `src/game/engine.ts` |
-| 初始状态 / 存档回放 | `src/game/runtime.ts` |
-| 真实市场数据刷新 | `scripts/build_data.py` → `data/` → `validate_data.py` |
-| 剧情配置数据 | `src/game/content/*.json` + `schema.ts` |
+`src/game/runtime.ts` 负责：
+
+- `createInitialState`：创建新周目状态
+- `sceneForMonth`：根据当前状态生成场景
+- `currentSceneNode`：取得当前节点
+- `canAdvanceScene`：判断能否继续
+- `advanceScene`：推进节点或进入下一话
+- `nextMonth`：清理本月锁定状态并进入下一月
+
+运行时只管理流程，不计算评分和关系变化。当前状态保存在 React 内存中，没有持久化存档。
+
+### 结算引擎
+
+`src/game/engine.ts` 负责研究选择后的状态变化，包括：
+
+- 研究可信度、投委会采纳度、推荐跟踪净值和观点准确度
+- 客户反馈、团队信任、疲劳和生活平衡
+- 角色关系
+- 决策类别累计
+- 关系门槛和路线旗标
+- 知识卡收集
+- 月度评分和业务事实结算
+- 导师关系路线和赵承宇最佳搭档结局判定
+
+评分由证据、清晰度、风险意识、沟通、生活平衡、推荐跟踪和反思加成组成。短期市场价格当前不参与判断，`makeDecision` 也没有读取传入年份数据中的真实涨跌幅。
+
+### 条件分支
+
+`src/game/branching.ts` 负责判断分支条件。`src/game/branches.ts` 定义分支内容。
+
+条件可以读取：
+
+- 指标上下限
+- 角色关系
+- 决策类别累计次数
+- 月份
+- 旗标
+- 与、或、非组合条件
+
+命中的分支可以插入对白、追加研究方案、改写提示语并记录路线旗标。
+
+## 数据关系
+
+项目里有四类数据，文件名相近但用途不同。
+
+| 数据 | 位置 | 当前用途 | 校验方式 |
+|---|---|---|---|
+| 年份剧情内容 | `src/game/content/*.json` | 前端实际使用 | `schema.ts` 和 Vitest |
+| 运行时年份数据 | `src/data/gameData.ts` | 装配场景和叙事快照 | TypeScript 和 Vitest |
+| 静态股票选项数据 | `data/` | 独立数据包，当前不接入 React | `validate_data.py` |
+| 市场复盘生成结果 | `market-review-*.json` | 独立研究工具输出，当前不接入 React | `test_build_data.py` 覆盖生成逻辑 |
+
+### 年份剧情内容
+
+这是运行时真正消费的数据。每年包含主题和研究方案，经过 TypeScript 加载器后进入场景装配层。
+
+### 运行时年份数据
+
+`src/data/gameData.ts` 为每个正式年份和 `demo` 创建 12 个月场景。当前市场快照由剧情主题派生，收益字段为 0，行业和风格数据为空。
+
+### 静态股票选项数据
+
+`data/YYYY.json` 每月包含四个股票选项和一个最佳选项。`data/game-data.js` 是同一数据的浏览器全局变量版本。`data/manifest.json` 记录年份和文件清单。
+
+这些文件当前只由校验脚本和前端结构检查读取。
+
+### 市场复盘生成结果
+
+`scripts/build_data.py` 读取本地 Parquet 数据并输出月度代理指数、行业轮动和风格因子。输出使用 `benchmarks` 字段，文件名带 `market-review-` 前缀。
+
+生成器默认输出到 `data/`，维护时建议通过 `--out-dir generated/market-review` 使用单独目录，以免和静态股票选项数据混放。
+
+## 舞台与资源
+
+`src/components/PixiStage.tsx` 使用 PixiJS 加载：
+
+- `assets/vn/backgrounds/` 下的场景背景
+- `assets/vn/characters/` 下的角色立绘
+
+`App.tsx` 会先检测 WebGL。设备不支持 WebGL、驱动不稳定或初始化失败时，页面会使用静态舞台。
+
+可用查询参数：
+
+- `?pixi=0`：强制使用静态舞台
+- `?staticStage=1`：强制使用静态舞台
+- `?pixi=1`：尝试启用 PixiJS 舞台
+
+## 音频
+
+`src/audio/bgm.ts` 使用 Web Audio API 生成循环和弦。
+
+`src/audio/sfx.ts` 提供翻页、选择和结算提示音。对白节点带有录音地址时会播放录音。没有录音且节点标记为关键语音时，会尝试使用 Web Speech API 调用系统中文语音。
+
+语音效果依赖操作系统和浏览器提供的语音列表，项目本身不下载在线语音模型。
+
+## Pixi'VN 原型
+
+`src/spike/pixivn/Chapter1Spike.tsx` 是第一话叙事运行时原型。
+
+只有 URL 包含 `?pixivn=1` 时，`App.tsx` 才会动态加载该模块。默认游戏流程仍使用 `src/game/runtime.ts`。原型复用现有研究方案和结算引擎。
+
+该入口用于验证替换叙事运行时的可行性。修改原型时不能改变默认线路行为。
+
+## 测试边界
+
+- `src/game/content/content.test.ts`：年份 JSON 和加载器
+- `src/game/runtime.test.ts`：剧情游标和跨月流程
+- `src/game/engine.test.ts`：评分、状态变化、关系、旗标、分支和结局
+- `src/data/gameData.test.ts`：正式年份和 `demo` 深链约束
+- `scripts/test_build_data.py`：市场复盘生成器
+- `scripts/test_validate_data.py`：静态股票选项数据
+- `scripts/test_docs_style.py`：说明文档风格
+- `scripts/validate_frontend.js`：入口、依赖、关键文件、资源和静态数据
+
+`npm run check` 负责前端检查。`uv run python scripts/check.py` 负责 Python 与前端联合检查。
+
+## 构建与部署
+
+`vite.config.ts` 将 `base` 设置为 `./`，构建产物可以从相对路径加载资源。
+
+`.github/workflows/pages.yml` 在 `main` 分支有新提交时运行 `npm ci` 和 `npm run build`，然后发布 `dist/`。
+
+`.github/workflows/ci.yml.disabled` 保存了停用的质量检查流程。由于文件扩展名不是 `.yml`，GitHub Actions 不会执行它。
+
+## 常见改动位置
+
+| 目标 | 文件 |
+|---|---|
+| 调整角色设定和关系门槛 | `src/game/characters.ts` |
+| 调整公共故事线和年份轮换文案 | `src/game/storyArcs.ts` |
+| 新增条件分支 | `src/game/branches.ts` |
+| 调整场景顺序和研究方案路由 | `src/game/sceneBuilders.ts` |
+| 修改年份主题和研究方案 | `src/game/content/*.json` |
+| 修改 2025 年业务事实 | `src/game/content2025.ts` |
+| 修改评分和状态结算 | `src/game/engine.ts` |
+| 修改剧情推进 | `src/game/runtime.ts` |
+| 修改页面和设置 | `src/App.tsx` |
+| 修改舞台和图片映射 | `src/components/PixiStage.tsx` |
+| 修改音频 | `src/audio/` |
+| 更新静态股票数据校验 | `scripts/validate_data.py` |
+| 更新市场复盘生成器 | `scripts/build_data.py` |

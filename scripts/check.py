@@ -1,18 +1,9 @@
 #!/usr/bin/env python
-"""Unified check runner — Python + frontend.
-
-All Python tools run via `uv run` which picks up the project's locked
-dependencies automatically. No virtualenv activation needed.
-
-Usage:
-    uv run python scripts/check.py              # Full check (blocking only)
-    uv run python scripts/check.py --all         # Include non-blocking type checks
-    uv run python scripts/check.py --python      # Python checks only
-    uv run python scripts/check.py --frontend    # Frontend checks only
-"""
+"""统一运行 Python 和前端检查。"""
 
 from __future__ import annotations
 
+import argparse
 import subprocess
 import sys
 from pathlib import Path
@@ -21,11 +12,11 @@ ROOT = Path(__file__).resolve().parent.parent
 
 
 def _uv_run(*args: str) -> list[str]:
-    """Build a uv-run command for a tool installed in the project venv."""
     return ["uv", "run", *args]
 
 
 def run(cmd: list[str], *, label: str, allow_failure: bool = False) -> bool:
+    """运行一条检查命令并打印精简结果。"""
     header = f"[{label}]"
     try:
         result = subprocess.run(
@@ -34,29 +25,34 @@ def run(cmd: list[str], *, label: str, allow_failure: bool = False) -> bool:
             capture_output=True,
             text=True,
             timeout=300,
+            check=False,
         )
-        if result.returncode == 0:
-            print(f"  \033[32mPASS\033[0m {header}")
-            return True
-        else:
-            marker = "\033[33mWARN\033[0m" if allow_failure else "\033[31mFAIL\033[0m"
-            print(f"  {marker} {header}")
-            if result.stdout.strip():
-                for line in result.stdout.strip().split("\n")[:20]:
-                    print(f"    {line}")
-            if result.stderr.strip():
-                for line in result.stderr.strip().split("\n")[:10]:
-                    print(f"    {line}")
-            return allow_failure  # non-blocking = always "pass" for overall result
     except FileNotFoundError:
-        print(f"  \033[33mSKIP\033[0m {header} (tool not found)")
+        print(f"  跳过 {header}，未找到命令")
         return allow_failure
+    except subprocess.TimeoutExpired:
+        marker = "警告" if allow_failure else "失败"
+        print(f"  {marker} {header}，运行超过 300 秒")
+        return allow_failure
+
+    if result.returncode == 0:
+        print(f"  通过 {header}")
+        return True
+
+    marker = "警告" if allow_failure else "失败"
+    print(f"  {marker} {header}")
+    if result.stdout.strip():
+        for line in result.stdout.strip().splitlines()[:20]:
+            print(f"    {line}")
+    if result.stderr.strip():
+        for line in result.stderr.strip().splitlines()[:10]:
+            print(f"    {line}")
+    return allow_failure
 
 
 def check_python(*, all_checks: bool = False) -> bool:
     print("── Python ──")
     ok = True
-
     ok &= run(_uv_run("ruff", "check", "."), label="ruff check")
     ok &= run(_uv_run("ruff", "format", "--check", "."), label="ruff format")
     ok &= run(
@@ -88,44 +84,44 @@ def check_python(*, all_checks: bool = False) -> bool:
 
 
 def check_frontend() -> bool:
-    print("── Frontend ──")
+    print("── 前端 ──")
     ok = True
-
     ok &= run(["node", "scripts/validate_frontend.js"], label="validate_frontend")
     ok &= run(["npm", "run", "lint"], label="ESLint")
-    ok &= run(["npm", "run", "typecheck"], label="tsc")
+    ok &= run(["npm", "run", "typecheck"], label="TypeScript")
     ok &= run(["npm", "run", "test:run"], label="Vitest")
     ok &= run(["npm", "run", "build"], label="build")
-
     return ok
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="运行项目检查")
+    parser.add_argument("--all", action="store_true", help="加入非阻塞类型检查")
+    parser.add_argument("--python", action="store_true", help="只运行 Python 检查")
+    parser.add_argument("--frontend", action="store_true", help="只运行前端检查")
+    return parser.parse_args()
+
+
 def main() -> None:
-    import argparse
-
-    parser = argparse.ArgumentParser(description="Unified check runner")
-    parser.add_argument("--all", action="store_true", help="Include non-blocking type checks")
-    parser.add_argument("--python", action="store_true", help="Python checks only")
-    parser.add_argument("--frontend", action="store_true", help="Frontend checks only")
-    args = parser.parse_args()
-
-    python_only = args.python
-    frontend_only = args.frontend
-    if not python_only and not frontend_only:
-        python_only = frontend_only = True
+    args = parse_args()
+    run_python = args.python
+    run_frontend = args.frontend
+    if not run_python and not run_frontend:
+        run_python = True
+        run_frontend = True
 
     ok = True
-    if python_only:
+    if run_python:
         ok &= check_python(all_checks=args.all)
-    if frontend_only:
+    if run_frontend:
         ok &= check_frontend()
 
     if ok:
-        print("\n\033[32mAll checks passed.\033[0m")
-        sys.exit(0)
-    else:
-        print("\n\033[31mSome checks failed.\033[0m")
-        sys.exit(1)
+        print("\n全部阻塞检查通过。")
+        raise SystemExit(0)
+
+    print("\n存在未通过的阻塞检查。")
+    raise SystemExit(1)
 
 
 if __name__ == "__main__":

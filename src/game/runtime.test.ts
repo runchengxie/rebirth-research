@@ -15,7 +15,12 @@ function emptyYear(): GameDataYear {
     year: 2025,
     currency: "CNY",
     generatedAt: new Date().toISOString(),
-    source: { dailyDataset: "test", dailyDatasetVersion: "1", instrumentDataset: "test", priceColumn: "adj_close" },
+    source: {
+      dailyDataset: "test",
+      dailyDatasetVersion: "1",
+      instrumentDataset: "test",
+      priceColumn: "adj_close",
+    },
     rules: {},
     benchmarks: [],
     scenes: [buildMonthScene(0, "2025"), buildMonthScene(1, "2025")],
@@ -26,63 +31,63 @@ function makeTestState(year = "2023"): GameState {
   return createInitialState(year);
 }
 
-describe("runtime.createInitialState", () => {
-  it("starts at month 0, unlocked, with baseline metrics", () => {
-    const s = makeTestState("2023");
-    expect(s.year).toBe("2023");
-    expect(s.monthIndex).toBe(0);
-    expect(s.sceneNodeIndex).toBe(0);
-    expect(s.locked).toBe(false);
-    expect(s.finished).toBe(false);
-    expect(s.relations.lin_ruoning).toBeGreaterThan(0);
-    expect(s.focusId).toBe("deep_research");
+describe("初始状态", () => {
+  it("从第一话和第一个剧情节点开始", () => {
+    const state = makeTestState("2023");
+    expect(state.year).toBe("2023");
+    expect(state.monthIndex).toBe(0);
+    expect(state.sceneNodeIndex).toBe(0);
+    expect(state.locked).toBe(false);
+    expect(state.finished).toBe(false);
+    expect(state.relations.lin_ruoning).toBeGreaterThan(0);
+    expect(state.focusId).toBe("deep_research");
   });
 });
 
-describe("runtime.scene cursor", () => {
-  it("currentSceneNode follows sceneNodeIndex and ends on the decision node", () => {
-    const s = makeTestState("2023");
-    const scene = sceneForMonth(s);
-    expect(currentSceneNode(s).type).toBe("dialogue");
-    const lastIdx = scene.nodes.length - 1;
-    const atDecision = { ...s, sceneNodeIndex: lastIdx };
+describe("当前剧情节点", () => {
+  it("根据 sceneNodeIndex 返回节点，并在末尾进入研究方案", () => {
+    const state = makeTestState("2023");
+    const scene = sceneForMonth(state);
+    expect(currentSceneNode(state).type).toBe("dialogue");
+    const lastIndex = scene.nodes.length - 1;
+    const atDecision = { ...state, sceneNodeIndex: lastIndex };
     expect(currentSceneNode(atDecision).type).toBe("decision");
   });
 });
 
-describe("runtime.canAdvanceScene", () => {
-  it("dialogue node is advanceable", () => {
+describe("剧情推进条件", () => {
+  it("对白节点可以继续", () => {
     expect(canAdvanceScene(makeTestState("2023"))).toBe(true);
   });
 
-  it("unlocked decision node blocks advance, locked allows it", () => {
-    const s = makeTestState("2023");
-    const lastIdx = sceneForMonth(s).nodes.length - 1;
-    const atDecision = { ...s, sceneNodeIndex: lastIdx };
+  it("未选择方案时停在研究方案节点，结算后可以继续", () => {
+    const state = makeTestState("2023");
+    const lastIndex = sceneForMonth(state).nodes.length - 1;
+    const atDecision = { ...state, sceneNodeIndex: lastIndex };
     expect(canAdvanceScene(atDecision)).toBe(false);
     expect(canAdvanceScene({ ...atDecision, locked: true })).toBe(true);
   });
 });
 
-describe("runtime.advanceScene", () => {
+describe("推进当前场景", () => {
   const data = emptyYear();
 
-  it("does not advance past an unlocked decision node", () => {
-    const s = makeTestState("2023");
-    const lastIdx = sceneForMonth(s).nodes.length - 1;
-    const atDecision = { ...s, sceneNodeIndex: lastIdx };
+  it("不会越过尚未结算的研究方案节点", () => {
+    const state = makeTestState("2023");
+    const lastIndex = sceneForMonth(state).nodes.length - 1;
+    const atDecision = { ...state, sceneNodeIndex: lastIndex };
     expect(advanceScene(atDecision, data)).toBe(atDecision);
   });
 
-  it("advances the cursor on a dialogue node", () => {
+  it("从对白节点进入下一个节点", () => {
     const next = advanceScene(makeTestState("2023"), data);
     expect(next.sceneNodeIndex).toBe(1);
   });
 
-  it("rolls to the next month when advancing past the last node while locked", () => {
-    const s = makeTestState("2023");
-    const lastIdx = sceneForMonth(s).nodes.length - 1;
-    const atEndLocked = { ...s, sceneNodeIndex: lastIdx, locked: true };
+  it("在本话最后一个节点结算后进入下一话", () => {
+    const state = makeTestState("2023");
+    const lastIndex = sceneForMonth(state).nodes.length - 1;
+    const atEndLocked = { ...state, sceneNodeIndex: lastIndex, locked: true };
     const next = advanceScene(atEndLocked, data);
     expect(next.monthIndex).toBe(1);
     expect(next.sceneNodeIndex).toBe(0);
@@ -90,24 +95,35 @@ describe("runtime.advanceScene", () => {
   });
 });
 
-describe("runtime.nextMonth", () => {
-  it("does nothing until the month is locked", () => {
-    const s = makeTestState("2023");
-    expect(nextMonth(s)).toBe(s);
+describe("进入下一话", () => {
+  it("本月尚未结算时保持原状态", () => {
+    const state = makeTestState("2023");
+    expect(nextMonth(state)).toBe(state);
   });
 
-  it("rolls over the month, resets cursor and lock, restores default focus", () => {
-    const s = { ...makeTestState("2023"), locked: true, monthIndex: 2, focusId: "self_care" };
-    const next = nextMonth(s);
+  it("重置剧情游标、锁定状态和默认日程", () => {
+    const state = {
+      ...makeTestState("2023"),
+      locked: true,
+      monthIndex: 2,
+      focusId: "self_care",
+    };
+    const next = nextMonth(state);
     expect(next.monthIndex).toBe(3);
     expect(next.sceneNodeIndex).toBe(0);
     expect(next.locked).toBe(false);
     expect(next.focusId).toBe("deep_research");
   });
 
-  it("restarts a fresh game when already finished", () => {
-    const s = { ...makeTestState("2023"), finished: true, locked: true, monthIndex: 11 };
-    const next = nextMonth(s);
+  it("完成全年后开启同年份的新周目", () => {
+    const state = {
+      ...makeTestState("2023"),
+      finished: true,
+      locked: true,
+      monthIndex: 11,
+    };
+    const next = nextMonth(state);
+    expect(next.year).toBe("2023");
     expect(next.monthIndex).toBe(0);
     expect(next.finished).toBe(false);
   });

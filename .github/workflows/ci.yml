@@ -26,27 +26,38 @@ jobs:
         run: npm ci
       - name: Install Python dependencies
         run: uv sync --only-dev
+      - name: Prepare diagnostic logs
+        run: mkdir -p .ci-logs
 
       - name: Ruff lint
-        run: uv run ruff check .
+        run: set -o pipefail; uv run ruff check . 2>&1 | tee .ci-logs/ruff-lint.log
       - name: Ruff format
-        run: uv run ruff format --check .
+        run: set -o pipefail; uv run ruff format --check . 2>&1 | tee .ci-logs/ruff-format.log
       - name: Python compile
-        run: uv run python -m compileall scripts
+        run: set -o pipefail; uv run python -m compileall scripts 2>&1 | tee .ci-logs/compileall.log
       - name: BasedPyright
-        run: uv run basedpyright scripts
+        run: set -o pipefail; uv run basedpyright scripts 2>&1 | tee .ci-logs/basedpyright.log
       - name: Pytest
-        run: uv run pytest scripts/ -v
+        run: set -o pipefail; uv run pytest scripts/ -v 2>&1 | tee .ci-logs/pytest.log
       - name: Validate static data
-        run: uv run python scripts/validate_data.py
+        run: set -o pipefail; uv run python scripts/validate_data.py 2>&1 | tee .ci-logs/validate-data.log
 
       - name: Validate frontend structure
-        run: node scripts/validate_frontend.js
+        run: set -o pipefail; node scripts/validate_frontend.js 2>&1 | tee .ci-logs/validate-frontend.log
       - name: ESLint
-        run: npm run lint:ci
+        run: set -o pipefail; npm run lint:ci 2>&1 | tee .ci-logs/eslint.log
       - name: Typecheck frontend
-        run: npm run typecheck
+        run: set -o pipefail; npm run typecheck 2>&1 | tee .ci-logs/typecheck.log
       - name: Unit tests
-        run: npm run test:run
+        run: set -o pipefail; npm run test:run 2>&1 | tee .ci-logs/vitest.log
       - name: Build frontend
-        run: npm run build
+        run: set -o pipefail; npm run build 2>&1 | tee .ci-logs/build.log
+
+      - name: Upload failure logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-failure-logs
+          path: .ci-logs
+          if-no-files-found: error
+          retention-days: 7

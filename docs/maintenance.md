@@ -130,7 +130,7 @@ npm run check
 
 该命令包含：
 
-- `npm run lint`
+- `npm run lint:ci`
 - `npm run typecheck`
 - `npm run test:run`
 - `npm run validate:frontend`
@@ -142,15 +142,14 @@ npm run check
 uv run python scripts/check.py
 ```
 
-默认执行阻塞检查。可用参数：
+默认执行全部阻塞检查，其中包含 Ruff、格式化、编译、BasedPyright、ty、Pytest、静态数据校验和前端完整检查。可用参数：
 
 ```bash
 uv run python scripts/check.py --python
 uv run python scripts/check.py --frontend
-uv run python scripts/check.py --all
 ```
 
-`--all` 会额外运行 `basedpyright` 和 `ty`，这两项按非阻塞结果处理。
+`--all` 作为兼容参数保留，完整检查现已默认执行。
 
 ### 测试分工
 
@@ -165,14 +164,20 @@ uv run python scripts/check.py --all
 
 ## 自动化与发布
 
+`.github/workflows/ci.yml` 会在拉取请求和 `main` 分支推送时执行全部阻塞检查：
+
+1. 使用锁文件安装 Node.js 和 Python 依赖。
+2. 运行 Ruff、格式化和 Python 编译检查。
+3. 运行 BasedPyright、ty、Pytest 和静态数据校验。
+4. 运行前端结构校验、零警告 ESLint、TypeScript、Vitest 和生产构建。
+5. 检查失败时上传诊断日志。
+
 `.github/workflows/pages.yml` 在 `main` 分支有新提交时执行：
 
 1. 安装 Node.js 22。
 2. 运行 `npm ci`。
-3. 运行 `npm run build`。
+3. 运行 `npm run check`。
 4. 上传并发布 `dist/`。
-
-质量工作流当前停用，文件名为 `.github/workflows/ci.yml.disabled`。它不会在推送或拉取请求中自动运行。恢复时需要改回 `.github/workflows/ci.yml`，并核对其中的命令和依赖版本。
 
 发布后检查：
 

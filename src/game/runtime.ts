@@ -85,6 +85,18 @@ export function canAdvanceScene(state: GameState): boolean {
   return node.type === "dialogue" || state.locked;
 }
 
+export function canRewindScene(state: GameState): boolean {
+  return !state.locked && state.sceneNodeIndex > 0;
+}
+
+export function rewindScene(state: GameState): GameState {
+  if (!canRewindScene(state)) return state;
+  return {
+    ...state,
+    sceneNodeIndex: state.sceneNodeIndex - 1,
+  };
+}
+
 export function advanceScene(state: GameState, _data: GameDataYear): GameState {
   void _data;
   const scene = sceneForMonth(state);

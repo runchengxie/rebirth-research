@@ -57,7 +57,7 @@ const BEHAVIOR_TAGS = [
 ] as const;
 
 export interface YearContent {
-  contentVersion: number;
+  contentVersion: 2;
   year: string;
   themes: MarketTheme[];
   decisions: ResearchDecision[][];
@@ -72,6 +72,10 @@ export class ContentValidationError extends Error {
 
 function isString(v: unknown): v is string {
   return typeof v === "string";
+}
+
+function isNonEmptyString(v: unknown): v is string {
+  return isString(v) && v.trim().length > 0;
 }
 
 function isNumber(v: unknown): v is number {
@@ -108,16 +112,38 @@ function validateDecisionEffects(v: unknown): v is DecisionEffects {
   return true;
 }
 
+function requireCompetingHypotheses(value: unknown, where: string): void {
+  if (typeof value !== "object" || value === null) {
+    throw new ContentValidationError(`${where}: theme.competingHypotheses must be an object`);
+  }
+  const hypotheses = value as Record<string, unknown>;
+  for (const key of ["lin", "chen", "zhou"] as const) {
+    if (!isNonEmptyString(hypotheses[key])) {
+      throw new ContentValidationError(`${where}: theme.competingHypotheses.${key} must be a non-empty string`);
+    }
+  }
+}
+
 function requireTheme(v: unknown, where: string): MarketTheme {
   if (typeof v !== "object" || v === null) {
     throw new ContentValidationError(`${where}: theme must be an object`);
   }
   const t = v as Record<string, unknown>;
-  for (const key of ["id", "period", "title", "publicContext", "protagonistMemory", "gameHook"] as const) {
-    if (!isString(t[key])) {
-      throw new ContentValidationError(`${where}: theme.${key} must be a string`);
+  for (const key of [
+    "id",
+    "period",
+    "title",
+    "publicContext",
+    "protagonistMemory",
+    "gameHook",
+    "knownEvent",
+    "businessOutcome",
+  ] as const) {
+    if (!isNonEmptyString(t[key])) {
+      throw new ContentValidationError(`${where}: theme.${key} must be a non-empty string`);
     }
   }
+  requireCompetingHypotheses(t.competingHypotheses, where);
   if (t.historicalPrototype !== undefined && !isString(t.historicalPrototype)) {
     throw new ContentValidationError(`${where}: theme.historicalPrototype must be a string when present`);
   }
@@ -176,6 +202,9 @@ export function validateYearContent(raw: unknown): YearContent {
     throw new ContentValidationError("year content must be an object");
   }
   const c = raw as Record<string, unknown>;
+  if (c.contentVersion !== 2) {
+    throw new ContentValidationError("year content: 'contentVersion' must be 2");
+  }
   if (!isString(c.year)) {
     throw new ContentValidationError("year content: 'year' must be a string");
   }
@@ -209,5 +238,5 @@ export function validateYearContent(raw: unknown): YearContent {
     throw new ContentValidationError(`expected 12 monthly decision pools, got ${decisions.length}`);
   }
 
-  return { contentVersion: isNumber(c.contentVersion) ? c.contentVersion : 1, year: c.year, themes, decisions };
+  return { contentVersion: 2, year: c.year, themes, decisions };
 }

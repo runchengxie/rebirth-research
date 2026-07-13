@@ -5,6 +5,7 @@ import raw2025 from "./2025.json";
 import { THEMES_2023, makeDecisions2023 } from "../content2023";
 import { THEMES_2024, makeDecisions2024 } from "../content2024";
 import { THEMES_2025, makeDecisions2025 } from "../content2025";
+import { applyVerified2025Timeline, VERIFIED_2025_TIMELINE } from "../verified2025";
 import { ContentValidationError, validateYearContent } from "./schema";
 
 const YEARS = [
@@ -47,7 +48,10 @@ describe("正式年份内容层", () => {
         && decision.quality
         && decision.outcomeAlignment
         && Array.isArray(decision.behaviorTags))).toBe(true);
-      expect(sample.themes).toEqual(content.themes);
+      const expectedThemes = sample.year === "2025"
+        ? applyVerified2025Timeline(content.themes)
+        : content.themes;
+      expect(sample.themes).toEqual(expectedThemes);
     });
 
     it(`${sample.year} 年加载器按月份返回研究方案并支持循环索引`, () => {
@@ -56,6 +60,14 @@ describe("正式年份内容层", () => {
       expect(sample.makeDecisions(12)).toEqual(content.decisions[0]);
     });
   }
+
+  it("2025 年核验台账覆盖 12 个月并修正错位事件", () => {
+    expect(VERIFIED_2025_TIMELINE).toHaveLength(12);
+    expect(VERIFIED_2025_TIMELINE.every((anchor) => anchor.sourceIds.length > 0)).toBe(true);
+    expect(THEMES_2025[2].historicalPrototype).toContain("继续推进");
+    expect(THEMES_2025[6].historicalPrototype).toContain("7月");
+    expect(THEMES_2025[7].publicContext).not.toContain("三中全会");
+  });
 
   it("把追涨错误选项识别为市场追逐，而不是风险管理", () => {
     const chase = makeDecisions2023(1).find((decision) => decision.id === "2023feb-chase");

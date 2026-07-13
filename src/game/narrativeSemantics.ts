@@ -22,6 +22,7 @@ const METHOD_BY_CATEGORY: Record<DecisionCategory, DecisionMethod> = {
 };
 
 const RECKLESS_MARKERS = ["先上车", "追最强", "追涨", "冲进去", "赌一把", "不用验证", "拍脑袋"];
+const NON_ANALYTICAL_METHODS: DecisionMethod[] = ["self_management", "collaboration"];
 
 export function decisionMethod(decision: ResearchDecision): DecisionMethod {
   if (decision.method) return decision.method;
@@ -40,9 +41,21 @@ export function decisionMethod(decision: ResearchDecision): DecisionMethod {
 export function decisionQuality(decision: ResearchDecision): DecisionQuality {
   if (decision.quality) return decision.quality;
   const method = decisionMethod(decision);
+  if (method === "market_chasing") return "reckless";
+  if (method === "self_management") {
+    return decision.effects.lifeBalance >= 8
+      || decision.effects.fatigue <= -8
+      || decision.reflectionValue >= 10
+      ? "sound"
+      : "mixed";
+  }
+  if (method === "collaboration") {
+    return decision.effects.teamTrust >= 8 || decision.reflectionValue >= 8
+      ? "sound"
+      : "mixed";
+  }
   if (
-    method === "market_chasing"
-    || decision.evidenceLevel + decision.clarityLevel <= 10
+    decision.evidenceLevel + decision.clarityLevel <= 10
     || (decision.riskAwareness <= 2 && decision.effects.researchCredibility < 0)
   ) {
     return "reckless";
@@ -72,7 +85,9 @@ export function decisionBehaviorTags(decision: ResearchDecision): DecisionBehavi
   const tags: DecisionBehaviorTag[] = [];
   if (method === "market_chasing") tags.push("momentum_chasing", "thin_evidence");
   if (method === "risk_management") tags.push("crowding_aware", "downside_defined");
-  if (quality === "sound") tags.push("hypothesis_driven");
+  if (quality === "sound" && !NON_ANALYTICAL_METHODS.includes(method)) {
+    tags.push("hypothesis_driven");
+  }
   if (quality === "reckless" && !tags.includes("thin_evidence")) tags.push("thin_evidence");
   if (decision.reflectionValue >= 10) tags.push("reflective");
   return tags;

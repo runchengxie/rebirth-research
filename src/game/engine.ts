@@ -11,9 +11,11 @@ import {
   pickKnowledgeCard,
 } from "./content";
 import { branchFlagsForMonth } from "./branching";
+import { decisionMethod, decisionOutcomeAlignment, decisionQuality } from "./narrativeSemantics";
 import type {
   CharacterId,
   DecisionCategory,
+  DecisionMethod,
   DecisionScore,
   FocusAction,
   GameDataYear,
@@ -90,15 +92,16 @@ export function focusById(id: string): FocusAction {
   return FOCUS_ACTIONS.find((item) => item.id === id) || FOCUS_ACTIONS[0];
 }
 
-const CATEGORY_TEXT: Record<DecisionCategory, string> = {
-  deep_research: "选择了深度研究，把判断建立在数据和逻辑上",
-  expert_interview: "选择了产业验证，用一手信息校准假设",
-  roadshow: "选择了沟通和表达，把框架翻译给更多人",
-  risk_alert: "选择了风险提示，在市场最热的时候提醒冷静",
-  self_care: "优先照顾了生活状态",
-  help_colleague: "选择了帮助同事，在协作中建立信任",
-  committee_defense: "站上了投委会的讲台，接受交叉提问",
-  data_deep_dive: "选择了深度数据分析，用证据驱动判断",
+const METHOD_TEXT: Record<DecisionMethod, string> = {
+  fundamental_research: "选择了基本面研究，把判断建立在业务证据和可验证假设上",
+  field_research: "选择了一线验证，用真实反馈校准案头假设",
+  communication: "选择了沟通表达，把框架翻译给更多人检验",
+  risk_management: "选择了风险管理，在热度最高时先写清错误边界",
+  self_management: "优先照顾了生活状态和判断节奏",
+  collaboration: "选择了团队协作，让判断经过交叉验证",
+  committee_process: "站上投委会讲台，接受概率、赔率和反例的追问",
+  quantitative_research: "选择了数据研究，用结构和回测约束直觉",
+  market_chasing: "跳过验证追逐了市场热度，把方向判断交给了情绪",
 };
 
 const FOCUS_TEXT: Record<string, string> = {
@@ -112,9 +115,16 @@ export function buildOutcome(
   story: StoryArc,
   focus: FocusAction,
 ): RoundOutcome {
+  const method = decisionMethod(decision);
+  const quality = decisionQuality(decision);
+  const qualityText = quality === "sound"
+    ? "方法执行完整。"
+    : quality === "reckless"
+      ? "这次选择跳过了关键验证。"
+      : "方法有价值，但证据链仍有缺口。";
   return {
     title: `${story.speaker}对你的选择做出了评价`,
-    dialogue: `${story.speaker}看了看你的选择：${CATEGORY_TEXT[decision.category] || "做了选择"}。${FOCUS_TEXT[focus.id] || ""}`,
+    dialogue: `${story.speaker}看了看你的选择：${METHOD_TEXT[method]}。${qualityText}${FOCUS_TEXT[focus.id] || ""}`,
     detail: decision.backgroundNote || "",
   };
 }
@@ -124,11 +134,8 @@ type CoreResearchScores = Pick<
   "evidenceScore" | "clarityScore" | "riskAwarenessScore"
 >;
 
-function categoryIs(
-  category: DecisionCategory,
-  ...candidates: DecisionCategory[]
-): boolean {
-  return candidates.includes(category);
+function methodIs(decision: ResearchDecision, ...candidates: DecisionMethod[]): boolean {
+  return candidates.includes(decisionMethod(decision));
 }
 
 function coreResearchScores(
@@ -152,10 +159,11 @@ function coreResearchScores(
   }
 
   const reflectionBonus = Math.floor(decision.reflectionValue / 5);
+  const qualityPenalty = decisionQuality(decision) === "reckless" ? 2 : 0;
   return {
-    evidenceScore: Math.min(20, evidenceScore + reflectionBonus),
-    clarityScore: Math.min(20, clarityScore + reflectionBonus),
-    riskAwarenessScore: Math.min(20, riskAwarenessScore + reflectionBonus),
+    evidenceScore: Math.max(0, Math.min(20, evidenceScore + reflectionBonus - qualityPenalty)),
+    clarityScore: Math.max(0, Math.min(20, clarityScore + reflectionBonus - qualityPenalty)),
+    riskAwarenessScore: Math.max(0, Math.min(20, riskAwarenessScore + reflectionBonus - qualityPenalty)),
   };
 }
 
@@ -166,22 +174,22 @@ function applyCharacterSynergy(
 ): CoreResearchScores {
   const next = { ...scores };
   if (
-    story.characterId === "lin_ruoning" &&
-    categoryIs(decision.category, "deep_research", "data_deep_dive")
+    story.characterId === "lin_ruoning"
+    && methodIs(decision, "fundamental_research", "field_research")
   ) {
     next.evidenceScore = Math.min(20, next.evidenceScore + 1);
     next.clarityScore = Math.min(20, next.clarityScore + 1);
   }
   if (
-    story.characterId === "chen_xinghe" &&
-    categoryIs(decision.category, "data_deep_dive", "expert_interview")
+    story.characterId === "chen_xinghe"
+    && methodIs(decision, "quantitative_research", "field_research")
   ) {
     next.evidenceScore = Math.min(20, next.evidenceScore + 1);
     next.riskAwarenessScore = Math.min(20, next.riskAwarenessScore + 1);
   }
   if (
-    story.characterId === "zhou_mingzhao" &&
-    categoryIs(decision.category, "risk_alert", "committee_defense")
+    story.characterId === "zhou_mingzhao"
+    && methodIs(decision, "risk_management", "committee_process")
   ) {
     next.riskAwarenessScore = Math.min(20, next.riskAwarenessScore + 2);
   }
@@ -193,16 +201,17 @@ function communicationScore(
   story: StoryArc,
   focus: FocusAction,
 ): number {
-  const categoryScores: Partial<Record<DecisionCategory, number>> = {
-    roadshow: 18,
-    committee_defense: 17,
-    expert_interview: 14,
+  const methodScores: Partial<Record<DecisionMethod, number>> = {
+    communication: 18,
+    committee_process: 17,
+    field_research: 14,
+    market_chasing: 6,
   };
-  let score = categoryScores[decision.category] ?? 10;
+  let score = methodScores[decisionMethod(decision)] ?? 10;
   if (score === 10 && focus.id === "team_collab") score = 15;
   if (
-    story.characterId === "chen_xinghe" &&
-    categoryIs(decision.category, "data_deep_dive", "roadshow")
+    story.characterId === "chen_xinghe"
+    && methodIs(decision, "quantitative_research", "communication")
   ) {
     score = Math.min(20, score + 2);
   }
@@ -210,25 +219,28 @@ function communicationScore(
 }
 
 function lifeBalanceScore(decision: ResearchDecision, focus: FocusAction): number {
+  const method = decisionMethod(decision);
   let score = 8;
-  if (decision.category === "self_care") score = 14;
+  if (method === "self_management") score = 14;
   else if (focus.id === "self_care") score = 12;
-  else if (decision.category === "deep_research" && focus.id === "deep_research") score = 3;
-  else if (decision.category === "help_colleague") score = 10;
+  else if (method === "fundamental_research" && focus.id === "deep_research") score = 3;
+  else if (method === "collaboration") score = 10;
   if (decision.reflectionValue >= 10) score = Math.min(15, score + 2);
   return score;
 }
 
 function portfolioScore(decision: ResearchDecision): number {
-  if (decision.category === "deep_research") {
+  const method = decisionMethod(decision);
+  if (decisionQuality(decision) === "reckless") return 0;
+  if (method === "fundamental_research") {
     return decision.effects.portfolioNav > 0.01 ? 5 : 4;
   }
-  const categoryScores: Partial<Record<DecisionCategory, number>> = {
-    data_deep_dive: 4,
-    risk_alert: 2,
-    self_care: 2,
+  const methodScores: Partial<Record<DecisionMethod, number>> = {
+    quantitative_research: 4,
+    risk_management: 3,
+    self_management: 2,
   };
-  return categoryScores[decision.category] ?? 3;
+  return methodScores[method] ?? 3;
 }
 
 function gradeFor(total: number): string {
@@ -252,23 +264,26 @@ export function scoreDecision(
   const communication = communicationScore(decision, story, focus);
   const lifeBalance = lifeBalanceScore(decision, focus);
   const portfolio = portfolioScore(decision);
-  const total = Math.min(
-    100,
-    researchScores.evidenceScore +
-      researchScores.clarityScore +
-      researchScores.riskAwarenessScore +
-      communication +
-      lifeBalance +
-      portfolio,
+  const quality = decisionQuality(decision);
+  const alignment = decisionOutcomeAlignment(decision);
+  const qualityBonus = quality === "sound" ? 6 : quality === "mixed" ? 2 : -8;
+  const outcomeScore = alignment === "supports" ? 4 : alignment === "mixed" ? 1 : 0;
+  const total = clamp(
+    researchScores.evidenceScore
+      + researchScores.clarityScore
+      + researchScores.riskAwarenessScore
+      + communication
+      + lifeBalance
+      + portfolio
+      + qualityBonus
+      + outcomeScore,
   );
   const reasoningScore = Math.min(
     25,
     Math.round(
-      ((researchScores.evidenceScore +
-        researchScores.clarityScore +
-        researchScores.riskAwarenessScore) /
-        3) *
-        1.25,
+      ((researchScores.evidenceScore
+        + researchScores.clarityScore
+        + researchScores.riskAwarenessScore) / 3) * 1.25,
     ),
   );
 
@@ -277,6 +292,8 @@ export function scoreDecision(
     communicationScore: communication,
     lifeBalanceScore: lifeBalance,
     portfolioScore: portfolio,
+    qualityBonus,
+    outcomeScore,
     reasoningScore,
     total,
     grade: gradeFor(total),
@@ -365,6 +382,15 @@ function markAffinityFlags(
   return milestone;
 }
 
+export function isParachutedDecision(
+  decision: ResearchDecision,
+  score: DecisionScore,
+): boolean {
+  return decisionOutcomeAlignment(decision) === "supports"
+    && decisionQuality(decision) !== "sound"
+    && score.reasoningScore <= 14;
+}
+
 function applyNarrativeFlags(
   flags: Record<string, boolean | number>,
   decision: ResearchDecision,
@@ -373,10 +399,9 @@ function applyNarrativeFlags(
 ): void {
   if (score.grade === "S") flags[`respect_${framework}`] = true;
   if (score.grade === "D") flags[`watch_${framework}`] = true;
-  const isParachuted = score.evidenceScore + score.clarityScore < 24 && score.total >= 70;
-  if (isParachuted) flags[`parachuted_${framework}`] = true;
+  if (isParachutedDecision(decision, score)) flags[`parachuted_${framework}`] = true;
 
-  if (decision.category === "help_colleague") {
+  if (decisionMethod(decision) === "collaboration") {
     const primaryRelation = decision.effects.characterRelations[0]?.characterId;
     if (primaryRelation === "chen_xinghe") flags.helped_xinghe = true;
     if (primaryRelation === "zhao_chengyu") flags.helped_zhao = true;
@@ -385,14 +410,14 @@ function applyNarrativeFlags(
 }
 
 function nextOffice(state: GameState, decision: ResearchDecision, focus: FocusAction): OfficeState {
-  const addsPostIt = categoryIs(decision.category, "deep_research", "help_colleague");
-  const addsWhiteboard = categoryIs(
-    decision.category,
-    "deep_research",
-    "data_deep_dive",
-    "committee_defense",
+  const addsPostIt = methodIs(decision, "fundamental_research", "collaboration");
+  const addsWhiteboard = methodIs(
+    decision,
+    "fundamental_research",
+    "quantitative_research",
+    "committee_process",
   );
-  const addsCoffee = focus.id === "deep_research" || decision.category === "deep_research";
+  const addsCoffee = focus.id === "deep_research" || decisionMethod(decision) === "fundamental_research";
   return {
     postIts: state.office.postIts + Number(addsPostIt),
     whiteboardMarkers: state.office.whiteboardMarkers + Number(addsWhiteboard),
@@ -420,6 +445,17 @@ function nextCategoryCounts(
   };
 }
 
+function nextMethodCounts(
+  state: GameState,
+  decision: ResearchDecision,
+): Partial<Record<DecisionMethod, number>> {
+  const method = decisionMethod(decision);
+  return {
+    ...state.methodCounts,
+    [method]: (state.methodCounts[method] ?? 0) + 1,
+  };
+}
+
 export function makeDecision(
   state: GameState,
   _data: GameDataYear,
@@ -439,9 +475,12 @@ export function makeDecision(
   const score = scoreDecision(decision, story, focus);
   const framework = frameworkOf(decision, story);
   const card: KnowledgeCard | null = pickKnowledgeCard(decision, story);
-  const isParachuted = score.evidenceScore + score.clarityScore < 24 && score.total >= 70;
+  const isParachuted = isParachutedDecision(decision, score);
   applyNarrativeFlags(flags, decision, score, framework);
-  const businessVerdict = buildBusinessVerdict(story.theme, score);
+  const alignment = decisionOutcomeAlignment(decision);
+  const quality = decisionQuality(decision);
+  const method = decisionMethod(decision);
+  const businessVerdict = buildBusinessVerdict(story.theme, score, alignment, isParachuted);
 
   return {
     ...state,
@@ -460,6 +499,7 @@ export function makeDecision(
     relations,
     flags,
     categoryCounts: nextCategoryCounts(state, decision),
+    methodCounts: nextMethodCounts(state, decision),
     milestone,
     finished: state.monthIndex >= 11,
     history: [
@@ -485,6 +525,9 @@ export function makeDecision(
         marketReturn: 0,
         score,
         businessVerdict,
+        method,
+        quality,
+        outcomeAlignment: alignment,
         framework,
         knowledgeCardId: card?.id,
         isParachuted,
@@ -494,7 +537,7 @@ export function makeDecision(
 }
 
 export function postMortem(decision: ResearchDecision, monthLabel: string): string {
-  return `${monthLabel} ${CATEGORY_TEXT[decision.category] || "做了选择"}。${decision.backgroundNote || ""}`;
+  return `${monthLabel} ${METHOD_TEXT[decisionMethod(decision)]}。${decision.backgroundNote || ""}`;
 }
 
 export function frameworkOf(decision: ResearchDecision, story: StoryArc): CharacterId {
@@ -503,16 +546,27 @@ export function frameworkOf(decision: ResearchDecision, story: StoryArc): Charac
   return primary ?? story.characterId;
 }
 
-export function buildBusinessVerdict(theme: MarketTheme, score: DecisionScore): string {
+export function buildBusinessVerdict(
+  theme: MarketTheme,
+  score: DecisionScore,
+  alignment = "mixed" as "supports" | "mixed" | "contradicts",
+  isParachuted = false,
+): string {
   const fallback =
     "业务事实在月末才慢慢显形。价格会吵吵闹闹，但生意自己会说话，你这次的框架，经得起回头看吗？";
   const base = theme.businessOutcome?.length ? theme.businessOutcome : fallback;
 
-  if (score.reasoningScore >= 18) {
-    return `${base} 更难得的是，你这次的推导链经得起业务事实的检验，不是蒙对的，是想通的。`;
+  if (isParachuted) {
+    return `${base} 结果这次站在你这边，但推导链没有跟上。结论像从天花板掉下来，下一次未必还接得住。`;
+  }
+  if (alignment === "contradicts") {
+    return `${base} 业务事实没有支持你的原判断。把错位发生在哪个假设、变量或时点写下来，比替结论找借口更有用。`;
+  }
+  if (alignment === "supports" && score.reasoningScore >= 18) {
+    return `${base} 你的结论和业务事实方向一致，推导链也经得起复盘。`;
   }
   if (score.reasoningScore <= 8) {
-    return `${base} 可惜你的判断来得太快：中间那几步推导没铺开，连你自己都说不清为什么。答案会过期，方法不会。`;
+    return `${base} 你的判断来得太快，中间几步没有铺开。答案会过期，方法不会。`;
   }
   return base;
 }

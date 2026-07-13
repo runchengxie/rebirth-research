@@ -405,8 +405,8 @@ export const BRANCHES: Branch[] = [
     when: {
       kind: "or",
       of: [
-        { kind: "categoryStreak", category: "deep_research", gte: 4 },
-        { kind: "categoryStreak", category: "data_deep_dive", gte: 4 },
+        { kind: "methodStreak", method: "fundamental_research", gte: 4 },
+        { kind: "methodStreak", method: "quantitative_research", gte: 4 },
       ],
     },
     contribute: {
@@ -492,8 +492,8 @@ export const BRANCHES: Branch[] = [
         {
           kind: "or",
           of: [
-            { kind: "categoryStreak", category: "help_colleague", gte: 3 },
-            { kind: "categoryStreak", category: "roadshow", gte: 3 },
+            { kind: "methodStreak", method: "collaboration", gte: 3 },
+            { kind: "methodStreak", method: "communication", gte: 3 },
           ],
         },
       ],

@@ -27,7 +27,7 @@ export function StoryRecapPanel({ result, state }: { result: RoundResult | undef
         <div className={`knowledge-card ${CHARACTERS[card.mentorId].color}`}>
           <strong>本月学到 · {card.concept}</strong>
           <p>{CHARACTERS[card.mentorId].name}：{card.mentorLine}</p>
-          {card.cfaRef ? <small>{card.cfaRef}</small> : null}
+          {card.learningRef ? <small>{card.learningRef}</small> : null}
         </div>
       ) : null}
     </div>

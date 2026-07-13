@@ -2,7 +2,7 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
-    "check": "npm run lint:ci && npm run typecheck && npm run test:run && npm run validate:frontend && npm run build",
+    "check": "npm run lint:ci && npm run typecheck && npm run test:run && npm run validate:frontend && npm run validate:brand && npm run build",
     "lint": "eslint .",
     "lint:ci": "eslint . --max-warnings=0",
     "preview": "vite preview --host 0.0.0.0",
@@ -12,7 +12,8 @@
     "validate:frontend": "node scripts/validate_frontend.js",
     "dump:2023": "node scripts/content-dumps/dump2023.mjs",
     "dump:2024": "node scripts/content-dumps/dump2024.mjs",
-    "dump:content": "npm run dump:2023 && npm run dump:2024"
+    "dump:content": "npm run dump:2023 && npm run dump:2024",
+    "validate:brand": "node scripts/validate_brand_refs.mjs"
   },
   "dependencies": {
     "@drincs/pixi-vn": "^1.8.22",

@@ -30,13 +30,24 @@ const YEARS = [
 
 describe("正式年份内容层", () => {
   for (const sample of YEARS) {
-    it(`${sample.year} 年包含 12 个主题和 12 组研究方案`, () => {
+    it(`${sample.year} 年包含完整的 12 个月 v2 内容`, () => {
       const content = validateYearContent(sample.raw);
+      expect(content.contentVersion).toBe(2);
       expect(content.year).toBe(sample.year);
       expect(content.themes).toHaveLength(12);
       expect(content.decisions).toHaveLength(12);
       expect(content.decisions.every((pool) => pool.length > 0)).toBe(true);
-      expect(sample.themes).toHaveLength(12);
+      expect(content.themes.every((theme) => theme.knownEvent && theme.businessOutcome)).toBe(true);
+      expect(content.themes.every((theme) =>
+        theme.competingHypotheses?.lin
+        && theme.competingHypotheses.chen
+        && theme.competingHypotheses.zhou)).toBe(true);
+      expect(content.decisions.flat().every((decision) =>
+        decision.method
+        && decision.quality
+        && decision.outcomeAlignment
+        && Array.isArray(decision.behaviorTags))).toBe(true);
+      expect(sample.themes).toEqual(content.themes);
     });
 
     it(`${sample.year} 年加载器按月份返回研究方案并支持循环索引`, () => {
@@ -46,14 +57,41 @@ describe("正式年份内容层", () => {
     });
   }
 
+  it("把追涨错误选项识别为市场追逐，而不是风险管理", () => {
+    const chase = makeDecisions2023(1).find((decision) => decision.id === "2023feb-chase");
+    expect(chase?.category).toBe("risk_alert");
+    expect(chase?.method).toBe("market_chasing");
+    expect(chase?.quality).toBe("reckless");
+  });
+
+  it("生活管理和团队协作不会因研究证据维度较低被误判为冒进", () => {
+    const decisions = YEARS.flatMap((sample) => validateYearContent(sample.raw).decisions.flat());
+    const nonAnalytical = decisions.filter((decision) =>
+      decision.method === "self_management" || decision.method === "collaboration");
+    expect(nonAnalytical.length).toBeGreaterThan(0);
+    expect(nonAnalytical.every((decision) => decision.quality !== "reckless")).toBe(true);
+    expect(nonAnalytical.every((decision) => !decision.behaviorTags?.includes("thin_evidence"))).toBe(true);
+  });
+
+  it("拒绝缺少业务事实或三方假设的 v2 内容", () => {
+    const missingOutcome = structuredClone(raw2023);
+    missingOutcome.themes[0].businessOutcome = "";
+    expect(() => validateYearContent(missingOutcome)).toThrow(/businessOutcome/);
+
+    const missingHypothesis = structuredClone(raw2024);
+    missingHypothesis.themes[0].competingHypotheses.lin = "";
+    expect(() => validateYearContent(missingHypothesis)).toThrow(/competingHypotheses\.lin/);
+  });
+
   it("拒绝缺少月份内容的数据", () => {
     expect(() =>
-      validateYearContent({ year: "2025", themes: [], decisions: [] }),
+      validateYearContent({ contentVersion: 2, year: "2025", themes: [], decisions: [] }),
     ).toThrow(ContentValidationError);
   });
 
   it("拒绝未知的研究方案类别", () => {
     const bad = {
+      contentVersion: 2,
       year: "2025",
       themes: raw2025.themes,
       decisions: [
@@ -74,6 +112,10 @@ describe("正式年份内容层", () => {
               lifeBalance: 0,
               characterRelations: [],
             },
+            method: "fundamental_research",
+            quality: "mixed",
+            outcomeAlignment: "mixed",
+            behaviorTags: [],
             evidenceLevel: 0,
             clarityLevel: 0,
             riskAwareness: 0,

@@ -1,8 +1,13 @@
+import { completeDecisionSemantics } from "./narrativeSemantics";
 import type {
   CharacterId,
   CharacterRelation,
+  DecisionBehaviorTag,
   DecisionCategory,
   DecisionEffects,
+  DecisionMethod,
+  DecisionQuality,
+  OutcomeAlignment,
   ResearchDecision,
 } from "../types";
 
@@ -12,6 +17,10 @@ export type DecisionInput = {
   id: string;
   label: string;
   category: DecisionCategory;
+  method?: DecisionMethod;
+  quality?: DecisionQuality;
+  outcomeAlignment?: OutcomeAlignment;
+  behaviorTags?: DecisionBehaviorTag[];
   description: string;
   to?: CharacterId; // 主要好感对象
   val?: number; // 主要好感增量
@@ -47,10 +56,14 @@ export function d(input: DecisionInput): ResearchDecision {
   };
   const effects: DecisionEffects = input.fx ? { ...base, ...input.fx } : base;
 
-  return {
+  return completeDecisionSemantics({
     id: input.id,
     label: input.label,
     category: input.category,
+    method: input.method,
+    quality: input.quality,
+    outcomeAlignment: input.outcomeAlignment,
+    behaviorTags: input.behaviorTags,
     description: input.description,
     effects,
     evidenceLevel: input.ev ?? 0,
@@ -59,5 +72,5 @@ export function d(input: DecisionInput): ResearchDecision {
     reflectionValue: input.rf ?? 0,
     backgroundNote: input.note,
     setsFlags: input.setsFlags,
-  };
+  });
 }

@@ -8,12 +8,13 @@
 import raw from "./content/2024.json";
 import type { MarketTheme, ResearchDecision } from "../types";
 import { validateYearContent } from "./content/schema";
+import { completeDecisionSemantics, completeYearThemes } from "./narrativeSemantics";
 
 const CONTENT_2024 = validateYearContent(raw);
 
-export const THEMES_2024: MarketTheme[] = CONTENT_2024.themes;
+export const THEMES_2024: MarketTheme[] = completeYearThemes(CONTENT_2024.themes);
 
 export function makeDecisions2024(monthIndex: number): ResearchDecision[] {
   const pool = CONTENT_2024.decisions[monthIndex % CONTENT_2024.decisions.length];
-  return pool ?? [];
+  return (pool ?? []).map(completeDecisionSemantics);
 }

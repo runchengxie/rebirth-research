@@ -13,9 +13,8 @@ import {
   rewindScene,
   sceneForMonth,
 } from "../game/runtime";
+import { persistStoredState, readStoredState as readStoredStateFromStorage } from "../game/saveState";
 import type { CharacterId, GameState, ResearchDecision, RoundResult } from "../types";
-
-const SAVE_KEY_PREFIX = "rebirthGameState:v1:";
 
 export function canUsePixiStage(): boolean {
   const params = new URLSearchParams(window.location.search);
@@ -66,67 +65,9 @@ function bestInitialYear(): string {
     : GAME_YEARS[GAME_YEARS.length - 1] || "2025";
 }
 
-function saveKey(year: string): string {
-  return `${SAVE_KEY_PREFIX}${year}`;
-}
-
-function isObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null;
-}
-
-function restoreObject<T extends object>(value: unknown, fallback: T): T {
-  if (!isObject(value)) return fallback;
-  return { ...fallback, ...value } as T;
-}
-
-function restoreRecord<T extends object>(value: unknown, fallback: T): T {
-  if (!isObject(value)) return fallback;
-  return value as T;
-}
-
-function restoreArray<T>(value: unknown, fallback: T[]): T[] {
-  if (!Array.isArray(value)) return fallback;
-  return value as T[];
-}
-
-function hasValidStoredPosition(saved: Partial<GameState>): boolean {
-  const { monthIndex, sceneNodeIndex } = saved;
-  return typeof monthIndex === "number"
-    && Number.isInteger(monthIndex)
-    && monthIndex >= 0
-    && monthIndex <= 11
-    && typeof sceneNodeIndex === "number"
-    && Number.isInteger(sceneNodeIndex)
-    && sceneNodeIndex >= 0;
-}
-
 function readStoredState(year: string): GameState | null {
   try {
-    const raw = localStorage.getItem(saveKey(year));
-    if (!raw) return null;
-    const parsed: unknown = JSON.parse(raw);
-    if (!isObject(parsed) || parsed.year !== year) return null;
-
-    const fresh = createInitialState(year);
-    const saved = parsed as Partial<GameState>;
-    if (!hasValidStoredPosition(saved)) return null;
-
-    const restored: GameState = {
-      ...fresh,
-      ...saved,
-      year,
-      relations: restoreObject(saved.relations, fresh.relations),
-      flags: restoreRecord(saved.flags, fresh.flags),
-      categoryCounts: restoreRecord(saved.categoryCounts, fresh.categoryCounts),
-      history: restoreArray(saved.history, fresh.history),
-      knowledgeCards: restoreArray(saved.knowledgeCards, fresh.knowledgeCards),
-      office: restoreObject(saved.office, fresh.office),
-    };
-    const lastSceneIndex = Math.max(0, sceneForMonth(restored).nodes.length - 1);
-    return {
-      ...restored,
-      sceneNodeIndex: Math.min(restored.sceneNodeIndex, lastSceneIndex),
-    };
+    return readStoredStateFromStorage(localStorage, year);
   } catch {
     return null;
   }
@@ -134,7 +75,7 @@ function readStoredState(year: string): GameState | null {
 
 function persistState(state: GameState): void {
   try {
-    localStorage.setItem(saveKey(state.year), JSON.stringify(state));
+    persistStoredState(localStorage, state);
   } catch {
     // Storage can be unavailable in strict privacy modes or full sandboxes.
   }
@@ -283,7 +224,7 @@ function useLineVoice(state: GameState, sceneNode: SceneNode, audio: GameAudio):
     sceneNode.type === "dialogue"
       && !sceneNode.id.endsWith("-competing")
       && sceneNode.voiceCue !== "silent"
-      ? `${state.year}-${state.monthIndex}-${state.sceneNodeIndex}`
+      ? `${state.year}-${state.monthIndex}-${sceneNode.id}`
       : "";
 
   useEffect(() => {

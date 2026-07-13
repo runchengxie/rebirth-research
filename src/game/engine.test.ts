@@ -8,9 +8,13 @@ import {
   gradeReviewText,
   hasFlag,
   isBestPartner,
+  isParachutedDecision,
   makeDecision,
+  scoreDecision,
   selectFocus,
   setFlag,
+  storyForMonth,
+  focusById,
   totalRelations,
 } from "./engine";
 import {
@@ -306,6 +310,38 @@ describe("scoring system", () => {
   });
 });
 
+describe("正式年份评分可达性", () => {
+  const years = ["2023", "2024", "2025"];
+  const focuses = ["deep_research", "team_collab", "self_care"];
+
+  it.each(years)("%s 年存在可达的 S 评级", (year) => {
+    const grades = new Set<string>();
+    for (let month = 0; month < 12; month += 1) {
+      const decisionNode = buildMonthScene(month, year).nodes.find((node) => node.type === "decision");
+      for (const decision of decisionNode?.decisions ?? []) {
+        for (const focusId of focuses) {
+          grades.add(scoreDecision(decision, storyForMonth(month, year), focusById(focusId)).grade);
+        }
+      }
+    }
+    expect(grades).toContain("S");
+  });
+
+  it.each(years)("%s 年存在可达的空降结论", (year) => {
+    let reachable = false;
+    for (let month = 0; month < 12; month += 1) {
+      const decisionNode = buildMonthScene(month, year).nodes.find((node) => node.type === "decision");
+      for (const decision of decisionNode?.decisions ?? []) {
+        for (const focusId of focuses) {
+          const score = scoreDecision(decision, storyForMonth(month, year), focusById(focusId));
+          reachable ||= isParachutedDecision(decision, score);
+        }
+      }
+    }
+    expect(reachable).toBe(true);
+  });
+});
+
 describe("grade review", () => {
   it("returns text for valid character + grade", () => {
     const text = gradeReviewText("lin_ruoning", "S");
@@ -404,6 +440,7 @@ describe("affection system & branching", () => {
       ).toBe(true);
       expect(evaluateBranchCondition({ kind: "not", of: { kind: "metric", key: "fatigue", gte: 75 } }, s)).toBe(false);
       expect(evaluateBranchCondition({ kind: "categoryStreak", category: "deep_research", gte: 4 }, { ...s, categoryCounts: { deep_research: 5 } })).toBe(true);
+      expect(evaluateBranchCondition({ kind: "methodStreak", method: "fundamental_research", gte: 4 }, { ...s, methodCounts: { fundamental_research: 5 } })).toBe(true);
       expect(
         evaluateBranchCondition(
           { kind: "affinityAny", gte: 60 },

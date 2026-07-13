@@ -26,19 +26,45 @@ export interface CharacterRelation {
 // ── Research decisions (expanded pool, not just 4 per month) ──
 
 export type DecisionCategory =
-  | "deep_research"      // 熬夜写深度研报
-  | "expert_interview"   // 约专家电话会
-  | "roadshow"           // 跟销售去路演
-  | "risk_alert"         // 写风险提示
-  | "self_care"          // 准时下班/生活优先
-  | "help_colleague"     // 帮同事改模型/补数据
-  | "committee_defense"  // 参加投委会答辩
-  | "data_deep_dive";    // 拆成交数据/跑回测
+  | "deep_research"      // 旧版内容分类：深度研报
+  | "expert_interview"   // 旧版内容分类：一线调研
+  | "roadshow"           // 旧版内容分类：沟通表达
+  | "risk_alert"         // 旧版内容分类：风险相关选项
+  | "self_care"          // 旧版内容分类：生活管理
+  | "help_colleague"     // 旧版内容分类：团队协作
+  | "committee_defense"  // 旧版内容分类：投委会答辩
+  | "data_deep_dive";    // 旧版内容分类：数据研究
+
+// 方法、行为质量和结果方向分开建模。category 只承担旧内容兼容和历史统计。
+export type DecisionMethod =
+  | "fundamental_research"
+  | "field_research"
+  | "communication"
+  | "risk_management"
+  | "self_management"
+  | "collaboration"
+  | "committee_process"
+  | "quantitative_research"
+  | "market_chasing";
+
+export type DecisionQuality = "sound" | "mixed" | "reckless";
+export type OutcomeAlignment = "supports" | "mixed" | "contradicts";
+export type DecisionBehaviorTag =
+  | "hypothesis_driven"
+  | "thin_evidence"
+  | "momentum_chasing"
+  | "crowding_aware"
+  | "downside_defined"
+  | "reflective";
 
 export interface ResearchDecision {
   id: string;
   label: string;           // e.g. "连夜写《低成本推理对应用软件的影响》"
   category: DecisionCategory;
+  method?: DecisionMethod;
+  quality?: DecisionQuality;
+  outcomeAlignment?: OutcomeAlignment;
+  behaviorTags?: DecisionBehaviorTag[];
   description: string;
   effects: DecisionEffects;
   backgroundNote?: string; // market context shown after choice
@@ -72,7 +98,7 @@ export interface KnowledgeCard {
   concept: string;          // human label, e.g. "因子拥挤度"
   mentorId: CharacterId;    // who taught it
   mentorLine: string;       // the line they say, in their voice
-  cfaRef?: string;          // optional CFA-style reading pointer
+  learningRef?: string;          // optional finance-foundations reading pointer
   tier: 1 | 2 | 3;          // surface / engaged / deep
 }
 
@@ -100,7 +126,7 @@ export interface DecisionEffects {
 // ── Monthly scenario ──
 
 // Three mutually-defensible hypotheses the three colleagues would each form
-// from the same future memory. The point of CFA-style thinking is that
+// from the same future memory. The point of finance-foundations thinking is that
 // reasonable analysts disagree — truth here is plural, not single.
 export interface CompetingHypotheses {
   lin?: string;   // 林若宁 / 基本面视角
@@ -209,6 +235,7 @@ export type BranchCondition =
   | { kind: "metricAtMost"; key: BranchMetricKey; lte: number }
   | { kind: "flag"; key: string; equals?: boolean | number }
   | { kind: "categoryStreak"; category: DecisionCategory; gte: number }
+  | { kind: "methodStreak"; method: DecisionMethod; gte: number }
   | { kind: "month"; gte: number }
   | { kind: "and"; of: BranchCondition[] }
   | { kind: "or"; of: BranchCondition[] }
@@ -299,6 +326,8 @@ export interface GameState {
   focusId: string;
   selectedId: string | null;
   sceneNodeIndex: number;
+  sceneNodeId: string;
+  contentRevision: string;
   locked: boolean;
   finished: boolean;
 
@@ -323,6 +352,7 @@ export interface GameState {
   // relationship-focused, self-care-balanced, ...) without hard-coding per-month
   // logic. Drives categoryStreak branch conditions.
   categoryCounts: Partial<Record<DecisionCategory, number>>;
+  methodCounts: Partial<Record<DecisionMethod, number>>;
 
   // Transient: the character whose affinity crossed a gate on the most recent decision
   milestone: CharacterId | null;
@@ -353,6 +383,8 @@ export interface DecisionScore {
   communicationScore: number;  // 0-20  晨会/路演/内部讨论表现
   lifeBalanceScore: number;   // 0-15  是否守住了生活节奏
   portfolioScore: number;     // 0-5   模拟组合表现（弱权重）
+  qualityBonus: number;       // -8-6 方法执行质量
+  outcomeScore: number;       // 0-4 结论与业务事实的方向关系
   // Reasoning quality, surfaced separately from the conclusion's correctness.
   // High reasoning + wrong business outcome still earns respect; low reasoning
   // + right outcome gets flagged as a "parachuted conclusion" (空降结论).
@@ -390,6 +422,9 @@ export interface RoundResult {
   // ── New narrative-system fields ──
   // Business-fact settlement verdict (not a stock return).
   businessVerdict?: string;
+  method?: DecisionMethod;
+  quality?: DecisionQuality;
+  outcomeAlignment?: OutcomeAlignment;
   // Which colleague's methodology this choice engaged.
   framework?: CharacterId;
   // The knowledge card taught this month (archived into the glossary).

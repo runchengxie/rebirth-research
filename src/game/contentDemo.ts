@@ -34,7 +34,7 @@ const CARD_CHAIN: KnowledgeCard = {
   concept: "产业链交叉验证",
   mentorId: "lin_ruoning",
   mentorLine: "别只看一个点。把上游、中游、下游的节奏差拆开，超额收益藏在断层里。",
-  cfaRef: "CFA · 权益估值与产业链验证",
+  learningRef: "金融基础 · 权益估值与产业链验证",
   tier: 1,
 };
 const CARD_CASH: KnowledgeCard = {
@@ -42,7 +42,7 @@ const CARD_CASH: KnowledgeCard = {
   concept: "回款才是收入",
   mentorId: "chen_xinghe",
   mentorLine: "订单不是收入，回款才是。预收和周转拆不开的，都是纸面富贵。",
-  cfaRef: "CFA · 现金流质量",
+  learningRef: "金融基础 · 现金流质量",
   tier: 1,
 };
 const CARD_MARGIN: KnowledgeCard = {
@@ -50,7 +50,7 @@ const CARD_MARGIN: KnowledgeCard = {
   concept: "降价守住毛利",
   mentorId: "zhou_mingzhao",
   mentorLine: "降级里跑出来的不是最便宜的，是平价但更好用的。守不住毛利的升级是假升级。",
-  cfaRef: "CFA · 毛利与周转",
+  learningRef: "金融基础 · 毛利与周转",
   tier: 1,
 };
 const CARD_YIELD: KnowledgeCard = {
@@ -58,7 +58,7 @@ const CARD_YIELD: KnowledgeCard = {
   concept: "良率爬坡才是入场券",
   mentorId: "lin_ruoning",
   mentorLine: "验证通过只是入场券，产线良率和复购才说明生意成没成。",
-  cfaRef: "CFA · 制造业爬坡曲线",
+  learningRef: "金融基础 · 制造业爬坡曲线",
   tier: 1,
 };
 

@@ -60,6 +60,7 @@ for (const script of [
   "lint:ci",
   "test:run",
   "typecheck",
+  "validate:brand",
   "validate:frontend",
 ]) {
   if (!packageJson.scripts?.[script]) {
@@ -113,8 +114,12 @@ for (const file of [
   "src/game/decisionFactory.ts",
   "src/game/engine.ts",
   "src/game/engine.test.ts",
+  "src/game/narrativeSemantics.ts",
+  "src/game/narrativeSemantics.test.ts",
   "src/game/runtime.ts",
   "src/game/runtime.test.ts",
+  "src/game/saveState.ts",
+  "src/game/saveState.test.ts",
   "src/game/sceneBuilders.ts",
   "src/game/storyArcs.ts",
   "src/game/content/schema.ts",
@@ -122,6 +127,7 @@ for (const file of [
   "src/spike/pixivn/Chapter1Spike.tsx",
   "scripts/content-dumps/dump2023.mjs",
   "scripts/content-dumps/dump2024.mjs",
+  "scripts/validate_brand_refs.mjs",
   "vite.config.ts",
   "tsconfig.json",
   "tsconfig.app.json",
@@ -150,10 +156,24 @@ requireText("src/app/useGameController.ts", [
   "ProceduralBgm",
   "NarrativeAudio",
   "staticStage",
-  "SAVE_KEY_PREFIX",
+  "readStoredStateFromStorage",
+  "persistStoredState",
   "rewindScene",
 ]);
-requireText("src/game/runtime.ts", ["canRewindScene", "rewindScene"]);
+requireText("src/game/saveState.ts", [
+  "SAVE_KEY_PREFIX",
+  "LEGACY_SAVE_KEY_PREFIX",
+  "sceneNodeId",
+  "contentRevision",
+]);
+requireText("src/game/runtime.ts", ["canRewindScene", "rewindScene", "sceneNodeId"]);
+requireText("src/game/narrativeSemantics.ts", [
+  "decisionMethod",
+  "decisionQuality",
+  "decisionOutcomeAlignment",
+  "YEAR_NARRATIVE_PROFILES",
+  "sceneProfileFor",
+]);
 requireText("src/components/PixiStage.tsx", [
   "pixi.js",
   "backgroundAssets",
@@ -176,6 +196,9 @@ for (const year of ["2023", "2024", "2025"]) {
   );
   if (content.year !== year) {
     fail(`src/game/content/${year}.json 的 year 字段不一致`);
+  }
+  if (content.contentVersion !== 2) {
+    fail(`src/game/content/${year}.json 应使用 contentVersion 2`);
   }
   if (!Array.isArray(content.themes) || content.themes.length !== 12) {
     fail(`src/game/content/${year}.json 应包含 12 个主题`);

@@ -20,20 +20,31 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: git clone --quiet --depth 1 --branch feat/content-system-v2 "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" .
+      - name: Detect pending migration
+        id: migration
+        run: |
+          if [ -f scripts/.content-system-v2-part00 ]; then
+            echo "pending=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "pending=false" >> "$GITHUB_OUTPUT"
+          fi
       - name: Rebuild migration script
+        if: steps.migration.outputs.pending == 'true'
         run: |
           cat scripts/.content-system-v2-part* | base64 --decode | gzip --decompress > scripts/apply_content_system_v2.py
           python scripts/.content-system-v2-hotfix.py
           python -m py_compile scripts/apply_content_system_v2.py
       - name: Apply migration
+        if: steps.migration.outputs.pending == 'true'
         run: |
           if ! python scripts/apply_content_system_v2.py > migration-output.log 2>&1; then
             cat migration-output.log
             exit 1
           fi
-      - name: Commit generated changes
+      - name: Commit generated source changes
+        if: steps.migration.outputs.pending == 'true'
         run: |
-          rm -f scripts/.content-system-v2-part* scripts/.content-system-v2-hotfix.py scripts/apply_content_system_v2.py migration-output.log .github/workflows/apply-content-system-v2.yml
+          rm -f scripts/.content-system-v2-part* scripts/.content-system-v2-hotfix.py scripts/apply_content_system_v2.py migration-output.log .github/workflows/check.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A

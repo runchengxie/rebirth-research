@@ -15,16 +15,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
-      - name: Apply test type fixes
-        run: python scripts/dev/fix_rebirth_v2_types.py
-      - name: Commit fixes
+      - name: Finalize docs and validation
+        run: python scripts/dev/finalize_rebirth_v2.py
+      - name: Commit finalization
         shell: bash
         run: |
           if ! git diff --quiet; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add src
-            git commit -m "fix: 修正重生二期测试类型"
+            git add docs scripts/validate_frontend.js
+            git commit -m "docs: 完成重生二期文档与结构校验"
             git push origin HEAD:${{ github.head_ref }}
           fi
       - uses: actions/setup-node@v4

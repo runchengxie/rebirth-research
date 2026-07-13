@@ -13,6 +13,16 @@ import {
   rewindScene,
   sceneForMonth,
 } from "../game/runtime";
+import {
+  completeRebirthCycle,
+  createRebirthMeta,
+  decisionOptionsForRebirth,
+  performInvestigation,
+  persistRebirthMeta,
+  prepareDecisionForRebirth,
+  readRebirthMeta,
+  resetRebirthRun,
+} from "../game/rebirth";
 import { persistStoredState, readStoredState as readStoredStateFromStorage } from "../game/saveState";
 import type { CharacterId, GameState, ResearchDecision, RoundResult } from "../types";
 
@@ -81,9 +91,28 @@ function persistState(state: GameState): void {
   }
 }
 
-function createState(year = bestInitialYear()): GameState {
+function readStoredRebirth(year: string) {
+  try {
+    return readRebirthMeta(localStorage, year);
+  } catch {
+    return createRebirthMeta(year);
+  }
+}
+
+function persistRebirth(meta: ReturnType<typeof createRebirthMeta>): void {
+  try {
+    persistRebirthMeta(localStorage, meta);
+  } catch {
+    // Storage can be unavailable in strict privacy modes or full sandboxes.
+  }
+}
+
+function createSessionState(year = bestInitialYear()) {
   const actualYear = readYearFromUrl() ?? year;
-  return readStoredState(actualYear) ?? createInitialState(actualYear);
+  return {
+    state: readStoredState(actualYear) ?? createInitialState(actualYear),
+    rebirth: readStoredRebirth(actualYear),
+  };
 }
 
 type Scene = ReturnType<typeof sceneForMonth>;
@@ -234,7 +263,9 @@ function useLineVoice(state: GameState, sceneNode: SceneNode, audio: GameAudio):
 
 export function useGameSession(audio: GameAudio) {
   const { playAdvance, playChoice, resetLineVoice } = audio;
-  const [state, setState] = useState<GameState>(() => createState());
+  const [initialSession] = useState(createSessionState);
+  const [state, setState] = useState<GameState>(initialSession.state);
+  const [rebirth, setRebirth] = useState(initialSession.rebirth);
   const data = GAME_DATA[state.year];
   const scene = sceneForMonth(state);
   const sceneNode = currentSceneNode(state);
@@ -248,21 +279,35 @@ export function useGameSession(audio: GameAudio) {
     persistState(state);
   }, [state]);
 
+  useEffect(() => {
+    persistRebirth(rebirth);
+  }, [rebirth]);
+
   const changeYear = useCallback((year: string) => {
     resetLineVoice();
     setState(readStoredState(year) ?? createInitialState(year));
+    setRebirth(readStoredRebirth(year));
   }, [resetLineVoice]);
 
   const restart = useCallback(() => {
     resetLineVoice();
     setState(createInitialState(state.year));
+    setRebirth((current) => resetRebirthRun(current));
   }, [resetLineVoice, state.year]);
 
   const advanceCurrentScene = useCallback(() => {
     if (!sceneCanAdvance) return;
     playAdvance();
+    const isCycleEnd = state.finished && state.sceneNodeIndex >= scene.nodes.length - 1;
+    if (isCycleEnd) {
+      const nextRebirth = completeRebirthCycle(rebirth, state);
+      setRebirth(nextRebirth);
+      setState(createInitialState(state.year));
+      resetLineVoice();
+      return;
+    }
     setState((current) => advanceScene(current, data));
-  }, [data, playAdvance, sceneCanAdvance]);
+  }, [data, playAdvance, rebirth, resetLineVoice, scene.nodes.length, sceneCanAdvance, state]);
 
   const goBack = useCallback(() => {
     if (!canGoBack) return;
@@ -275,10 +320,21 @@ export function useGameSession(audio: GameAudio) {
     setState((current) => selectFocus(current, focusId));
   }, [playChoice]);
 
+  const investigateWithSound = useCallback((nodeId: Parameters<typeof performInvestigation>[2]) => {
+    const result = performInvestigation(rebirth, state, nodeId);
+    if (!result.changed) return;
+    playChoice();
+    setRebirth(result.meta);
+    setState(result.state);
+  }, [playChoice, rebirth, state]);
+
   const makeDecisionWithSound = useCallback((decision: ResearchDecision) => {
     playChoice();
-    setState((current) => makeDecision(current, data, decision));
-  }, [data, playChoice]);
+    setState((current) => {
+      const prepared = prepareDecisionForRebirth(rebirth, current, decision);
+      return makeDecision(current, data, prepared);
+    });
+  }, [data, playChoice, rebirth]);
 
   return {
     advanceCurrentScene,
@@ -286,7 +342,9 @@ export function useGameSession(audio: GameAudio) {
     changeYear,
     data,
     goBack,
+    investigateWithSound,
     makeDecisionWithSound,
+    rebirth,
     restart,
     scene,
     sceneCanAdvance,
@@ -386,7 +444,7 @@ function advanceLabelFor(
   isLastSceneNode: boolean,
 ): string {
   if (sceneNode.type === "decision" && !state.locked) return "先选择研究方向";
-  if (state.finished && isLastSceneNode) return "开启新周目";
+  if (state.finished && isLastSceneNode) return "带着记忆重生";
   if (state.locked && isLastSceneNode) return "下一话";
   if (sceneNode.type === "decision" && state.locked) return "继续剧情";
   return "继续";
@@ -400,6 +458,7 @@ export function buildSceneView(session: GameSession) {
   const lineCharacterId: CharacterId =
     sceneNode.type === "dialogue" ? sceneNode.characterId : story.characterId;
   const result = resultCopyFor(state, sceneNode, scene, sceneProgress, last);
+  const baseDecisions = sceneNode.type === "decision" ? sceneNode.decisions || [] : [];
 
   return {
     activeCharacter: CHARACTERS[lineCharacterId],
@@ -421,7 +480,7 @@ export function buildSceneView(session: GameSession) {
     sceneProgress,
     speakerName: speakerNameFor(state, sceneNode, story, last),
     speakerRole: speakerRoleFor(state, sceneNode, story, last),
-    topDecisions: sceneNode.type === "decision" ? sceneNode.decisions || [] : [],
+    topDecisions: decisionOptionsForRebirth(session.rebirth, state, baseDecisions),
   };
 }
 

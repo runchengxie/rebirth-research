@@ -1,0 +1,190 @@
+.rebirth-investigation {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid color-mix(in srgb, var(--line) 82%, var(--pink) 18%);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--surface) 94%, var(--pink) 6%);
+}
+
+.rebirth-investigation-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.rebirth-investigation-head div {
+  display: grid;
+  gap: 3px;
+}
+
+.rebirth-investigation-head span,
+.rebirth-unlocks > span,
+.rebirth-clues > span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+}
+
+.rebirth-investigation-head strong {
+  font-size: 1rem;
+}
+
+.rebirth-investigation-head b {
+  flex: 0 0 auto;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: var(--surface-strong);
+  font-size: 0.82rem;
+}
+
+.rebirth-memory-source {
+  margin: 0;
+  padding: 9px 11px;
+  border-left: 3px solid var(--pink);
+  background: var(--surface-strong);
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.rebirth-unlocks {
+  display: grid;
+  gap: 5px;
+  padding: 9px 11px;
+  border-radius: 12px;
+  background: var(--surface-strong);
+}
+
+.rebirth-unlocks ul,
+.rebirth-clues ul,
+.rebirth-archive-group ul,
+.rebirth-archive-group ol {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rebirth-unlocks li {
+  font-size: 0.86rem;
+}
+
+.rebirth-node-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.rebirth-node {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: var(--surface-strong);
+  color: inherit;
+  text-align: left;
+}
+
+.rebirth-node:not(:disabled):hover,
+.rebirth-node:not(:disabled):focus-visible {
+  border-color: var(--pink);
+  transform: translateY(-1px);
+}
+
+.rebirth-node:disabled {
+  cursor: default;
+  opacity: 0.66;
+}
+
+.rebirth-node.completed {
+  opacity: 0.84;
+}
+
+.rebirth-node > span {
+  width: fit-content;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--pink) 13%, transparent);
+  color: var(--pink);
+  font-size: 0.72rem;
+}
+
+.rebirth-node strong {
+  font-size: 0.92rem;
+  line-height: 1.35;
+}
+
+.rebirth-node p,
+.rebirth-node small {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.rebirth-clues {
+  display: grid;
+  gap: 7px;
+}
+
+.rebirth-clues > p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.rebirth-clues li,
+.rebirth-archive-group li {
+  display: grid;
+  gap: 3px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--surface-strong);
+}
+
+.rebirth-clues li strong,
+.rebirth-archive-group li b {
+  font-size: 0.84rem;
+}
+
+.rebirth-clues li span,
+.rebirth-archive-group li span,
+.rebirth-archive-group > span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.rebirth-archive {
+  display: grid;
+  gap: 12px;
+}
+
+.rebirth-archive-group {
+  display: grid;
+  gap: 7px;
+}
+
+.rebirth-archive-group > strong {
+  font-size: 0.9rem;
+}
+
+@media (max-width: 720px) {
+  .rebirth-investigation-head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .rebirth-investigation-head b {
+    width: fit-content;
+  }
+
+  .rebirth-node-grid {
+    grid-template-columns: 1fr;
+  }
+}

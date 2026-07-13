@@ -5,6 +5,7 @@ import type { CharacterId, CompetingHypotheses, SceneNode } from "../types";
 import { DecisionCard } from "../components/DecisionCard";
 import { EndingPanel } from "../components/EndingPanel";
 import { FocusSelector } from "../components/FocusSelector";
+import { InvestigationPanel, RebirthArchiveSection } from "../components/RebirthPanel";
 import { StatusBar } from "../components/StatusBar";
 import { StoryRecapPanel } from "../components/StoryRecapPanel";
 import { buildSceneView } from "./useGameController";
@@ -145,6 +146,11 @@ function DecisionPanel({ session }: { session: GameSession }) {
         <strong>{decisionNode.decisionPrompt || session.story.mission}</strong>
       </div>
       <ResearchBriefs node={decisionNode} />
+      <InvestigationPanel
+        meta={session.rebirth}
+        state={session.state}
+        onInvestigate={session.investigateWithSound}
+      />
       <FocusSelector state={session.state} onSelect={session.selectFocusWithSound} />
       <div className="options">
         {view.topDecisions.map((decision, index) => (
@@ -238,6 +244,7 @@ function ResearchArchive({ session }: { session: GameSession }) {
           </ul>
         )}
       </section>
+      <RebirthArchiveSection meta={session.rebirth} />
       <EndingPanel state={session.state} />
     </>
   );
@@ -265,7 +272,7 @@ function ArchiveDrawer({
       >
         <header className="archive-drawer-head">
           <div>
-            <span>{session.scene.label}</span>
+            <span>{session.scene.label} · 第 {session.rebirth.cycle} 周目</span>
             <strong>{session.scene.theme.title}</strong>
           </div>
           <button type="button" onClick={onClose} aria-label="关闭档案">×</button>
@@ -332,7 +339,7 @@ function SettingsPopover({
             <button
               type="button"
               onClick={() => {
-                if (window.confirm("重新开始会覆盖当前年份的存档，确定继续吗？")) session.restart();
+                if (window.confirm("重新开始会覆盖当前年份的本周目存档，但保留已经获得的记忆钥匙和研究捷径。确定继续吗？")) session.restart();
               }}
             >
               重新开始
@@ -385,7 +392,7 @@ export function ImmersiveGameScreen(props: ImmersiveGameScreenProps) {
         <div className="immersive-brand">
           <span>重生投研部</span>
           <strong>{session.scene.theme.title}</strong>
-          <small>{session.scene.label} · 剧情 {view.sceneProgress}</small>
+          <small>{session.scene.label} · 第 {session.rebirth.cycle} 周目 · 剧情 {view.sceneProgress}</small>
         </div>
         <SettingsPopover {...props} />
       </header>

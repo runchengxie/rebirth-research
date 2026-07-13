@@ -45,6 +45,7 @@ Python 工具、测试、数据更新和发布流程见 [`docs/maintenance.md`](
 - [`docs/architecture.md`](docs/architecture.md)：模块结构、状态流转和数据关系
 - [`docs/maintenance.md`](docs/maintenance.md)：开发、测试、数据和发布流程
 - [`docs/characters.md`](docs/characters.md)：角色定位、语言特点和写作边界
+- [`docs/dialogue-writing.md`](docs/dialogue-writing.md)：对白去重、回调设计和中文表达要求
 - [`AGENTS.md`](AGENTS.md)：维护者和自动化助手需要遵守的项目约定
 
 ## 技术栈

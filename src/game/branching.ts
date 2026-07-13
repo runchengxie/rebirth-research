@@ -13,6 +13,30 @@ function metricValue(state: GameState, key: Extract<BranchCondition, { kind: "me
   return state[key];
 }
 
+function isPersistentRouteBranch(branch: Branch): boolean {
+  return branch.id.startsWith("route-")
+    && Object.keys(branch.contribute.setFlags ?? {}).some((key) => key.startsWith("route_"));
+}
+
+function contributionFlagsAlreadyApplied(state: GameState, branch: Branch): boolean {
+  if (!isPersistentRouteBranch(branch)) return false;
+  const entries = Object.entries(branch.contribute.setFlags ?? {});
+  return entries.length > 0 && entries.every(([key, value]) => state.flags[key] === value);
+}
+
+function suppressRepeatedNodes(state: GameState, branch: Branch): Branch {
+  if (!branch.contribute.nodes?.length || !contributionFlagsAlreadyApplied(state, branch)) {
+    return branch;
+  }
+  return {
+    ...branch,
+    contribute: {
+      ...branch.contribute,
+      nodes: [],
+    },
+  };
+}
+
 export function evaluateBranchCondition(cond: BranchCondition, state: GameState): boolean {
   switch (cond.kind) {
     case "always":
@@ -45,10 +69,12 @@ export function evaluateBranchCondition(cond: BranchCondition, state: GameState)
 }
 
 export function activeBranches(state: GameState, branches: Branch[]): Branch[] {
-  return branches.filter((branch) => {
-    if (branch.once && flagIsSet(state, `seen_${branch.id}`)) return false;
-    return evaluateBranchCondition(branch.when, state);
-  });
+  return branches
+    .filter((branch) => {
+      if (branch.once && flagIsSet(state, `seen_${branch.id}`)) return false;
+      return evaluateBranchCondition(branch.when, state);
+    })
+    .map((branch) => suppressRepeatedNodes(state, branch));
 }
 
 export function branchFlagsForMonth(

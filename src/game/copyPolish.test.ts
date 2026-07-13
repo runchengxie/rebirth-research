@@ -36,7 +36,7 @@ describe("公共台词润色", () => {
 describe("2025 中英文排版", () => {
   it("在核验后的标题和主题文字中为英文术语保留必要空格", () => {
     expect(THEMES_2025[0]?.title).toBe("DeepSeek-R1 发布与推理成本重估");
-    expect(THEMES_2025[2]?.title).toBe("政府工作报告深化AI+与具身智能");
+    expect(THEMES_2025[2]?.title).toBe("政府工作报告深化 AI+与具身智能");
     expect(THEMES_2025[0]?.publicContext).toContain("DeepSeek-R1 在一月发布");
     expect(THEMES_2025[6]?.protagonistMemory).toContain("可持续 Alpha");
   });

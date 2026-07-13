@@ -10,12 +10,13 @@
 import raw from "./content/2023.json";
 import type { MarketTheme, ResearchDecision } from "../types";
 import { validateYearContent } from "./content/schema";
+import { completeDecisionSemantics, completeYearThemes } from "./narrativeSemantics";
 
 const CONTENT_2023 = validateYearContent(raw);
 
-export const THEMES_2023: MarketTheme[] = CONTENT_2023.themes;
+export const THEMES_2023: MarketTheme[] = completeYearThemes(CONTENT_2023.themes);
 
 export function makeDecisions2023(monthIndex: number): ResearchDecision[] {
   const pool = CONTENT_2023.decisions[monthIndex % CONTENT_2023.decisions.length];
-  return pool ?? [];
+  return (pool ?? []).map(completeDecisionSemantics);
 }

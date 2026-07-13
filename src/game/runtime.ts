@@ -1,32 +1,12 @@
-// ═══════════════════════════════════════════════════════════
-// VN runtime layer — scene progression & playable state
-// ═══════════════════════════════════════════════════════════
-//
-// This module owns the *visual-novel runtime* concerns: building the current
-// month's scene graph from content, advancing the dialogue/decision cursor,
-// and the playable GameState factory plus month rollover.
-//
-// It deliberately depends only on `types` and the content layer
-// (`buildMonthScene`). It must NOT import the simulation layer (engine.ts).
-// Keeping that boundary clean is what lets a borrowed VN runtime such as
-// Pixi'VN replace this file later — without touching financial simulation,
-// scoring, character relations, or market settlement.
-//
-// Responsibilities that belong HERE (borrowable / replaceable):
-//   - playable state shape (createInitialState) and month rollover (nextMonth)
-//   - scene graph assembly (sceneForMonth) + cursor (currentSceneNode)
-//   - dialogue/decision step advancement (advanceScene / canAdvanceScene)
-//
-// Responsibilities that stay in engine.ts (your core, never outsourced):
-//   - research scoring, character relations, fatigue, net-value, market
-//     settlement, route flags — i.e. makeDecision and everything it calls.
+// Visual-novel runtime: dynamic scene assembly plus stable-node progression.
 
 import { buildMonthScene } from "./content";
+import { CONTENT_REVISION } from "./narrativeSemantics";
 import type { GameDataYear, GameState, MonthScene } from "../types";
 
-// ═══════════════════════════════════════════════════════════
-// Playable state factory
-// ═══════════════════════════════════════════════════════════
+function firstNodeId(year: string, monthIndex: number, state?: GameState): string {
+  return buildMonthScene(monthIndex, year, state).nodes[0]?.id ?? "";
+}
 
 export function createInitialState(year: string): GameState {
   return {
@@ -35,11 +15,10 @@ export function createInitialState(year: string): GameState {
     focusId: "deep_research",
     selectedId: null,
     sceneNodeIndex: 0,
+    sceneNodeId: firstNodeId(year, 0),
+    contentRevision: CONTENT_REVISION,
     locked: false,
     finished: false,
-    // Research career metrics
-    // portfolioNav = 研究推荐跟踪净值 (模拟研究员推荐标的的理论表现)
-    // 基准参考另算，不与净值直接比较
     researchCredibility: 14,
     committeeAdoption: 10,
     portfolioNav: 1.0,
@@ -56,6 +35,7 @@ export function createInitialState(year: string): GameState {
     },
     flags: {},
     categoryCounts: {},
+    methodCounts: {},
     milestone: null,
     history: [],
     knowledgeCards: [],
@@ -63,22 +43,25 @@ export function createInitialState(year: string): GameState {
   };
 }
 
-// ═══════════════════════════════════════════════════════════
-// Scene graph assembly & cursor
-// ═══════════════════════════════════════════════════════════
-
 export function sceneForMonth(state: GameState): MonthScene {
   return buildMonthScene(state.monthIndex, state.year, state);
 }
 
-export function currentSceneNode(state: GameState): MonthScene["nodes"][number] {
-  const scene = sceneForMonth(state);
-  return scene.nodes[state.sceneNodeIndex] || scene.nodes[scene.nodes.length - 1];
+export function scenePosition(
+  state: GameState,
+  scene: MonthScene = sceneForMonth(state),
+): number {
+  const idIndex = state.sceneNodeId
+    ? scene.nodes.findIndex((node) => node.id === state.sceneNodeId)
+    : -1;
+  if (idIndex >= 0) return idIndex;
+  return Math.max(0, Math.min(state.sceneNodeIndex, scene.nodes.length - 1));
 }
 
-// ═══════════════════════════════════════════════════════════
-// Scene advancement
-// ═══════════════════════════════════════════════════════════
+export function currentSceneNode(state: GameState): MonthScene["nodes"][number] {
+  const scene = sceneForMonth(state);
+  return scene.nodes[scenePosition(state, scene)] ?? scene.nodes[scene.nodes.length - 1];
+}
 
 export function canAdvanceScene(state: GameState): boolean {
   const node = currentSceneNode(state);
@@ -86,45 +69,51 @@ export function canAdvanceScene(state: GameState): boolean {
 }
 
 export function canRewindScene(state: GameState): boolean {
-  return !state.locked && state.sceneNodeIndex > 0;
+  return !state.locked && scenePosition(state) > 0;
 }
 
 export function rewindScene(state: GameState): GameState {
   if (!canRewindScene(state)) return state;
+  const scene = sceneForMonth(state);
+  const nextIndex = scenePosition(state, scene) - 1;
   return {
     ...state,
-    sceneNodeIndex: state.sceneNodeIndex - 1,
+    sceneNodeIndex: nextIndex,
+    sceneNodeId: scene.nodes[nextIndex]?.id ?? state.sceneNodeId,
   };
 }
 
 export function advanceScene(state: GameState, _data: GameDataYear): GameState {
   void _data;
   const scene = sceneForMonth(state);
-  const node = currentSceneNode(state);
+  const currentIndex = scenePosition(state, scene);
+  const node = scene.nodes[currentIndex];
   if (node.type === "decision" && !state.locked) return state;
-  if (state.sceneNodeIndex < scene.nodes.length - 1) {
+  if (currentIndex < scene.nodes.length - 1) {
+    const nextIndex = currentIndex + 1;
     return {
       ...state,
-      sceneNodeIndex: state.sceneNodeIndex + 1,
+      sceneNodeIndex: nextIndex,
+      sceneNodeId: scene.nodes[nextIndex]?.id ?? state.sceneNodeId,
     };
   }
   return nextMonth(state);
 }
 
-// ═══════════════════════════════════════════════════════════
-// Month rollover
-// ═══════════════════════════════════════════════════════════
-
 export function nextMonth(state: GameState): GameState {
   if (state.finished) return createInitialState(state.year);
   if (!state.locked) return state;
-  return {
+  const monthIndex = Math.min(state.monthIndex + 1, 11);
+  const next: GameState = {
     ...state,
-    monthIndex: Math.min(state.monthIndex + 1, 11),
+    monthIndex,
     selectedId: null,
     sceneNodeIndex: 0,
+    sceneNodeId: "",
+    contentRevision: CONTENT_REVISION,
     locked: false,
     focusId: "deep_research",
     milestone: null,
   };
+  return { ...next, sceneNodeId: firstNodeId(state.year, monthIndex, next) };
 }

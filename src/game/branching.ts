@@ -31,6 +31,8 @@ export function evaluateBranchCondition(cond: BranchCondition, state: GameState)
         : state.flags[cond.key] === cond.equals;
     case "categoryStreak":
       return numberOrZero(state.categoryCounts[cond.category]) >= cond.gte;
+    case "methodStreak":
+      return numberOrZero(state.methodCounts[cond.method]) >= cond.gte;
     case "month":
       return state.monthIndex >= cond.gte;
     case "and":

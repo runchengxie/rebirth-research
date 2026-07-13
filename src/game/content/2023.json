@@ -137,7 +137,13 @@
         "clarityLevel": 14,
         "riskAwareness": 10,
         "reflectionValue": 6,
-        "backgroundNote": "高频数据能让你在情绪亢奋中保持量化锚点，区分报复性反弹和趋势性复苏。"
+        "backgroundNote": "高频数据能让你在情绪亢奋中保持量化锚点，区分报复性反弹和趋势性复苏。",
+        "method": "quantitative_research",
+        "quality": "sound",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "hypothesis_driven"
+        ]
       },
       {
         "id": "2023jan-flow",
@@ -164,7 +170,13 @@
         "clarityLevel": 12,
         "riskAwareness": 12,
         "reflectionValue": 4,
-        "backgroundNote": "外资的行为逻辑和国内资金不同，拆开他们的配置偏好能帮你在情绪面之外找到结构信号。"
+        "backgroundNote": "外资的行为逻辑和国内资金不同，拆开他们的配置偏好能帮你在情绪面之外找到结构信号。",
+        "method": "quantitative_research",
+        "quality": "sound",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "hypothesis_driven"
+        ]
       },
       {
         "id": "2023jan-reopen-theme",
@@ -191,7 +203,13 @@
         "clarityLevel": 17,
         "riskAwareness": 12,
         "reflectionValue": 8,
-        "backgroundNote": "四阶段框架能让你在复苏的每个节点都有清晰的研究锚，而不是被每天的涨跌牵着走。"
+        "backgroundNote": "四阶段框架能让你在复苏的每个节点都有清晰的研究锚，而不是被每天的涨跌牵着走。",
+        "method": "fundamental_research",
+        "quality": "sound",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "hypothesis_driven"
+        ]
       },
       {
         "id": "2023jan-field",
@@ -218,7 +236,11 @@
         "clarityLevel": 8,
         "riskAwareness": 10,
         "reflectionValue": 4,
-        "backgroundNote": "你在商场里看到的人流密度和统计局的数据之间有微妙的差异，这个差异本身就是研究信号。"
+        "backgroundNote": "你在商场里看到的人流密度和统计局的数据之间有微妙的差异，这个差异本身就是研究信号。",
+        "method": "field_research",
+        "quality": "mixed",
+        "outcomeAlignment": "supports",
+        "behaviorTags": []
       },
       {
         "id": "2023jan-help",
@@ -245,7 +267,11 @@
         "clarityLevel": 8,
         "riskAwareness": 8,
         "reflectionValue": 4,
-        "backgroundNote": "帮前辈整理估值表的过程让你发现：市场对消费复苏的定价已经打得很满，超额收益的空间可能不在龙头。"
+        "backgroundNote": "帮前辈整理估值表的过程让你发现：市场对消费复苏的定价已经打得很满，超额收益的空间可能不在龙头。",
+        "method": "collaboration",
+        "quality": "mixed",
+        "outcomeAlignment": "mixed",
+        "behaviorTags": []
       },
       {
         "id": "2023jan-life",
@@ -272,7 +298,14 @@
         "clarityLevel": 2,
         "riskAwareness": 6,
         "reflectionValue": 12,
-        "backgroundNote": "三年没回家的年夜饭比任何研报都重要。带着被填满的心情回到工位，判断力会不一样。"
+        "backgroundNote": "三年没回家的年夜饭比任何研报都重要。带着被填满的心情回到工位，判断力会不一样。",
+        "method": "self_management",
+        "quality": "reckless",
+        "outcomeAlignment": "mixed",
+        "behaviorTags": [
+          "thin_evidence",
+          "reflective"
+        ]
       }
     ],
     [
@@ -301,7 +334,13 @@
         "clarityLevel": 18,
         "riskAwareness": 10,
         "reflectionValue": 6,
-        "backgroundNote": "产业链图谱能让你在市场最亢奋的时候保持结构化思维，区分谁在卖铲子谁在淘金。"
+        "backgroundNote": "产业链图谱能让你在市场最亢奋的时候保持结构化思维，区分谁在卖铲子谁在淘金。",
+        "method": "fundamental_research",
+        "quality": "sound",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "hypothesis_driven"
+        ]
       },
       {
         "id": "2023feb-order",
@@ -328,7 +367,13 @@
         "clarityLevel": 14,
         "riskAwareness": 12,
         "reflectionValue": 4,
-        "backgroundNote": "光模块龙头的在手订单已经排到下半年，但市场还在纠结是不是纯概念。订单数据给了你信心。"
+        "backgroundNote": "光模块龙头的在手订单已经排到下半年，但市场还在纠结是不是纯概念。订单数据给了你信心。",
+        "method": "quantitative_research",
+        "quality": "sound",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "hypothesis_driven"
+        ]
       },
       {
         "id": "2023feb-roadshow",
@@ -355,7 +400,11 @@
         "clarityLevel": 12,
         "riskAwareness": 8,
         "reflectionValue": 4,
-        "backgroundNote": "客户最关心一件事：AI概念股什么时候会出现业绩验证。你的产业链图谱刚好回答了这个问题。"
+        "backgroundNote": "客户最关心一件事：AI概念股什么时候会出现业绩验证。你的产业链图谱刚好回答了这个问题。",
+        "method": "communication",
+        "quality": "mixed",
+        "outcomeAlignment": "supports",
+        "behaviorTags": []
       },
       {
         "id": "2023feb-chase",
@@ -382,7 +431,14 @@
         "clarityLevel": 2,
         "riskAwareness": 0,
         "reflectionValue": 2,
-        "backgroundNote": "追涨一时爽，但三周后那些没有订单验证的标的已经开始回调。你的推荐纪要被投委会标注了未经验证。"
+        "backgroundNote": "追涨一时爽，但三周后那些没有订单验证的标的已经开始回调。你的推荐纪要被投委会标注了未经验证。",
+        "method": "market_chasing",
+        "quality": "reckless",
+        "outcomeAlignment": "contradicts",
+        "behaviorTags": [
+          "momentum_chasing",
+          "thin_evidence"
+        ]
       },
       {
         "id": "2023feb-help",
@@ -409,7 +465,11 @@
         "clarityLevel": 8,
         "riskAwareness": 10,
         "reflectionValue": 4,
-        "backgroundNote": "帮她跑成交结构时你发现：机构资金在AI硬件方向还有建仓空间，但纯概念股已经出现游资出货迹象。"
+        "backgroundNote": "帮她跑成交结构时你发现：机构资金在AI硬件方向还有建仓空间，但纯概念股已经出现游资出货迹象。",
+        "method": "collaboration",
+        "quality": "mixed",
+        "outcomeAlignment": "mixed",
+        "behaviorTags": []
       },
       {
         "id": "2023feb-life",
@@ -436,7 +496,14 @@
         "clarityLevel": 4,
         "riskAwareness": 8,
         "reflectionValue": 10,
-        "backgroundNote": "信息过载的时候，最好的研究决策有时是暂时关机。清醒的头脑比熬夜追热点更值钱。"
+        "backgroundNote": "信息过载的时候，最好的研究决策有时是暂时关机。清醒的头脑比熬夜追热点更值钱。",
+        "method": "self_management",
+        "quality": "reckless",
+        "outcomeAlignment": "mixed",
+        "behaviorTags": [
+          "thin_evidence",
+          "reflective"
+        ]
       }
     ],
     [
@@ -465,7 +532,13 @@
         "clarityLevel": 17,
         "riskAwareness": 10,
         "reflectionValue": 6,
-        "backgroundNote": "中特估不是炒作标签。通过ROE杜邦拆解，你找到了几家经营效率确实在改善的央企，它们的估值修复有基本面支撑。"
+        "backgroundNote": "中特估不是炒作标签。通过ROE杜邦拆解，你找到了几家经营效率确实在改善的央企，它们的估值修复有基本面支撑。",
+        "method": "fundamental_research",
+        "quality": "sound",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "hypothesis_driven"
+        ]
       },
       {
         "id": "2023mar-digital",
@@ -492,7 +565,13 @@
         "clarityLevel": 14,
         "riskAwareness": 10,
         "reflectionValue": 4,
-        "backgroundNote": "今年的数字经济和人工智能相关关键词频次比去年翻了接近一倍，政策底牌比市场想的更重。"
+        "backgroundNote": "今年的数字经济和人工智能相关关键词频次比去年翻了接近一倍，政策底牌比市场想的更重。",
+        "method": "quantitative_research",
+        "quality": "sound",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "hypothesis_driven"
+        ]
       },
       {
         "id": "2023mar-defense",
@@ -519,7 +598,13 @@
         "clarityLevel": 16,
         "riskAwareness": 12,
         "reflectionValue": 6,
-        "backgroundNote": "投委会对你的ROE拆解框架表示认可，但追问了两个问题：央企分红率的可持续性和行业间估值差异。这恰好是你下一步的研究方向。"
+        "backgroundNote": "投委会对你的ROE拆解框架表示认可，但追问了两个问题：央企分红率的可持续性和行业间估值差异。这恰好是你下一步的研究方向。",
+        "method": "committee_process",
+        "quality": "sound",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "hypothesis_driven"
+        ]
       },
       {
         "id": "2023mar-chase-soe",
@@ -546,7 +631,14 @@
         "clarityLevel": 2,
         "riskAwareness": 2,
         "reflectionValue": 2,
-        "backgroundNote": "标签式覆盖让你的研报看起来很全面，但有三处出现了逻辑跳跃。林若宁在你的笔记上贴了便签：选股要经得起反问。"
+        "backgroundNote": "标签式覆盖让你的研报看起来很全面，但有三处出现了逻辑跳跃。林若宁在你的笔记上贴了便签：选股要经得起反问。",
+        "method": "market_chasing",
+        "quality": "reckless",
+        "outcomeAlignment": "contradicts",
+        "behaviorTags": [
+          "momentum_chasing",
+          "thin_evidence"
+        ]
       },
       {
         "id": "2023mar-help",
@@ -573,7 +665,11 @@
         "clarityLevel": 8,
         "riskAwareness": 12,
         "reflectionValue": 4,
-        "backgroundNote": "帮周明昭整理数据时你发现：全球配置型资金对中国资产的低配程度已经接近历史极值，反转的赔率在累积。"
+        "backgroundNote": "帮周明昭整理数据时你发现：全球配置型资金对中国资产的低配程度已经接近历史极值，反转的赔率在累积。",
+        "method": "collaboration",
+        "quality": "mixed",
+        "outcomeAlignment": "mixed",
+        "behaviorTags": []
       },
       {
         "id": "2023mar-life",
@@ -600,7 +696,14 @@
         "clarityLevel": 2,
         "riskAwareness": 6,
         "reflectionValue": 10,
-        "backgroundNote": "错过了政策解读的第一波讨论，但带着清晰的头脑回到周一晨会，你的问题反而比一直在会议室里的人更精准。"
+        "backgroundNote": "错过了政策解读的第一波讨论，但带着清晰的头脑回到周一晨会，你的问题反而比一直在会议室里的人更精准。",
+        "method": "self_management",
+        "quality": "reckless",
+        "outcomeAlignment": "mixed",
+        "behaviorTags": [
+          "thin_evidence",
+          "reflective"
+        ]
       }
     ],
     [
@@ -629,7 +732,13 @@
         "clarityLevel": 18,
         "riskAwareness": 12,
         "reflectionValue": 8,
-        "backgroundNote": "交叉验证让你发现：AI硬件方向的毛利率在改善但现金流改善幅度小于市场预期，这意味着库存周期的影响可能被低估了。"
+        "backgroundNote": "交叉验证让你发现：AI硬件方向的毛利率在改善但现金流改善幅度小于市场预期，这意味着库存周期的影响可能被低估了。",
+        "method": "fundamental_research",
+        "quality": "sound",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "hypothesis_driven"
+        ]
       },
       {
         "id": "2023apr-crowding",
@@ -656,7 +765,13 @@
         "clarityLevel": 14,
         "riskAwareness": 16,
         "reflectionValue": 4,
-        "backgroundNote": "拥挤度数据显示AI应用方向的拥挤程度已经接近2021年的新能源，但AI硬件方向还有建仓空间。"
+        "backgroundNote": "拥挤度数据显示AI应用方向的拥挤程度已经接近2021年的新能源，但AI硬件方向还有建仓空间。",
+        "method": "quantitative_research",
+        "quality": "sound",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "hypothesis_driven"
+        ]
       },
       {
         "id": "2023apr-consumer",
@@ -683,7 +798,14 @@
         "clarityLevel": 14,
         "riskAwareness": 14,
         "reflectionValue": 12,
-        "backgroundNote": "复盘笔记里你诚实记录了：复苏第二阶段的数据验证假设过于乐观，居民收入预期这个变量被低估了。这份笔记比任何正确的判断都值钱。"
+        "backgroundNote": "复盘笔记里你诚实记录了：复苏第二阶段的数据验证假设过于乐观，居民收入预期这个变量被低估了。这份笔记比任何正确的判断都值钱。",
+        "method": "fundamental_research",
+        "quality": "sound",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "hypothesis_driven",
+          "reflective"
+        ]
       },
       {
         "id": "2023apr-defend",
@@ -710,7 +832,13 @@
         "clarityLevel": 16,
         "riskAwareness": 14,
         "reflectionValue": 8,
-        "backgroundNote": "投委会对你的诚实回溯表示认可。一位老基金经理说：知道哪错了比知道哪对了更值钱。"
+        "backgroundNote": "投委会对你的诚实回溯表示认可。一位老基金经理说：知道哪错了比知道哪对了更值钱。",
+        "method": "committee_process",
+        "quality": "sound",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "hypothesis_driven"
+        ]
       },
       {
         "id": "2023apr-help",
@@ -737,7 +865,11 @@
         "clarityLevel": 10,
         "riskAwareness": 8,
         "reflectionValue": 4,
-        "backgroundNote": "帮前辈做业绩对照时你发现：业绩miss最多的恰恰是那些年初被追捧最猛的AI概念股，泡沫出清比预期快得多。"
+        "backgroundNote": "帮前辈做业绩对照时你发现：业绩miss最多的恰恰是那些年初被追捧最猛的AI概念股，泡沫出清比预期快得多。",
+        "method": "collaboration",
+        "quality": "mixed",
+        "outcomeAlignment": "mixed",
+        "behaviorTags": []
       },
       {
         "id": "2023apr-life",
@@ -764,7 +896,14 @@
         "clarityLevel": 4,
         "riskAwareness": 8,
         "reflectionValue": 10,
-        "backgroundNote": "财报季的疲劳累积会影响判断力。关机睡了一天之后，周一你看那些数字的眼光清晰了很多。"
+        "backgroundNote": "财报季的疲劳累积会影响判断力。关机睡了一天之后，周一你看那些数字的眼光清晰了很多。",
+        "method": "self_management",
+        "quality": "reckless",
+        "outcomeAlignment": "mixed",
+        "behaviorTags": [
+          "thin_evidence",
+          "reflective"
+        ]
       }
     ],
     [
@@ -793,7 +932,13 @@
         "clarityLevel": 15,
         "riskAwareness": 18,
         "reflectionValue": 8,
-        "backgroundNote": "悲观的时候最考验框架。你用估值-盈利-情绪的三角模型筛出了一批被错杀的制造业标的，它们的在手订单其实没有恶化。"
+        "backgroundNote": "悲观的时候最考验框架。你用估值-盈利-情绪的三角模型筛出了一批被错杀的制造业标的，它们的在手订单其实没有恶化。",
+        "method": "fundamental_research",
+        "quality": "sound",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "hypothesis_driven"
+        ]
       },
       {
         "id": "2023may-pmi",
@@ -820,7 +965,13 @@
         "clarityLevel": 12,
         "riskAwareness": 12,
         "reflectionValue": 4,
-        "backgroundNote": "PMI的结构拆解显示：大型制造业企业的景气度并没有市场想的那么差，中小企业才是拖累PMI的主力。"
+        "backgroundNote": "PMI的结构拆解显示：大型制造业企业的景气度并没有市场想的那么差，中小企业才是拖累PMI的主力。",
+        "method": "quantitative_research",
+        "quality": "sound",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "hypothesis_driven"
+        ]
       },
       {
         "id": "2023may-field",
@@ -847,7 +998,11 @@
         "clarityLevel": 10,
         "riskAwareness": 10,
         "reflectionValue": 6,
-        "backgroundNote": "调研回来的路上你写了一条笔记：小企业主们最担心的是订单，不是成本。这意味着需求端的问题可能比供给端更严重。"
+        "backgroundNote": "调研回来的路上你写了一条笔记：小企业主们最担心的是订单，不是成本。这意味着需求端的问题可能比供给端更严重。",
+        "method": "field_research",
+        "quality": "mixed",
+        "outcomeAlignment": "supports",
+        "behaviorTags": []
       },
       {
         "id": "2023may-housing",
@@ -874,7 +1029,15 @@
         "clarityLevel": 14,
         "riskAwareness": 20,
         "reflectionValue": 6,
-        "backgroundNote": "你的地产风险提示在投委会上引起了共鸣。周明昭补了一组数据：地产链的信用风险还没有完全暴露。"
+        "backgroundNote": "你的地产风险提示在投委会上引起了共鸣。周明昭补了一组数据：地产链的信用风险还没有完全暴露。",
+        "method": "risk_management",
+        "quality": "sound",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "crowding_aware",
+          "downside_defined",
+          "hypothesis_driven"
+        ]
       },
       {
         "id": "2023may-help",
@@ -901,7 +1064,11 @@
         "clarityLevel": 8,
         "riskAwareness": 10,
         "reflectionValue": 6,
-        "backgroundNote": "回测数据给了你一线希望：历史上类似的下行期平均持续2.5个月，之后往往伴随政策转向。"
+        "backgroundNote": "回测数据给了你一线希望：历史上类似的下行期平均持续2.5个月，之后往往伴随政策转向。",
+        "method": "collaboration",
+        "quality": "mixed",
+        "outcomeAlignment": "mixed",
+        "behaviorTags": []
       },
       {
         "id": "2023may-life",
@@ -928,7 +1095,14 @@
         "clarityLevel": 4,
         "riskAwareness": 6,
         "reflectionValue": 10,
-        "backgroundNote": "负面情绪是研究的天敌。健身回来之后你翻看自己昨天写的笔记，发现有两个判断明显被情绪污染了。"
+        "backgroundNote": "负面情绪是研究的天敌。健身回来之后你翻看自己昨天写的笔记，发现有两个判断明显被情绪污染了。",
+        "method": "self_management",
+        "quality": "reckless",
+        "outcomeAlignment": "mixed",
+        "behaviorTags": [
+          "thin_evidence",
+          "reflective"
+        ]
       }
     ],
     [
@@ -957,7 +1131,13 @@
         "clarityLevel": 18,
         "riskAwareness": 10,
         "reflectionValue": 6,
-        "backgroundNote": "订单到业绩的传导节奏，是你通过产业链调研和财报拆解一步步验证出来的，不是猜出来的。这份研报会成为你和投委会之间信任的基石。"
+        "backgroundNote": "订单到业绩的传导节奏，是你通过产业链调研和财报拆解一步步验证出来的，不是猜出来的。这份研报会成为你和投委会之间信任的基石。",
+        "method": "fundamental_research",
+        "quality": "sound",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "hypothesis_driven"
+        ]
       },
       {
         "id": "2023jun-flow",
@@ -984,7 +1164,13 @@
         "clarityLevel": 14,
         "riskAwareness": 14,
         "reflectionValue": 4,
-        "backgroundNote": "Barra归因显示AI硬件方向的收益里基本面因子的贡献率已经超过动量因子，这是从炒作到验证的质变信号。"
+        "backgroundNote": "Barra归因显示AI硬件方向的收益里基本面因子的贡献率已经超过动量因子，这是从炒作到验证的质变信号。",
+        "method": "quantitative_research",
+        "quality": "sound",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "hypothesis_driven"
+        ]
       },
       {
         "id": "2023jun-roadshow",
@@ -1011,7 +1197,11 @@
         "clarityLevel": 14,
         "riskAwareness": 8,
         "reflectionValue": 4,
-        "backgroundNote": "客户最关心中报季AI方向的业绩验证，你的产业链拆解框架帮他们画出了一条清晰的验证路径。"
+        "backgroundNote": "客户最关心中报季AI方向的业绩验证，你的产业链拆解框架帮他们画出了一条清晰的验证路径。",
+        "method": "communication",
+        "quality": "mixed",
+        "outcomeAlignment": "supports",
+        "behaviorTags": []
       },
       {
         "id": "2023jun-app",
@@ -1038,7 +1228,14 @@
         "clarityLevel": 4,
         "riskAwareness": 4,
         "reflectionValue": 2,
-        "backgroundNote": "API调用量增长不等于收入增长，收入增长不等于盈利。你的判断跳过了两个关键验证环节，被周明昭在白板上圈了出来。"
+        "backgroundNote": "API调用量增长不等于收入增长，收入增长不等于盈利。你的判断跳过了两个关键验证环节，被周明昭在白板上圈了出来。",
+        "method": "market_chasing",
+        "quality": "reckless",
+        "outcomeAlignment": "contradicts",
+        "behaviorTags": [
+          "momentum_chasing",
+          "thin_evidence"
+        ]
       },
       {
         "id": "2023jun-help",
@@ -1065,7 +1262,11 @@
         "clarityLevel": 10,
         "riskAwareness": 12,
         "reflectionValue": 4,
-        "backgroundNote": "横向对比做完后发现：A股AI硬件方向的估值比美股低30-40%，但应用方向的估值比美股高了一倍。这个发现会在下半年得到验证。"
+        "backgroundNote": "横向对比做完后发现：A股AI硬件方向的估值比美股低30-40%，但应用方向的估值比美股高了一倍。这个发现会在下半年得到验证。",
+        "method": "collaboration",
+        "quality": "mixed",
+        "outcomeAlignment": "mixed",
+        "behaviorTags": []
       },
       {
         "id": "2023jun-life",
@@ -1092,7 +1293,14 @@
         "clarityLevel": 4,
         "riskAwareness": 8,
         "reflectionValue": 10,
-        "backgroundNote": "站在山顶往下看，城市里的K线焦虑突然变远了。你想起周明昭说过：研究框架最好的校正方式，是暂时从市场里抽离。"
+        "backgroundNote": "站在山顶往下看，城市里的K线焦虑突然变远了。你想起周明昭说过：研究框架最好的校正方式，是暂时从市场里抽离。",
+        "method": "self_management",
+        "quality": "reckless",
+        "outcomeAlignment": "mixed",
+        "behaviorTags": [
+          "thin_evidence",
+          "reflective"
+        ]
       }
     ],
     [
@@ -1121,7 +1329,13 @@
         "clarityLevel": 16,
         "riskAwareness": 12,
         "reflectionValue": 6,
-        "backgroundNote": "历史复盘显示类似表述后政策落地通常在3-8周内，但首周的情绪爆发后往往会出现回调。你的框架在两者的时间差里找机会。"
+        "backgroundNote": "历史复盘显示类似表述后政策落地通常在3-8周内，但首周的情绪爆发后往往会出现回调。你的框架在两者的时间差里找机会。",
+        "method": "fundamental_research",
+        "quality": "sound",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "hypothesis_driven"
+        ]
       },
       {
         "id": "2023jul-securities",
@@ -1148,7 +1362,13 @@
         "clarityLevel": 12,
         "riskAwareness": 12,
         "reflectionValue": 4,
-        "backgroundNote": "ROE弹性分析显示：佣金收入占比较高的券商弹性最大，但自营占比较高的券商风险也最大。市场在亢奋中把这两类混为一谈了。"
+        "backgroundNote": "ROE弹性分析显示：佣金收入占比较高的券商弹性最大，但自营占比较高的券商风险也最大。市场在亢奋中把这两类混为一谈了。",
+        "method": "quantitative_research",
+        "quality": "sound",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "hypothesis_driven"
+        ]
       },
       {
         "id": "2023jul-call",
@@ -1175,7 +1395,11 @@
         "clarityLevel": 8,
         "riskAwareness": 12,
         "reflectionValue": 4,
-        "backgroundNote": "营业部的朋友说散户开户数在暴涨，但两融的加仓节奏并没有跟上。这是典型的有激情没资金的信号。"
+        "backgroundNote": "营业部的朋友说散户开户数在暴涨，但两融的加仓节奏并没有跟上。这是典型的有激情没资金的信号。",
+        "method": "field_research",
+        "quality": "mixed",
+        "outcomeAlignment": "supports",
+        "behaviorTags": []
       },
       {
         "id": "2023jul-chase",
@@ -1202,7 +1426,14 @@
         "clarityLevel": 2,
         "riskAwareness": 2,
         "reflectionValue": 2,
-        "backgroundNote": "情绪交易在首周赚了，但第二周券商板块的回调来得比预期更快。周明昭提醒你：政策底之后还有市场底，政策喊话的保质期比你想的短。"
+        "backgroundNote": "情绪交易在首周赚了，但第二周券商板块的回调来得比预期更快。周明昭提醒你：政策底之后还有市场底，政策喊话的保质期比你想的短。",
+        "method": "market_chasing",
+        "quality": "reckless",
+        "outcomeAlignment": "contradicts",
+        "behaviorTags": [
+          "momentum_chasing",
+          "thin_evidence"
+        ]
       },
       {
         "id": "2023jul-help",
@@ -1229,7 +1460,11 @@
         "clarityLevel": 10,
         "riskAwareness": 14,
         "reflectionValue": 4,
-        "backgroundNote": "帮她整理风险矩阵时你发现：券商板块当前的隐含波动率已经接近历史90分位，潜在收益已经被定价了。"
+        "backgroundNote": "帮她整理风险矩阵时你发现：券商板块当前的隐含波动率已经接近历史90分位，潜在收益已经被定价了。",
+        "method": "collaboration",
+        "quality": "mixed",
+        "outcomeAlignment": "mixed",
+        "behaviorTags": []
       },
       {
         "id": "2023jul-life",
@@ -1256,7 +1491,14 @@
         "clarityLevel": 4,
         "riskAwareness": 10,
         "reflectionValue": 10,
-        "backgroundNote": "你错过了第一时间的市场解读，但第二天早上你带着清醒的头脑把政策拆得比其他人更清晰。周明昭说：好判断需要好状态。"
+        "backgroundNote": "你错过了第一时间的市场解读，但第二天早上你带着清醒的头脑把政策拆得比其他人更清晰。周明昭说：好判断需要好状态。",
+        "method": "self_management",
+        "quality": "reckless",
+        "outcomeAlignment": "mixed",
+        "behaviorTags": [
+          "thin_evidence",
+          "reflective"
+        ]
       }
     ],
     [
@@ -1285,7 +1527,13 @@
         "clarityLevel": 17,
         "riskAwareness": 16,
         "reflectionValue": 8,
-        "backgroundNote": "历史复盘显示印花税调降后的第一个月市场平均涨3%但三个月后平均跌2%。你的框架把短中期的节奏差写进了研报里。"
+        "backgroundNote": "历史复盘显示印花税调降后的第一个月市场平均涨3%但三个月后平均跌2%。你的框架把短中期的节奏差写进了研报里。",
+        "method": "fundamental_research",
+        "quality": "sound",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "hypothesis_driven"
+        ]
       },
       {
         "id": "2023aug-ipo",
@@ -1312,7 +1560,11 @@
         "clarityLevel": 12,
         "riskAwareness": 10,
         "reflectionValue": 4,
-        "backgroundNote": "IPO收紧每年大约节省2000-3000亿的流动性消耗，但这个效果要2-3个月才能完全显现。短期冲高后的回落是正常的。"
+        "backgroundNote": "IPO收紧每年大约节省2000-3000亿的流动性消耗，但这个效果要2-3个月才能完全显现。短期冲高后的回落是正常的。",
+        "method": "quantitative_research",
+        "quality": "mixed",
+        "outcomeAlignment": "supports",
+        "behaviorTags": []
       },
       {
         "id": "2023aug-buyback",
@@ -1339,7 +1591,13 @@
         "clarityLevel": 14,
         "riskAwareness": 10,
         "reflectionValue": 4,
-        "backgroundNote": "减持新规锁住了近5000亿的潜在减持压力。但你在筛选池里标注了一条备忘：锁住不等于消失，市场底才是真正的信心底。"
+        "backgroundNote": "减持新规锁住了近5000亿的潜在减持压力。但你在筛选池里标注了一条备忘：锁住不等于消失，市场底才是真正的信心底。",
+        "method": "fundamental_research",
+        "quality": "sound",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "hypothesis_driven"
+        ]
       },
       {
         "id": "2023aug-buy",
@@ -1366,7 +1624,14 @@
         "clarityLevel": 2,
         "riskAwareness": 0,
         "reflectionValue": 2,
-        "backgroundNote": "冲高买入的头寸在随后的回撤中损失惨重。你低估了市场底和政策底之间的时差，也高估了政策对市场信心的即时修复能力。"
+        "backgroundNote": "冲高买入的头寸在随后的回撤中损失惨重。你低估了市场底和政策底之间的时差，也高估了政策对市场信心的即时修复能力。",
+        "method": "market_chasing",
+        "quality": "reckless",
+        "outcomeAlignment": "contradicts",
+        "behaviorTags": [
+          "momentum_chasing",
+          "thin_evidence"
+        ]
       },
       {
         "id": "2023aug-help",
@@ -1393,7 +1658,13 @@
         "clarityLevel": 12,
         "riskAwareness": 14,
         "reflectionValue": 6,
-        "backgroundNote": "国际比较做完后你发现：中国的四箭齐发相当于日本2012年组合拳的60%力度。够猛但还不够猛。"
+        "backgroundNote": "国际比较做完后你发现：中国的四箭齐发相当于日本2012年组合拳的60%力度。够猛但还不够猛。",
+        "method": "collaboration",
+        "quality": "sound",
+        "outcomeAlignment": "mixed",
+        "behaviorTags": [
+          "hypothesis_driven"
+        ]
       },
       {
         "id": "2023aug-life",
@@ -1420,7 +1691,14 @@
         "clarityLevel": 4,
         "riskAwareness": 12,
         "reflectionValue": 12,
-        "backgroundNote": "关掉行情软件的那两天你没有错过任何真正的投资机会，但避开了两个因为情绪波动而做出的错误判断。冷静是最稀缺的研究工具。"
+        "backgroundNote": "关掉行情软件的那两天你没有错过任何真正的投资机会，但避开了两个因为情绪波动而做出的错误判断。冷静是最稀缺的研究工具。",
+        "method": "self_management",
+        "quality": "reckless",
+        "outcomeAlignment": "mixed",
+        "behaviorTags": [
+          "thin_evidence",
+          "reflective"
+        ]
       }
     ],
     [
@@ -1449,7 +1727,13 @@
         "clarityLevel": 18,
         "riskAwareness": 10,
         "reflectionValue": 6,
-        "backgroundNote": "华为链不会是一阵风。先进制程的突破意味着国产化从能不能变成了多快能。你的产业链拆解框架在这里找到了最好的应用场景。"
+        "backgroundNote": "华为链不会是一阵风。先进制程的突破意味着国产化从能不能变成了多快能。你的产业链拆解框架在这里找到了最好的应用场景。",
+        "method": "fundamental_research",
+        "quality": "sound",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "hypothesis_driven"
+        ]
       },
       {
         "id": "2023sep-equipment",
@@ -1476,7 +1760,13 @@
         "clarityLevel": 14,
         "riskAwareness": 12,
         "reflectionValue": 4,
-        "backgroundNote": "光刻设备之外，刻蚀、沉积和检测设备的国产化率还有巨大的提升空间。你在订单数据里找到了三条确定性最高的受益线路。"
+        "backgroundNote": "光刻设备之外，刻蚀、沉积和检测设备的国产化率还有巨大的提升空间。你在订单数据里找到了三条确定性最高的受益线路。",
+        "method": "quantitative_research",
+        "quality": "sound",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "hypothesis_driven"
+        ]
       },
       {
         "id": "2023sep-roadshow",
@@ -1503,7 +1793,11 @@
         "clarityLevel": 14,
         "riskAwareness": 8,
         "reflectionValue": 4,
-        "backgroundNote": "客户听完路演后问了三个关于国产化率时间表的问题，这三个问题后来成了你Q4的研究主线。"
+        "backgroundNote": "客户听完路演后问了三个关于国产化率时间表的问题，这三个问题后来成了你Q4的研究主线。",
+        "method": "communication",
+        "quality": "mixed",
+        "outcomeAlignment": "supports",
+        "behaviorTags": []
       },
       {
         "id": "2023sep-chase-huawei",
@@ -1530,7 +1824,14 @@
         "clarityLevel": 2,
         "riskAwareness": 2,
         "reflectionValue": 2,
-        "backgroundNote": "有三个标的你覆盖了但是逻辑跳跃严重。周明昭在你的研报上圈出了「华为概念」和「华为收入」之间的裂缝，概念不等于收入。"
+        "backgroundNote": "有三个标的你覆盖了但是逻辑跳跃严重。周明昭在你的研报上圈出了「华为概念」和「华为收入」之间的裂缝，概念不等于收入。",
+        "method": "market_chasing",
+        "quality": "reckless",
+        "outcomeAlignment": "contradicts",
+        "behaviorTags": [
+          "momentum_chasing",
+          "thin_evidence"
+        ]
       },
       {
         "id": "2023sep-help",
@@ -1557,7 +1858,11 @@
         "clarityLevel": 10,
         "riskAwareness": 12,
         "reflectionValue": 4,
-        "backgroundNote": "因子回测结果显示华为概念股的动量持续性高于历史均值30%，但波动率溢价也在升高。这是典型的主题驱动行情特征。"
+        "backgroundNote": "因子回测结果显示华为概念股的动量持续性高于历史均值30%，但波动率溢价也在升高。这是典型的主题驱动行情特征。",
+        "method": "collaboration",
+        "quality": "mixed",
+        "outcomeAlignment": "mixed",
+        "behaviorTags": []
       },
       {
         "id": "2023sep-life",
@@ -1584,7 +1889,14 @@
         "clarityLevel": 4,
         "riskAwareness": 6,
         "reflectionValue": 10,
-        "backgroundNote": "在科技馆看到真实的晶圆和光刻演示之后，你对国产替代的三个技术瓶颈有了更直观的理解。有些东西财报和K线里看不出来。"
+        "backgroundNote": "在科技馆看到真实的晶圆和光刻演示之后，你对国产替代的三个技术瓶颈有了更直观的理解。有些东西财报和K线里看不出来。",
+        "method": "self_management",
+        "quality": "reckless",
+        "outcomeAlignment": "mixed",
+        "behaviorTags": [
+          "thin_evidence",
+          "reflective"
+        ]
       }
     ],
     [
@@ -1613,7 +1925,13 @@
         "clarityLevel": 17,
         "riskAwareness": 12,
         "reflectionValue": 6,
-        "backgroundNote": "万亿级别的增量资金会对基建链形成实质性拉动。你的订单传导模型显示：建材受益在先、施工其次、运营最后，时间差大约1-3个月。"
+        "backgroundNote": "万亿级别的增量资金会对基建链形成实质性拉动。你的订单传导模型显示：建材受益在先、施工其次、运营最后，时间差大约1-3个月。",
+        "method": "fundamental_research",
+        "quality": "sound",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "hypothesis_driven"
+        ]
       },
       {
         "id": "2023oct-huijin-flow",
@@ -1640,7 +1958,13 @@
         "clarityLevel": 12,
         "riskAwareness": 12,
         "reflectionValue": 4,
-        "backgroundNote": "历史上汇金增持后银行板块平均在3个月内跑赢大盘8-12%。但这次增持的规模和估值水位和2008-2015年有本质不同。"
+        "backgroundNote": "历史上汇金增持后银行板块平均在3个月内跑赢大盘8-12%。但这次增持的规模和估值水位和2008-2015年有本质不同。",
+        "method": "quantitative_research",
+        "quality": "sound",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "hypothesis_driven"
+        ]
       },
       {
         "id": "2023oct-cement",
@@ -1667,7 +1991,11 @@
         "clarityLevel": 8,
         "riskAwareness": 10,
         "reflectionValue": 4,
-        "backgroundNote": "你去的那家建材市场老板说今年的出货量比去年同期还差，但最近接了两个大项目的询价。政策传导到基层需要时间。"
+        "backgroundNote": "你去的那家建材市场老板说今年的出货量比去年同期还差，但最近接了两个大项目的询价。政策传导到基层需要时间。",
+        "method": "field_research",
+        "quality": "mixed",
+        "outcomeAlignment": "supports",
+        "behaviorTags": []
       },
       {
         "id": "2023oct-chase-infra",
@@ -1694,7 +2022,14 @@
         "clarityLevel": 2,
         "riskAwareness": 4,
         "reflectionValue": 2,
-        "backgroundNote": "基建链的涨幅远低于你的预期。你忽略了两个关键细节：特别国债的资金到位节奏和地方政府的配套能力。周明昭说：政策力度的翻译不是一比一。"
+        "backgroundNote": "基建链的涨幅远低于你的预期。你忽略了两个关键细节：特别国债的资金到位节奏和地方政府的配套能力。周明昭说：政策力度的翻译不是一比一。",
+        "method": "market_chasing",
+        "quality": "reckless",
+        "outcomeAlignment": "contradicts",
+        "behaviorTags": [
+          "momentum_chasing",
+          "thin_evidence"
+        ]
       },
       {
         "id": "2023oct-help",
@@ -1721,7 +2056,11 @@
         "clarityLevel": 10,
         "riskAwareness": 10,
         "reflectionValue": 4,
-        "backgroundNote": "在帮前辈整理数据时你发现：基建链目前的估值分位并不低，市场已经把特别国债的利好定价了相当一部分。"
+        "backgroundNote": "在帮前辈整理数据时你发现：基建链目前的估值分位并不低，市场已经把特别国债的利好定价了相当一部分。",
+        "method": "collaboration",
+        "quality": "mixed",
+        "outcomeAlignment": "mixed",
+        "behaviorTags": []
       },
       {
         "id": "2023oct-life",
@@ -1748,7 +2087,14 @@
         "clarityLevel": 4,
         "riskAwareness": 10,
         "reflectionValue": 12,
-        "backgroundNote": "看到漫山红叶的时候你突然想通了一件事：市场底部不是一个点，是一段时间。你不需要在最低点买入，只需要在底部区间保持研究框架的稳定。"
+        "backgroundNote": "看到漫山红叶的时候你突然想通了一件事：市场底部不是一个点，是一段时间。你不需要在最低点买入，只需要在底部区间保持研究框架的稳定。",
+        "method": "self_management",
+        "quality": "reckless",
+        "outcomeAlignment": "mixed",
+        "behaviorTags": [
+          "thin_evidence",
+          "reflective"
+        ]
       }
     ],
     [
@@ -1777,7 +2123,13 @@
         "clarityLevel": 15,
         "riskAwareness": 18,
         "reflectionValue": 8,
-        "backgroundNote": "你的分析显示微盘行情本质是主板流动性不足环境下的资金溢出效应。一旦主板放量，微盘的流动性溢价会快速收缩。"
+        "backgroundNote": "你的分析显示微盘行情本质是主板流动性不足环境下的资金溢出效应。一旦主板放量，微盘的流动性溢价会快速收缩。",
+        "method": "fundamental_research",
+        "quality": "sound",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "hypothesis_driven"
+        ]
       },
       {
         "id": "2023nov-beijing-exchange",
@@ -1804,7 +2156,13 @@
         "clarityLevel": 12,
         "riskAwareness": 12,
         "reflectionValue": 4,
-        "backgroundNote": "筛选后发现北交所大约有15-20家公司具备了主板小市值股票的基本面水准，但估值已经比主板同类型公司贵了一倍以上。"
+        "backgroundNote": "筛选后发现北交所大约有15-20家公司具备了主板小市值股票的基本面水准，但估值已经比主板同类型公司贵了一倍以上。",
+        "method": "quantitative_research",
+        "quality": "sound",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "hypothesis_driven"
+        ]
       },
       {
         "id": "2023nov-skip",
@@ -1831,7 +2189,14 @@
         "clarityLevel": 10,
         "riskAwareness": 18,
         "reflectionValue": 8,
-        "backgroundNote": "不参与的判断最后被验证是正确的：11月下旬北证50开始剧烈波动。但你也在复盘笔记里写了：机会成本也是成本，完全回避不一定是最优。"
+        "backgroundNote": "不参与的判断最后被验证是正确的：11月下旬北证50开始剧烈波动。但你也在复盘笔记里写了：机会成本也是成本，完全回避不一定是最优。",
+        "method": "risk_management",
+        "quality": "mixed",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "crowding_aware",
+          "downside_defined"
+        ]
       },
       {
         "id": "2023nov-chase-beijing",
@@ -1858,7 +2223,14 @@
         "clarityLevel": 2,
         "riskAwareness": 0,
         "reflectionValue": 2,
-        "backgroundNote": "追在高位的头寸在随后的回调中损失惨重。你忽略了北交所流动性的脆弱性，极小的体量意味着进出都很难。"
+        "backgroundNote": "追在高位的头寸在随后的回调中损失惨重。你忽略了北交所流动性的脆弱性，极小的体量意味着进出都很难。",
+        "method": "market_chasing",
+        "quality": "reckless",
+        "outcomeAlignment": "contradicts",
+        "behaviorTags": [
+          "momentum_chasing",
+          "thin_evidence"
+        ]
       },
       {
         "id": "2023nov-help",
@@ -1885,7 +2257,13 @@
         "clarityLevel": 12,
         "riskAwareness": 14,
         "reflectionValue": 6,
-        "backgroundNote": "因子归因结果显示微盘行情中反转因子贡献了超过50%的收益，动量因子贡献不足20%。这是典型的情绪驱动行情，不是趋势。"
+        "backgroundNote": "因子归因结果显示微盘行情中反转因子贡献了超过50%的收益，动量因子贡献不足20%。这是典型的情绪驱动行情，不是趋势。",
+        "method": "collaboration",
+        "quality": "sound",
+        "outcomeAlignment": "mixed",
+        "behaviorTags": [
+          "hypothesis_driven"
+        ]
       },
       {
         "id": "2023nov-life",
@@ -1912,7 +2290,14 @@
         "clarityLevel": 4,
         "riskAwareness": 10,
         "reflectionValue": 14,
-        "backgroundNote": "你在图书馆翻到一本讲1970年代美国漂亮50泡沫的书，里面的很多描述和当下的微盘行情出奇地相似。历史不会重复但会押韵。"
+        "backgroundNote": "你在图书馆翻到一本讲1970年代美国漂亮50泡沫的书，里面的很多描述和当下的微盘行情出奇地相似。历史不会重复但会押韵。",
+        "method": "self_management",
+        "quality": "reckless",
+        "outcomeAlignment": "mixed",
+        "behaviorTags": [
+          "thin_evidence",
+          "reflective"
+        ]
       }
     ],
     [
@@ -1941,7 +2326,14 @@
         "clarityLevel": 16,
         "riskAwareness": 14,
         "reflectionValue": 20,
-        "backgroundNote": "复盘笔记是整个年度最有价值的研究成果。你诚实记录了两次判断成功（AI硬件、华为链）和一次偏差（消费复苏的节奏），每一次偏差都对应着一个可以改进的研究框架。"
+        "backgroundNote": "复盘笔记是整个年度最有价值的研究成果。你诚实记录了两次判断成功（AI硬件、华为链）和一次偏差（消费复苏的节奏），每一次偏差都对应着一个可以改进的研究框架。",
+        "method": "fundamental_research",
+        "quality": "sound",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "hypothesis_driven",
+          "reflective"
+        ]
       },
       {
         "id": "2023dec-spring",
@@ -1968,7 +2360,13 @@
         "clarityLevel": 14,
         "riskAwareness": 10,
         "reflectionValue": 6,
-        "backgroundNote": "历史数据显示春季躁动在AI硬件方向上的胜率超过70%，在消费方向上的胜率只有55%。但这个统计规律会不会因为2024年的特殊宏观环境而改变？"
+        "backgroundNote": "历史数据显示春季躁动在AI硬件方向上的胜率超过70%，在消费方向上的胜率只有55%。但这个统计规律会不会因为2024年的特殊宏观环境而改变？",
+        "method": "fundamental_research",
+        "quality": "sound",
+        "outcomeAlignment": "supports",
+        "behaviorTags": [
+          "hypothesis_driven"
+        ]
       },
       {
         "id": "2023dec-client",
@@ -1995,7 +2393,11 @@
         "clarityLevel": 14,
         "riskAwareness": 8,
         "reflectionValue": 6,
-        "backgroundNote": "客户对你的年度复盘框架的评价是：诚实但不悲观，乐观但不盲目。这种平衡感是一个好分析师的标志。"
+        "backgroundNote": "客户对你的年度复盘框架的评价是：诚实但不悲观，乐观但不盲目。这种平衡感是一个好分析师的标志。",
+        "method": "communication",
+        "quality": "mixed",
+        "outcomeAlignment": "supports",
+        "behaviorTags": []
       },
       {
         "id": "2023dec-bet",
@@ -2022,7 +2424,14 @@
         "clarityLevel": 2,
         "riskAwareness": 2,
         "reflectionValue": 2,
-        "backgroundNote": "排名压力下的赌博式判断在年底没有产生你期望的回报。周明昭说：排名是过程的沉淀，不是目的。这句话你现在懂了。"
+        "backgroundNote": "排名压力下的赌博式判断在年底没有产生你期望的回报。周明昭说：排名是过程的沉淀，不是目的。这句话你现在懂了。",
+        "method": "market_chasing",
+        "quality": "reckless",
+        "outcomeAlignment": "contradicts",
+        "behaviorTags": [
+          "momentum_chasing",
+          "thin_evidence"
+        ]
       },
       {
         "id": "2023dec-help",
@@ -2057,7 +2466,11 @@
         "clarityLevel": 8,
         "riskAwareness": 8,
         "reflectionValue": 6,
-        "backgroundNote": "在整理三位同事的年度贡献时你发现：林若宁的框架帮你识别了消费复苏的节奏偏差，陈星禾的成交数据帮你确认了AI硬件的趋势，周明昭的估值框架帮你避开了微盘追涨的陷阱。你的成长离不开她们。"
+        "backgroundNote": "在整理三位同事的年度贡献时你发现：林若宁的框架帮你识别了消费复苏的节奏偏差，陈星禾的成交数据帮你确认了AI硬件的趋势，周明昭的估值框架帮你避开了微盘追涨的陷阱。你的成长离不开她们。",
+        "method": "collaboration",
+        "quality": "mixed",
+        "outcomeAlignment": "mixed",
+        "behaviorTags": []
       },
       {
         "id": "2023dec-life",
@@ -2084,8 +2497,16 @@
         "clarityLevel": 4,
         "riskAwareness": 8,
         "reflectionValue": 14,
-        "backgroundNote": "三天的空白让你看清了一件事：好的研究框架需要好的生活状态做底座。明年的策略会在你的复盘笔记里发芽，但前提是你自己先充满了电。"
+        "backgroundNote": "三天的空白让你看清了一件事：好的研究框架需要好的生活状态做底座。明年的策略会在你的复盘笔记里发芽，但前提是你自己先充满了电。",
+        "method": "self_management",
+        "quality": "reckless",
+        "outcomeAlignment": "mixed",
+        "behaviorTags": [
+          "thin_evidence",
+          "reflective"
+        ]
       }
     ]
-  ]
+  ],
+  "contentVersion": 2
 }

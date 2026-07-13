@@ -32,11 +32,22 @@ describe("正式年份内容层", () => {
   for (const sample of YEARS) {
     it(`${sample.year} 年包含 12 个主题和 12 组研究方案`, () => {
       const content = validateYearContent(sample.raw);
+      expect(content.contentVersion).toBe(2);
       expect(content.year).toBe(sample.year);
       expect(content.themes).toHaveLength(12);
       expect(content.decisions).toHaveLength(12);
       expect(content.decisions.every((pool) => pool.length > 0)).toBe(true);
       expect(sample.themes).toHaveLength(12);
+      expect(sample.themes.every((theme) => theme.knownEvent && theme.businessOutcome)).toBe(true);
+      expect(sample.themes.every((theme) =>
+        theme.competingHypotheses?.lin
+        && theme.competingHypotheses.chen
+        && theme.competingHypotheses.zhou)).toBe(true);
+      expect(content.decisions.flat().every((decision) =>
+        decision.method
+        && decision.quality
+        && decision.outcomeAlignment
+        && Array.isArray(decision.behaviorTags))).toBe(true);
     });
 
     it(`${sample.year} 年加载器按月份返回研究方案并支持循环索引`, () => {
@@ -45,6 +56,13 @@ describe("正式年份内容层", () => {
       expect(sample.makeDecisions(12)).toEqual(content.decisions[0]);
     });
   }
+
+  it("把追涨错误选项识别为市场追逐，而不是风险管理", () => {
+    const chase = makeDecisions2023(1).find((decision) => decision.id === "2023feb-chase");
+    expect(chase?.category).toBe("risk_alert");
+    expect(chase?.method).toBe("market_chasing");
+    expect(chase?.quality).toBe("reckless");
+  });
 
   it("拒绝缺少月份内容的数据", () => {
     expect(() =>

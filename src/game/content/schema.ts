@@ -34,7 +34,30 @@ export const DECISION_CATEGORIES: readonly DecisionCategory[] = [
   "data_deep_dive",
 ];
 
+const DECISION_METHODS = [
+  "fundamental_research",
+  "field_research",
+  "communication",
+  "risk_management",
+  "self_management",
+  "collaboration",
+  "committee_process",
+  "quantitative_research",
+  "market_chasing",
+] as const;
+const DECISION_QUALITIES = ["sound", "mixed", "reckless"] as const;
+const OUTCOME_ALIGNMENTS = ["supports", "mixed", "contradicts"] as const;
+const BEHAVIOR_TAGS = [
+  "hypothesis_driven",
+  "thin_evidence",
+  "momentum_chasing",
+  "crowding_aware",
+  "downside_defined",
+  "reflective",
+] as const;
+
 export interface YearContent {
+  contentVersion: number;
   year: string;
   themes: MarketTheme[];
   decisions: ResearchDecision[][];
@@ -119,6 +142,19 @@ function requireDecision(v: unknown, where: string): ResearchDecision {
   if (!validateDecisionEffects(d.effects)) {
     throw new ContentValidationError(`${where}: decision.effects is invalid`);
   }
+  if (!(DECISION_METHODS as readonly string[]).includes(String(d.method))) {
+    throw new ContentValidationError(`${where}: decision.method is invalid`);
+  }
+  if (!(DECISION_QUALITIES as readonly string[]).includes(String(d.quality))) {
+    throw new ContentValidationError(`${where}: decision.quality is invalid`);
+  }
+  if (!(OUTCOME_ALIGNMENTS as readonly string[]).includes(String(d.outcomeAlignment))) {
+    throw new ContentValidationError(`${where}: decision.outcomeAlignment is invalid`);
+  }
+  if (!Array.isArray(d.behaviorTags)
+    || !(d.behaviorTags as unknown[]).every((tag) => (BEHAVIOR_TAGS as readonly unknown[]).includes(tag))) {
+    throw new ContentValidationError(`${where}: decision.behaviorTags is invalid`);
+  }
   if (d.backgroundNote !== undefined && !isString(d.backgroundNote)) {
     throw new ContentValidationError(`${where}: decision.backgroundNote must be a string when present`);
   }
@@ -168,5 +204,5 @@ export function validateYearContent(raw: unknown): YearContent {
     throw new ContentValidationError(`expected 12 monthly decision pools, got ${decisions.length}`);
   }
 
-  return { year: c.year, themes, decisions };
+  return { contentVersion: isNumber(c.contentVersion) ? c.contentVersion : 1, year: c.year, themes, decisions };
 }

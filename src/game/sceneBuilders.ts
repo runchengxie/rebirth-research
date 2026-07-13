@@ -1,7 +1,7 @@
 import type {
   Branch,
   CharacterId,
-  DecisionCategory,
+  DecisionMethod,
   GameState,
   KnowledgeCard,
   MarketTheme,
@@ -10,6 +10,8 @@ import type {
   ResearchDecision,
   SceneNode,
 } from "../types";
+import type { SceneBeatKey } from "./narrativeSemantics";
+import { decisionMethod, decisionQuality, sceneProfileFor } from "./narrativeSemantics";
 import { activeBranches } from "./branching";
 import { CHARACTERS, AFFINITY_GATE } from "./characters";
 import {
@@ -30,38 +32,38 @@ import { buildDemoChapter, makeDecisionsDemo } from "./contentDemo";
 // Knowledge cards — the "platform" payoff
 // ═══════════════════════════════════════════════════════════
 
-type Teaching = { concept: string; line: string; cfaRef: string };
+type Teaching = { concept: string; line: string; learningRef: string };
 
-export const MENTOR_TEACHINGS: Record<MentorId, Record<DecisionCategory, Teaching>> = {
+export const MENTOR_TEACHINGS: Record<MentorId, Partial<Record<DecisionMethod, Teaching>>> = {
   lin_ruoning: {
-    deep_research: { concept: "产业链交叉验证", line: "别只看一个点。把上游、中游、下游的节奏差拆开，超额收益藏在断层里。", cfaRef: "CFA · 权益估值与产业链验证" },
-    expert_interview: { concept: "一线验证", line: "研报会说漂亮话，但经销商的库存、厂长的语气不会。去一线，比看十篇纪要都值钱。", cfaRef: "CFA · 尽职调查与一手信息" },
-    roadshow: { concept: "框架翻译", line: "把复杂逻辑讲成人能听懂的故事，是研究员的基本功。客户追问的那两个问题，就是你框架的漏洞。", cfaRef: "CFA · 投资沟通" },
-    risk_alert: { concept: "反身性", line: "当所有人都觉得「这回不一样」，就是风险最大的时候。提醒冷静不是泼冷水，是替团队守住边界。", cfaRef: "CFA · 行为金融与反身性" },
-    self_care: { concept: "判断节奏", line: "脑子不清亮的时候，任何判断都打折。先把自己救回来，研究不会跑。", cfaRef: "CFA · 决策卫生" },
-    help_colleague: { concept: "模型直觉", line: "帮人改模型，也是在练自己的手感。你今天搭的每一根假设，明天都会长回你自己的框架里。", cfaRef: "CFA · 财务建模" },
-    committee_defense: { concept: "假设可视化", line: "投委会要的不是结论，是你怎么想的。把概率和赔率都摆出来，比喊方向有用。", cfaRef: "CFA · 投资论述" },
-    data_deep_dive: { concept: "数据诚实", line: "数据不会替你下结论，但会揭穿你的偷懒。先问「这数怎么来的」，再问「说明什么」。", cfaRef: "CFA · 量化与数据质量" },
+    fundamental_research: { concept: "产业链交叉验证", line: "别只看一个点。把上游、中游、下游的节奏差拆开，超额收益藏在断层里。", learningRef: "金融基础 · 权益估值与产业链验证" },
+    field_research: { concept: "一线验证", line: "研报会说漂亮话，但经销商的库存、厂长的语气不会。去一线，比看十篇纪要都值钱。", learningRef: "金融基础 · 尽职调查与一手信息" },
+    communication: { concept: "框架翻译", line: "把复杂逻辑讲成人能听懂的故事，是研究员的基本功。客户追问的那两个问题，就是你框架的漏洞。", learningRef: "金融基础 · 投资沟通" },
+    risk_management: { concept: "反身性", line: "当所有人都觉得「这回不一样」，就是风险最大的时候。提醒冷静不是泼冷水，是替团队守住边界。", learningRef: "金融基础 · 行为金融与反身性" },
+    self_management: { concept: "判断节奏", line: "脑子不清亮的时候，任何判断都打折。先把自己救回来，研究不会跑。", learningRef: "金融基础 · 决策卫生" },
+    collaboration: { concept: "模型直觉", line: "帮人改模型，也是在练自己的手感。你今天搭的每一根假设，明天都会长回你自己的框架里。", learningRef: "金融基础 · 财务建模" },
+    committee_process: { concept: "假设可视化", line: "投委会要的不是结论，是你怎么想的。把概率和赔率都摆出来，比喊方向有用。", learningRef: "金融基础 · 投资论述" },
+    quantitative_research: { concept: "数据诚实", line: "数据不会替你下结论，但会揭穿你的偷懒。先问「这数怎么来的」，再问「说明什么」。", learningRef: "金融基础 · 量化与数据质量" },
   },
   chen_xinghe: {
-    deep_research: { concept: "量价背离", line: "价格会骗人，成交量不会。量在价先，结构比方向诚实。", cfaRef: "CFA · 市场微观结构" },
-    expert_interview: { concept: "信号交叉", line: "一手信息能校准你的因子。别只信回测，去问圈内人信号变没变。", cfaRef: "CFA · 另类数据与调研" },
-    roadshow: { concept: "信号翻译", line: "把因子讲成人话，是量化员的修行。客户听得懂，才会信你的 Alpha。", cfaRef: "CFA · 投资沟通" },
-    risk_alert: { concept: "因子拥挤度", line: "所有人都挤一个方向时，风险溢价趋近零。这时候还冲，是在给前人接盘。", cfaRef: "CFA · 因子投资与拥挤度" },
-    self_care: { concept: "噪声 vs 信号", line: "连轴转的时候信噪比会塌。休息不是偷懒，是给模型留干净输入。", cfaRef: "CFA · 决策卫生" },
-    help_colleague: { concept: "交叉验证", line: "量化和基本面打架时，真理通常在中间。你帮我校准的那一下，我也学会了怎么读生意。", cfaRef: "CFA · 多因子融合" },
-    committee_defense: { concept: "因子正交", line: "把动量因子的干扰拆掉，你的净 Alpha 才纯。混着讲，等于什么都没说。", cfaRef: "CFA · Barra 归因" },
-    data_deep_dive: { concept: "Barra 归因", line: "收益里多少是因子、多少是能力？归因拆不开的，都是运气。", cfaRef: "CFA · 绩效归因" },
+    fundamental_research: { concept: "量价背离", line: "价格会骗人，成交量不会。量在价先，结构比方向诚实。", learningRef: "金融基础 · 市场微观结构" },
+    field_research: { concept: "信号交叉", line: "一手信息能校准你的因子。别只信回测，去问圈内人信号变没变。", learningRef: "金融基础 · 另类数据与调研" },
+    communication: { concept: "信号翻译", line: "把因子讲成人话，是量化员的修行。客户听得懂，才会信你的 Alpha。", learningRef: "金融基础 · 投资沟通" },
+    risk_management: { concept: "因子拥挤度", line: "所有人都挤一个方向时，风险溢价趋近零。这时候还冲，是在给前人接盘。", learningRef: "金融基础 · 因子投资与拥挤度" },
+    self_management: { concept: "噪声 vs 信号", line: "连轴转的时候信噪比会塌。休息不是偷懒，是给模型留干净输入。", learningRef: "金融基础 · 决策卫生" },
+    collaboration: { concept: "交叉验证", line: "量化和基本面打架时，真理通常在中间。你帮我校准的那一下，我也学会了怎么读生意。", learningRef: "金融基础 · 多因子融合" },
+    committee_process: { concept: "因子正交", line: "把动量因子的干扰拆掉，你的净 Alpha 才纯。混着讲，等于什么都没说。", learningRef: "金融基础 · Barra 归因" },
+    quantitative_research: { concept: "Barra 归因", line: "收益里多少是因子、多少是能力？归因拆不开的，都是运气。", learningRef: "金融基础 · 绩效归因" },
   },
   zhou_mingzhao: {
-    deep_research: { concept: "估值分位", line: "别只看方向，看你在第几层估值分位上出手。赔率比胜率更长久。", cfaRef: "CFA · 估值与安全边际" },
-    expert_interview: { concept: "政策传导", line: "政策到订单之间隔着三层时滞。问清楚「什么时候见效」，比问「好不好」重要。", cfaRef: "CFA · 宏观与政策传导" },
-    roadshow: { concept: "拐点思维", line: "我看拐点不看趋势。最拥挤的地方，往往离拐点最近。", cfaRef: "CFA · 周期与拐点" },
-    risk_alert: { concept: "安全边际", line: "先想清楚错了怎么办，再想对了赚多少。边界划不清，再对的判断也是赌。", cfaRef: "CFA · 风险管理" },
-    self_care: { concept: "长跑节奏", line: "研究是马拉松。把自己熬没了，再好的框架也没人跑。", cfaRef: "CFA · 决策卫生" },
-    help_colleague: { concept: "情景框架", line: "把外生冲击嵌进宏观模型，是教科书学不到的。你帮我补的变量，让我的情景更真了。", cfaRef: "CFA · 情景分析" },
-    committee_defense: { concept: "概率与赔率", line: "我只认一件事：你把概率和赔率都写出来了。这比喊方向专业。", cfaRef: "CFA · 预期收益框架" },
-    data_deep_dive: { concept: "微观结构", line: "制度一变，价格发现机制就变。尊重规则变化，规则才不会惩罚你。", cfaRef: "CFA · 市场微观结构" },
+    fundamental_research: { concept: "估值分位", line: "别只看方向，看你在第几层估值分位上出手。赔率比胜率更长久。", learningRef: "金融基础 · 估值与安全边际" },
+    field_research: { concept: "政策传导", line: "政策到订单之间隔着三层时滞。问清楚「什么时候见效」，比问「好不好」重要。", learningRef: "金融基础 · 宏观与政策传导" },
+    communication: { concept: "拐点思维", line: "我看拐点不看趋势。最拥挤的地方，往往离拐点最近。", learningRef: "金融基础 · 周期与拐点" },
+    risk_management: { concept: "安全边际", line: "先想清楚错了怎么办，再想对了赚多少。边界划不清，再对的判断也是赌。", learningRef: "金融基础 · 风险管理" },
+    self_management: { concept: "长跑节奏", line: "研究是马拉松。把自己熬没了，再好的框架也没人跑。", learningRef: "金融基础 · 决策卫生" },
+    collaboration: { concept: "情景框架", line: "把外生冲击嵌进宏观模型，是教科书学不到的。你帮我补的变量，让我的情景更真了。", learningRef: "金融基础 · 情景分析" },
+    committee_process: { concept: "概率与赔率", line: "我只认一件事：你把概率和赔率都写出来了。这比喊方向专业。", learningRef: "金融基础 · 预期收益框架" },
+    quantitative_research: { concept: "微观结构", line: "制度一变，价格发现机制就变。尊重规则变化，规则才不会惩罚你。", learningRef: "金融基础 · 市场微观结构" },
   },
 };
 
@@ -73,10 +75,21 @@ function frameworkOfLocal(decision: ResearchDecision, story: StoryArc): Characte
 export function pickKnowledgeCard(decision: ResearchDecision, story: StoryArc): KnowledgeCard {
   if (decision.teaches) return decision.teaches;
   const mentor = frameworkOfLocal(decision, story);
-  const teaching = MENTOR_TEACHINGS[mentor as MentorId]?.[decision.category];
+  const method = decisionMethod(decision);
+  if (decisionQuality(decision) === "reckless" || method === "market_chasing") {
+    return {
+      id: `kc_${mentor}_validation_before_conclusion`,
+      concept: "验证先于结论",
+      mentorId: mentor,
+      mentorLine: "方向猜对一次不值钱。先把证据、反例和退出条件写清楚，结论才有复用价值。",
+      learningRef: "金融基础 · 证据链与风险边界",
+      tier: 1,
+    };
+  }
+  const teaching = MENTOR_TEACHINGS[mentor as MentorId]?.[method];
   if (!teaching) {
     return {
-      id: `generic_${decision.category}`,
+      id: `generic_${method}`,
       concept: "研究方法",
       mentorId: mentor,
       mentorLine: "每一次选择都是一次练习。复盘时问自己：我这次为什么这么想？",
@@ -84,11 +97,11 @@ export function pickKnowledgeCard(decision: ResearchDecision, story: StoryArc): 
     };
   }
   return {
-    id: `kc_${mentor}_${decision.category}`,
+    id: `kc_${mentor}_${method}`,
     concept: teaching.concept,
     mentorId: mentor,
     mentorLine: teaching.line,
-    cfaRef: teaching.cfaRef,
+    learningRef: teaching.learningRef,
     tier: 1,
   };
 }
@@ -238,9 +251,9 @@ function buildDecisionNode(
     decisionPrompt: arcMission,
     briefTitle: `${theme.period}：${theme.title}`,
     briefs: [
-      { characterId: "lin_ruoning", label: "基本面视角", text: `${theme.publicContext.split("。")[0]}。` },
-      { characterId: "chen_xinghe", label: "量化信号", text: MENTOR_LENS[monthIndex % MENTOR_LENS.length].chen },
-      { characterId: "zhou_mingzhao", label: "宏观风控", text: MENTOR_LENS[monthIndex % MENTOR_LENS.length].zhou },
+      { characterId: "lin_ruoning", label: "基本面视角", text: theme.competingHypotheses?.lin ?? `${theme.publicContext.split("。")[0]}。` },
+      { characterId: "chen_xinghe", label: "量化信号", text: theme.competingHypotheses?.chen ?? MENTOR_LENS[monthIndex % MENTOR_LENS.length].chen },
+      { characterId: "zhou_mingzhao", label: "宏观风控", text: theme.competingHypotheses?.zhou ?? MENTOR_LENS[monthIndex % MENTOR_LENS.length].zhou },
     ],
     ...overrideDecision,
   };
@@ -279,15 +292,16 @@ export function buildMonthScene(
     [...makeResearchDecisions(actualYear, monthIndex), ...branch.decisions],
     branch.overrideDecision,
   );
-  const nodes: SceneNode[] = [
-    buildMemoryNode(story, theme, monthIndex),
-    ...optionalNode(competingNodeFor(state, story, theme, monthIndex)),
-    ...branch.afterMemory,
-    ...optionalNode(affinityNodeFor(state, story, monthIndex)),
-    buildColleagueNode(story, theme, arcLine, monthIndex),
-    ...branch.beforeDecision,
-    decisionNode,
-  ];
+  const nodeGroups: Record<SceneBeatKey, SceneNode[]> = {
+    memory: [buildMemoryNode(story, theme, monthIndex)],
+    competing: optionalNode(competingNodeFor(state, story, theme, monthIndex)),
+    afterMemory: branch.afterMemory,
+    affinity: optionalNode(affinityNodeFor(state, story, monthIndex)),
+    colleague: [buildColleagueNode(story, theme, arcLine, monthIndex)],
+    beforeDecision: branch.beforeDecision,
+    decision: [decisionNode],
+  };
+  const nodes = sceneProfileFor(actualYear).beats.flatMap((beat) => nodeGroups[beat]);
 
   return {
     id: `${year || "default"}-m${monthIndex}`,

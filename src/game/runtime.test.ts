@@ -39,6 +39,7 @@ describe("初始状态", () => {
     expect(state.year).toBe("2023");
     expect(state.monthIndex).toBe(0);
     expect(state.sceneNodeIndex).toBe(0);
+    expect(state.sceneNodeId).toBe(sceneForMonth(state).nodes[0].id);
     expect(state.locked).toBe(false);
     expect(state.finished).toBe(false);
     expect(state.relations.lin_ruoning).toBeGreaterThan(0);
@@ -91,6 +92,31 @@ describe("回看当前场景", () => {
   });
 });
 
+describe("稳定节点游标", () => {
+  it("动态分支插入后仍按节点 id 恢复到同一段剧情", () => {
+    const base = { ...createInitialState("2025"), monthIndex: 3 };
+    const before = sceneForMonth(base);
+    const colleagueIndex = before.nodes.findIndex((node) => node.id === "m3-colleague");
+    const changed = {
+      ...base,
+      sceneNodeIndex: colleagueIndex,
+      sceneNodeId: "m3-colleague",
+      flags: { ...base.flags, peer_zhao_met: true },
+    };
+    const after = sceneForMonth(changed);
+    expect(after.nodes.findIndex((node) => node.id === "m3-colleague")).not.toBe(colleagueIndex);
+    expect(currentSceneNode(changed).id).toBe("m3-colleague");
+  });
+
+  it("推进和回看同步更新节点 id 与数字缓存", () => {
+    const initial = createInitialState("2023");
+    const advanced = advanceScene(initial, emptyYear());
+    expect(advanced.sceneNodeId).toBe(sceneForMonth(advanced).nodes[advanced.sceneNodeIndex].id);
+    const rewound = rewindScene(advanced);
+    expect(rewound.sceneNodeId).toBe(sceneForMonth(rewound).nodes[rewound.sceneNodeIndex].id);
+  });
+});
+
 describe("推进当前场景", () => {
   const data = emptyYear();
 
@@ -113,6 +139,7 @@ describe("推进当前场景", () => {
     const next = advanceScene(atEndLocked, data);
     expect(next.monthIndex).toBe(1);
     expect(next.sceneNodeIndex).toBe(0);
+    expect(next.sceneNodeId).toBe(sceneForMonth(next).nodes[0].id);
     expect(next.locked).toBe(false);
   });
 });
@@ -133,6 +160,7 @@ describe("进入下一话", () => {
     const next = nextMonth(state);
     expect(next.monthIndex).toBe(3);
     expect(next.sceneNodeIndex).toBe(0);
+    expect(next.sceneNodeId).toBe(sceneForMonth(next).nodes[0].id);
     expect(next.locked).toBe(false);
     expect(next.focusId).toBe("deep_research");
   });

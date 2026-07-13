@@ -18,6 +18,7 @@
 import raw from "./content/2025.json";
 import type { CompetingHypotheses, MarketTheme, ResearchDecision } from "../types";
 import { validateYearContent } from "./content/schema";
+import { completeDecisionSemantics, completeYearThemes } from "./narrativeSemantics";
 
 const CONTENT_2025 = validateYearContent(raw);
 
@@ -118,14 +119,14 @@ const COMPETING: CompetingHypotheses[] = [
   },
 ];
 
-export const THEMES_2025: MarketTheme[] = CONTENT_2025.themes.map((theme, i) => ({
+export const THEMES_2025: MarketTheme[] = completeYearThemes(CONTENT_2025.themes.map((theme, i) => ({
   ...theme,
   knownEvent: KNOWN_EVENTS[i] ?? theme.knownEvent,
   businessOutcome: BUSINESS_OUTCOMES[i] ?? theme.businessOutcome,
   competingHypotheses: COMPETING[i] ?? theme.competingHypotheses,
-}));
+})));
 
 export function makeDecisions2025(monthIndex: number): ResearchDecision[] {
   const pool = CONTENT_2025.decisions[monthIndex % CONTENT_2025.decisions.length];
-  return pool ?? [];
+  return (pool ?? []).map(completeDecisionSemantics);
 }

@@ -195,7 +195,7 @@ function ResearchNotes({ state }: { state: GameState }) {
                 <span>
                   {mentor.name}：{card.mentorLine}
                 </span>
-                {card.cfaRef ? <small>{card.cfaRef}</small> : null}
+                {card.learningRef ? <small>{card.learningRef}</small> : null}
               </li>
             );
           })}

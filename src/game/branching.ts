@@ -105,7 +105,10 @@ export function evaluateBranchCondition(
   if (cond.kind === "or") {
     return cond.of.some((child) => evaluateBranchCondition(child, state, meta));
   }
-  return !evaluateBranchCondition(cond.of, state, meta);
+  if (cond.kind === "not") {
+    return !evaluateBranchCondition(cond.of, state, meta);
+  }
+  return false;
 }
 
 export function activeBranches(

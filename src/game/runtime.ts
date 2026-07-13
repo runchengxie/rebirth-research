@@ -33,7 +33,7 @@ export function createInitialState(year: string): GameState {
       zhou_mingzhao: 12,
       zhao_chengyu: 10,
     },
-    flags: {},
+    flags: year === "2025" ? { year_2025: true } : {},
     categoryCounts: {},
     methodCounts: {},
     milestone: null,

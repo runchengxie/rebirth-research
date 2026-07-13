@@ -9,9 +9,15 @@
 //   - storyArcs.ts   主题与 12 章叙事弧 + 按年份轮换的寒暄/mission 镜头表
 //   - branches.ts    条件分支与赵承宇 peer 弧（GRADE/DEBT/peer 全家）
 //   - sceneBuilders.ts  知识卡逻辑 + 四个场景构建函数 + 决策池路由
+//   - linRoute2025.ts  林若宁「早心动、慢信任」的 2025 专属关系弧
 // ═══════════════════════════════════════════════════════════
+
+import { installLinRoute2025 } from "./linRoute2025";
+
+installLinRoute2025();
 
 export * from "./characters";
 export * from "./storyArcs";
 export * from "./branches";
 export * from "./sceneBuilders";
+export * from "./verified2025";

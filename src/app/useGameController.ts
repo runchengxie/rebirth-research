@@ -291,11 +291,6 @@ export function useGameSession(audio: GameAudio) {
     persistRebirth(rebirth);
   }, [rebirth]);
 
-  useEffect(() => {
-    if (sceneNode.type !== "dialogue") return;
-    setRebirth((current) => markSceneNodeRead(current, state, sceneNode.id));
-  }, [sceneNode.id, sceneNode.type, state.monthIndex, state.year]);
-
   const changeYear = useCallback((year: string) => {
     resetLineVoice();
     setState(readStoredState(year) ?? createInitialState(year));
@@ -311,6 +306,9 @@ export function useGameSession(audio: GameAudio) {
   const advanceCurrentScene = useCallback(() => {
     if (!sceneCanAdvance) return;
     playAdvance();
+    if (sceneNode.type === "dialogue") {
+      setRebirth((current) => markSceneNodeRead(current, state, sceneNode.id));
+    }
     const isCycleEnd = state.finished && state.sceneNodeIndex >= scene.nodes.length - 1;
     if (isCycleEnd) {
       const nextRebirth = completeRebirthCycle(rebirth, state);
@@ -320,7 +318,16 @@ export function useGameSession(audio: GameAudio) {
       return;
     }
     setState((current) => advanceScene(current, data, branchMetaContext(rebirth)));
-  }, [data, playAdvance, rebirth, resetLineVoice, scene.nodes.length, sceneCanAdvance, state]);
+  }, [
+    data,
+    playAdvance,
+    rebirth,
+    resetLineVoice,
+    scene.nodes.length,
+    sceneCanAdvance,
+    sceneNode,
+    state,
+  ]);
 
   const goBack = useCallback(() => {
     if (!canGoBack) return;

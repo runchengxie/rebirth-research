@@ -5,7 +5,12 @@ import type { CharacterId, CompetingHypotheses, SceneNode } from "../types";
 import { DecisionCard } from "../components/DecisionCard";
 import { EndingPanel } from "../components/EndingPanel";
 import { FocusSelector } from "../components/FocusSelector";
-import { InvestigationPanel, RebirthArchiveSection } from "../components/RebirthPanel";
+import {
+  InvestigationPanel,
+  OfficeHubPanel,
+  RebirthArchiveSection,
+  RebirthFlowPanel,
+} from "../components/RebirthPanel";
 import { StatusBar } from "../components/StatusBar";
 import { StoryRecapPanel } from "../components/StoryRecapPanel";
 import { buildSceneView } from "./useGameController";
@@ -259,7 +264,7 @@ function ArchiveDrawer({
   session: GameSession;
   onClose: () => void;
 }) {
-  const [tab, setTab] = useState<"log" | "archive">("log");
+  const [tab, setTab] = useState<"log" | "archive" | "flow" | "office">("log");
   if (!open) return null;
   return (
     <div className="archive-backdrop" role="presentation" onMouseDown={onClose}>
@@ -280,9 +285,22 @@ function ArchiveDrawer({
         <div className="archive-tabs" role="tablist">
           <button aria-controls="archive-tabpanel" aria-selected={tab === "log"} className={tab === "log" ? "active" : ""} role="tab" type="button" onClick={() => setTab("log")}>本话记录</button>
           <button aria-controls="archive-tabpanel" aria-selected={tab === "archive"} className={tab === "archive" ? "active" : ""} role="tab" type="button" onClick={() => setTab("archive")}>研究档案</button>
+          <button aria-controls="archive-tabpanel" aria-selected={tab === "flow"} className={tab === "flow" ? "active" : ""} role="tab" type="button" onClick={() => setTab("flow")}>年度流程</button>
+          <button aria-controls="archive-tabpanel" aria-selected={tab === "office"} className={tab === "office" ? "active" : ""} role="tab" type="button" onClick={() => setTab("office")}>研究室</button>
         </div>
         <div className="archive-scroll" id="archive-tabpanel" role="tabpanel">
-          {tab === "log" ? <DialogueHistory session={session} /> : <ResearchArchive session={session} />}
+          {tab === "log" ? <DialogueHistory session={session} /> : null}
+          {tab === "archive" ? <ResearchArchive session={session} /> : null}
+          {tab === "flow" ? (
+            <RebirthFlowPanel meta={session.rebirth} state={session.state} />
+          ) : null}
+          {tab === "office" ? (
+            <OfficeHubPanel
+              meta={session.rebirth}
+              state={session.state}
+              onInspect={session.inspectOfficeWithSound}
+            />
+          ) : null}
         </div>
       </aside>
     </div>
@@ -439,6 +457,14 @@ export function ImmersiveGameScreen(props: ImmersiveGameScreenProps) {
               onClick={session.goBack}
             >
               ← 上一句
+            </button>
+            <button
+              className="secondary-action"
+              disabled={!session.canSkipRead}
+              type="button"
+              onClick={session.skipReadScene}
+            >
+              跳过已读
             </button>
             <button className="secondary-action" type="button" onClick={() => setArchiveOpen(true)}>
               记录与档案

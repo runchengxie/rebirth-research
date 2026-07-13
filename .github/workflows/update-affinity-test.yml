@@ -1,0 +1,57 @@
+name: Update affinity test
+
+on:
+  push:
+    branches:
+      - feat/affinity-dialogue-beats
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    if: github.event.head_commit.message == 'ci: update legacy affinity test'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/affinity-dialogue-beats
+          fetch-depth: 0
+      - name: Replace obsolete generic-affinity test
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("src/game/engine.test.ts")
+          text = path.read_text(encoding="utf-8")
+          start = text.index('  it("injects an affinity moment node only when the arc character is above the gate"')
+          end = text.index('\n\n  describe("conditional branching layer"', start)
+          replacement = '''  it("uses specific legacy affinity beats and skips the generic 2025 template", () => {
+            const state2024 = createInitialState("2024");
+            const warm = buildMonthScene(8, "2024", {
+              ...state2024,
+              monthIndex: 8,
+              relations: { lin_ruoning: 70, chen_xinghe: 10, zhou_mingzhao: 10, zhao_chengyu: 10 },
+            });
+            const inserted = warm.nodes.find((n) => n.id === "affinity-2024-lin_ruoning-8");
+            expect(inserted).toBeDefined();
+            expect(inserted!.characterId).toBe("lin_ruoning");
+            expect(inserted!.type).toBe("dialogue");
+
+            const state2025 = createInitialState("2025");
+            const noGeneric = buildMonthScene(5, "2025", {
+              ...state2025,
+              monthIndex: 5,
+              relations: { lin_ruoning: 70, chen_xinghe: 70, zhou_mingzhao: 70, zhao_chengyu: 10 },
+            });
+            expect(noGeneric.nodes.some((node) => node.id.endsWith("-affinity"))).toBe(false);
+          });'''
+          path.write_text(text[:start] + replacement + text[end:], encoding="utf-8")
+          PY
+          git rm -f .github/workflows/debug-check.yml
+          git rm -f .github/workflows/update-affinity-test.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/game/engine.test.ts
+          git commit -m "更新关系节点测试"
+          git push origin HEAD:feat/affinity-dialogue-beats

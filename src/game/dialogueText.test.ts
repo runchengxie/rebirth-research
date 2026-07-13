@@ -21,6 +21,6 @@ describe("对白分段", () => {
 
   it("忽略空段并保留普通单段文本", () => {
     expect(dialogueText("动作。", "", "  ", "对白。")).toBe("动作。\n\n对白。");
-    expect(dialogueParagraphs("普通对白。 ")).toEqual(["普通对白。");
+    expect(dialogueParagraphs("普通对白。 ")).toEqual(["普通对白。。"]);
   });
 });

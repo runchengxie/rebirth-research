@@ -271,7 +271,7 @@
         "reflectionValue": 4,
         "backgroundNote": "帮同事跑因子的过程，也是你在学习如何用量化工具验证基本面直觉。",
         "method": "collaboration",
-        "quality": "mixed",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": []
       },
@@ -302,10 +302,9 @@
         "reflectionValue": 10,
         "backgroundNote": "信息爆炸的时候，最稀缺的是安静的判断力，不是信息量。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -469,7 +468,7 @@
         "reflectionValue": 4,
         "backgroundNote": "帮她梳理收费模式的过程，让你对AI应用的「需求真实性」有了更直观的判断框架。",
         "method": "collaboration",
-        "quality": "mixed",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": []
       },
@@ -500,10 +499,9 @@
         "reflectionValue": 12,
         "backgroundNote": "身体的节奏会直接影响判断的节奏。带着好状态回到工位，比带着焦虑追热点更有效。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -700,10 +698,9 @@
         "reflectionValue": 12,
         "backgroundNote": "带着父母的关心回到周一晨会，你的判断没有被周末的信息洪流冲散。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -869,7 +866,7 @@
         "reflectionValue": 6,
         "backgroundNote": "帮她更新模型的时候，你学会了如何把关税这类外生冲击嵌入宏观框架，这是教科书上学不到的。",
         "method": "collaboration",
-        "quality": "mixed",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": []
       },
@@ -900,10 +897,9 @@
         "reflectionValue": 12,
         "backgroundNote": "带着旅行的放松回到工位，你对关税冲击的二次效应有了更冷静的判断。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -1102,10 +1098,9 @@
         "reflectionValue": 10,
         "backgroundNote": "在商场亲眼看到餐饮排长队但服饰门店冷冷清清，这种体感数据比任何研究报告都直观。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -1269,7 +1264,7 @@
         "reflectionValue": 6,
         "backgroundNote": "量化和基本面的交叉验证是你和陈星禾最有效的协作模式。这次你也从她的回测中学到了新视角。",
         "method": "collaboration",
-        "quality": "mixed",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": []
       },
@@ -1300,10 +1295,9 @@
         "reflectionValue": 14,
         "backgroundNote": "爬到山顶的时候你突然想通了一个问题：国产化的真正瓶颈不在技术，在市场对「用国货」的接受度。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -1469,7 +1463,7 @@
         "reflectionValue": 6,
         "backgroundNote": "帮她改模型的过程中，你学会了如何判断一个DCF假设是否过于乐观，这是研究员最基础也最难的能力。",
         "method": "collaboration",
-        "quality": "mixed",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": []
       },
@@ -1500,10 +1494,9 @@
         "reflectionValue": 12,
         "backgroundNote": "海风吹了两天之后，你重新审视中报数据时发现了一个之前被忽视的产业链交叉信号。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -1674,7 +1667,7 @@
         "reflectionValue": 6,
         "backgroundNote": "帮他们修正模型的过程，也是你在学习两种不同框架如何处理新数据。",
         "method": "collaboration",
-        "quality": "mixed",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": []
       },
@@ -1705,10 +1698,9 @@
         "reflectionValue": 12,
         "backgroundNote": "重建生活节奏比多写一篇速评更有长期价值。周明昭说：「你的状态写在脸上，比你的研报还诚实。」",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -1905,10 +1897,9 @@
         "reflectionValue": 10,
         "backgroundNote": "市场在适应新规，你也在适应新的节奏。稳定的状态是最好的研究基础设施。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -2072,7 +2063,7 @@
         "reflectionValue": 6,
         "backgroundNote": "把基本面筛选嵌入量化排名模型后，模型的胜率提升了近五个百分点。你们是最好的互补搭档。",
         "method": "collaboration",
-        "quality": "mixed",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": []
       },
@@ -2103,10 +2094,9 @@
         "reflectionValue": 14,
         "backgroundNote": "在所有人都在熬夜的排名季里，你带着清晰的头脑走进会议室。林若宁说：「你的状态比你的推荐值钱。」",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -2305,7 +2295,7 @@
         "reflectionValue": 16,
         "backgroundNote": "翻看十一个月的笔记时你发现：很多「月度判断的偏差」，其实在半年前做覆盖框架选择时就已经埋下了。",
         "method": "self_management",
-        "quality": "mixed",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
           "reflective"
@@ -2484,7 +2474,7 @@
         "reflectionValue": 8,
         "backgroundNote": "帮同事改模型的同时，你也重新审视了自己的框架。陈星禾说：「和你合作一年了，你的判断越来越有自己的风格。」",
         "method": "collaboration",
-        "quality": "mixed",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": []
       },
@@ -2523,10 +2513,9 @@
         "reflectionValue": 10,
         "backgroundNote": "年末聚餐上，三个人都说了自己今年最大的判断失误。这一刻你发现，诚实比正确更有力量。林若宁说：「下一年，我们还一起。」",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }

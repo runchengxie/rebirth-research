@@ -271,7 +271,7 @@
         "reflectionValue": 2,
         "backgroundNote": "在最恐慌的时候帮同事梳理估值，本身就是一种研究态度。",
         "method": "collaboration",
-        "quality": "mixed",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": []
       },
@@ -302,10 +302,9 @@
         "reflectionValue": 10,
         "backgroundNote": "带着恐慌做研究，不如带着清晰的头脑推开明天的门。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -470,7 +469,7 @@
         "reflectionValue": 4,
         "backgroundNote": "帮同事复核数据既是协作也是学习，你帮陈星禾排掉了一个样本偏差。",
         "method": "collaboration",
-        "quality": "mixed",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": []
       },
@@ -501,10 +500,9 @@
         "reflectionValue": 10,
         "backgroundNote": "行情亢奋的时候保持体能，比多熬一个小时更有长期价值。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -699,10 +697,9 @@
         "reflectionValue": 10,
         "backgroundNote": "错过了政策解读的第一波讨论，但带着更清晰的头脑回到了周一晨会。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -866,7 +863,7 @@
         "reflectionValue": 4,
         "backgroundNote": "帮周明昭跑回归的同时，你也在建立宏观和行业的映射框架。",
         "method": "collaboration",
-        "quality": "mixed",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": []
       },
@@ -897,10 +894,9 @@
         "reflectionValue": 12,
         "backgroundNote": "在所有人都在加班看财报的时候离开两天，需要勇气，也需要对自己的节奏有信心。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -1095,10 +1091,9 @@
         "reflectionValue": 12,
         "backgroundNote": "风格切换时最危险的是瞎动。有时候最好的交易是不交易，最好的研究是投资自己。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -1295,10 +1290,9 @@
         "reflectionValue": 12,
         "backgroundNote": "半年复盘比多熬一个夜更有价值。家人的一句「你最近看起来好累」本身就是信号。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -1497,10 +1491,9 @@
         "reflectionValue": 14,
         "backgroundNote": "在所有人都在追扩散的时候度假，需要勇气。回来时你发现真正的主线比离开前更清晰了。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -1668,7 +1661,7 @@
         "reflectionValue": 6,
         "backgroundNote": "帮她改模型的过程，也是你在学习她的估值框架，这是最好的在职培训。",
         "method": "collaboration",
-        "quality": "mixed",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": []
       },
@@ -1699,10 +1692,9 @@
         "reflectionValue": 12,
         "backgroundNote": "中报季后如果不休息，疲劳会一路带到四季度，那时候才是真正的马拉松。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -1899,10 +1891,9 @@
         "reflectionValue": 10,
         "backgroundNote": "在暴涨中保持作息，说明你对市场波动有了抗体。这是研究员最稀缺的心理素质。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -2066,7 +2057,7 @@
         "reflectionValue": 6,
         "backgroundNote": "量化和基本面的交叉验证，是你和陈星禾之间最有默契的工作方式。",
         "method": "collaboration",
-        "quality": "mixed",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": []
       },
@@ -2097,10 +2088,9 @@
         "reflectionValue": 12,
         "backgroundNote": "不被排名焦虑裹挟的人，才能做出对明年更有价值的研究。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -2298,7 +2288,7 @@
         "reflectionValue": 14,
         "backgroundNote": "整理工作日志的时候你会发现：今年的很多判断偏差，其实在半年前的某次选择里就已经有了苗头。",
         "method": "self_management",
-        "quality": "mixed",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
           "reflective"
@@ -2405,7 +2395,7 @@
         "reflectionValue": 8,
         "backgroundNote": "你在帮同事改模型的同时，也重新审视了自己的框架。教学是最好的学习。",
         "method": "collaboration",
-        "quality": "mixed",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": []
       },
@@ -2478,10 +2468,9 @@
         "reflectionValue": 10,
         "backgroundNote": "年末聚餐上每个人都说了自己今年最大的判断失误。这一刻你发现，诚实比正确更有力量。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }

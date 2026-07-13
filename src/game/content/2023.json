@@ -269,7 +269,7 @@
         "reflectionValue": 4,
         "backgroundNote": "帮前辈整理估值表的过程让你发现：市场对消费复苏的定价已经打得很满，超额收益的空间可能不在龙头。",
         "method": "collaboration",
-        "quality": "mixed",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": []
       },
@@ -300,10 +300,9 @@
         "reflectionValue": 12,
         "backgroundNote": "三年没回家的年夜饭比任何研报都重要。带着被填满的心情回到工位，判断力会不一样。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -467,7 +466,7 @@
         "reflectionValue": 4,
         "backgroundNote": "帮她跑成交结构时你发现：机构资金在AI硬件方向还有建仓空间，但纯概念股已经出现游资出货迹象。",
         "method": "collaboration",
-        "quality": "mixed",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": []
       },
@@ -498,10 +497,9 @@
         "reflectionValue": 10,
         "backgroundNote": "信息过载的时候，最好的研究决策有时是暂时关机。清醒的头脑比熬夜追热点更值钱。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -667,7 +665,7 @@
         "reflectionValue": 4,
         "backgroundNote": "帮周明昭整理数据时你发现：全球配置型资金对中国资产的低配程度已经接近历史极值，反转的赔率在累积。",
         "method": "collaboration",
-        "quality": "mixed",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": []
       },
@@ -698,10 +696,9 @@
         "reflectionValue": 10,
         "backgroundNote": "错过了政策解读的第一波讨论，但带着清晰的头脑回到周一晨会，你的问题反而比一直在会议室里的人更精准。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -867,7 +864,7 @@
         "reflectionValue": 4,
         "backgroundNote": "帮前辈做业绩对照时你发现：业绩miss最多的恰恰是那些年初被追捧最猛的AI概念股，泡沫出清比预期快得多。",
         "method": "collaboration",
-        "quality": "mixed",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": []
       },
@@ -898,10 +895,9 @@
         "reflectionValue": 10,
         "backgroundNote": "财报季的疲劳累积会影响判断力。关机睡了一天之后，周一你看那些数字的眼光清晰了很多。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -1066,7 +1062,7 @@
         "reflectionValue": 6,
         "backgroundNote": "回测数据给了你一线希望：历史上类似的下行期平均持续2.5个月，之后往往伴随政策转向。",
         "method": "collaboration",
-        "quality": "mixed",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": []
       },
@@ -1097,10 +1093,9 @@
         "reflectionValue": 10,
         "backgroundNote": "负面情绪是研究的天敌。健身回来之后你翻看自己昨天写的笔记，发现有两个判断明显被情绪污染了。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -1264,7 +1259,7 @@
         "reflectionValue": 4,
         "backgroundNote": "横向对比做完后发现：A股AI硬件方向的估值比美股低30-40%，但应用方向的估值比美股高了一倍。这个发现会在下半年得到验证。",
         "method": "collaboration",
-        "quality": "mixed",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": []
       },
@@ -1295,10 +1290,9 @@
         "reflectionValue": 10,
         "backgroundNote": "站在山顶往下看，城市里的K线焦虑突然变远了。你想起周明昭说过：研究框架最好的校正方式，是暂时从市场里抽离。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -1462,7 +1456,7 @@
         "reflectionValue": 4,
         "backgroundNote": "帮她整理风险矩阵时你发现：券商板块当前的隐含波动率已经接近历史90分位，潜在收益已经被定价了。",
         "method": "collaboration",
-        "quality": "mixed",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": []
       },
@@ -1493,10 +1487,9 @@
         "reflectionValue": 10,
         "backgroundNote": "你错过了第一时间的市场解读，但第二天早上你带着清醒的头脑把政策拆得比其他人更清晰。周明昭说：好判断需要好状态。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -1662,9 +1655,7 @@
         "method": "collaboration",
         "quality": "sound",
         "outcomeAlignment": "mixed",
-        "behaviorTags": [
-          "hypothesis_driven"
-        ]
+        "behaviorTags": []
       },
       {
         "id": "2023aug-life",
@@ -1693,10 +1684,9 @@
         "reflectionValue": 12,
         "backgroundNote": "关掉行情软件的那两天你没有错过任何真正的投资机会，但避开了两个因为情绪波动而做出的错误判断。冷静是最稀缺的研究工具。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -1860,7 +1850,7 @@
         "reflectionValue": 4,
         "backgroundNote": "因子回测结果显示华为概念股的动量持续性高于历史均值30%，但波动率溢价也在升高。这是典型的主题驱动行情特征。",
         "method": "collaboration",
-        "quality": "mixed",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": []
       },
@@ -1891,10 +1881,9 @@
         "reflectionValue": 10,
         "backgroundNote": "在科技馆看到真实的晶圆和光刻演示之后，你对国产替代的三个技术瓶颈有了更直观的理解。有些东西财报和K线里看不出来。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -2058,7 +2047,7 @@
         "reflectionValue": 4,
         "backgroundNote": "在帮前辈整理数据时你发现：基建链目前的估值分位并不低，市场已经把特别国债的利好定价了相当一部分。",
         "method": "collaboration",
-        "quality": "mixed",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": []
       },
@@ -2089,10 +2078,9 @@
         "reflectionValue": 12,
         "backgroundNote": "看到漫山红叶的时候你突然想通了一件事：市场底部不是一个点，是一段时间。你不需要在最低点买入，只需要在底部区间保持研究框架的稳定。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -2261,9 +2249,7 @@
         "method": "collaboration",
         "quality": "sound",
         "outcomeAlignment": "mixed",
-        "behaviorTags": [
-          "hypothesis_driven"
-        ]
+        "behaviorTags": []
       },
       {
         "id": "2023nov-life",
@@ -2292,10 +2278,9 @@
         "reflectionValue": 14,
         "backgroundNote": "你在图书馆翻到一本讲1970年代美国漂亮50泡沫的书，里面的很多描述和当下的微盘行情出奇地相似。历史不会重复但会押韵。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }
@@ -2468,7 +2453,7 @@
         "reflectionValue": 6,
         "backgroundNote": "在整理三位同事的年度贡献时你发现：林若宁的框架帮你识别了消费复苏的节奏偏差，陈星禾的成交数据帮你确认了AI硬件的趋势，周明昭的估值框架帮你避开了微盘追涨的陷阱。你的成长离不开她们。",
         "method": "collaboration",
-        "quality": "mixed",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": []
       },
@@ -2499,10 +2484,9 @@
         "reflectionValue": 14,
         "backgroundNote": "三天的空白让你看清了一件事：好的研究框架需要好的生活状态做底座。明年的策略会在你的复盘笔记里发芽，但前提是你自己先充满了电。",
         "method": "self_management",
-        "quality": "reckless",
+        "quality": "sound",
         "outcomeAlignment": "mixed",
         "behaviorTags": [
-          "thin_evidence",
           "reflective"
         ]
       }

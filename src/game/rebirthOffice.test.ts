@@ -18,8 +18,7 @@ function developedOfficeState() {
       coffeeCups: 3,
       monthsElapsed: 4,
     },
-    history: [{ month: "2025-01" }, { month: "2025-02" }, { month: "2025-03" }]
-      as RoundResult[],
+    history: Array.from({ length: 3 }, () => ({} as RoundResult)),
   };
 }
 

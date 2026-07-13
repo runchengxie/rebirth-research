@@ -376,11 +376,9 @@ function flagIsSet(state: GameState, key: string): boolean {
   return value !== undefined && value !== false && value !== 0;
 }
 
-function lockedReason(
+function metaRequirementReason(
   node: InvestigationNodeDefinition,
   meta: RebirthMetaState,
-  state: GameState,
-  progress: InvestigationProgress,
 ): string | null {
   if (node.requiresCycle && meta.cycle < node.requiresCycle) {
     return `需要第 ${node.requiresCycle} 周目`;
@@ -396,9 +394,24 @@ function lockedReason(
   if (node.requiresShortcut && !meta.shortcuts.includes(node.requiresShortcut)) {
     return `需要研究捷径：${RESEARCH_SHORTCUTS[node.requiresShortcut].label}`;
   }
+  return null;
+}
+
+function stateRequirementReason(
+  node: InvestigationNodeDefinition,
+  state: GameState,
+): string | null {
   if (node.requiresFlag && !flagIsSet(state, node.requiresFlag)) {
     return "需要先在研究室完成对应档案整理";
   }
+  return null;
+}
+
+function progressRequirementReason(
+  node: InvestigationNodeDefinition,
+  meta: RebirthMetaState,
+  progress: InvestigationProgress,
+): string | null {
   const missing = node.requiresCompleted?.find(
     (id) => !progress.completedNodeIds.includes(id),
   );
@@ -407,8 +420,18 @@ function lockedReason(
     return `先完成：${requirement?.label ?? missing}`;
   }
   const cost = effectiveCost(node, meta);
-  if (remainingTime(progress) < cost) return `还需要 ${cost} 个时间块`;
-  return null;
+  return remainingTime(progress) < cost ? `还需要 ${cost} 个时间块` : null;
+}
+
+function lockedReason(
+  node: InvestigationNodeDefinition,
+  meta: RebirthMetaState,
+  state: GameState,
+  progress: InvestigationProgress,
+): string | null {
+  return metaRequirementReason(node, meta)
+    ?? stateRequirementReason(node, state)
+    ?? progressRequirementReason(node, meta, progress);
 }
 
 export function isInvestigationActive(

@@ -170,7 +170,7 @@ function DialogueHistory({ session }: { session: GameSession }) {
         {nodes.map((node) => (
           <li key={node.id}>
             <span>{node.type === "dialogue" ? node.speaker : "研究选择"}</span>
-            <p>{node.id.endsWith("-competing")
+            <p style={{ whiteSpace: "pre-line" }}>{node.id.endsWith("-competing")
               ? "三位同事围绕同一事实给出基本面、量价和风控三种假设。"
               : node.type === "dialogue" ? node.text : node.decisionPrompt || node.text}</p>
           </li>
@@ -419,7 +419,7 @@ export function ImmersiveGameScreen(props: ImmersiveGameScreenProps) {
               <DecisionPanel session={session} />
             ) : (
               <div className="immersive-dialogue-copy">
-                <p>{view.dialogue}</p>
+                <p style={{ whiteSpace: "pre-line" }}>{view.dialogue}</p>
                 <small>{view.prompt}</small>
               </div>
             )}

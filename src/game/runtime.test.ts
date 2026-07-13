@@ -4,9 +4,11 @@ import { buildMonthScene } from "./content";
 import {
   advanceScene,
   canAdvanceScene,
+  canRewindScene,
   createInitialState,
   currentSceneNode,
   nextMonth,
+  rewindScene,
   sceneForMonth,
 } from "./runtime";
 
@@ -66,6 +68,26 @@ describe("剧情推进条件", () => {
     const atDecision = { ...state, sceneNodeIndex: lastIndex };
     expect(canAdvanceScene(atDecision)).toBe(false);
     expect(canAdvanceScene({ ...atDecision, locked: true })).toBe(true);
+  });
+});
+
+describe("回看当前场景", () => {
+  it("允许在结算前返回上一段对白", () => {
+    const state = { ...makeTestState("2023"), sceneNodeIndex: 2 };
+    expect(canRewindScene(state)).toBe(true);
+    expect(rewindScene(state).sceneNodeIndex).toBe(1);
+  });
+
+  it("不会退到第一段对白之前", () => {
+    const state = makeTestState("2023");
+    expect(canRewindScene(state)).toBe(false);
+    expect(rewindScene(state)).toBe(state);
+  });
+
+  it("结算完成后只允许通过记录回看，不撤销数值", () => {
+    const state = { ...makeTestState("2023"), sceneNodeIndex: 2, locked: true };
+    expect(canRewindScene(state)).toBe(false);
+    expect(rewindScene(state)).toBe(state);
   });
 });
 

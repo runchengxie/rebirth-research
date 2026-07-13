@@ -7,11 +7,15 @@ import { focusById, makeDecision, selectFocus, storyForMonth } from "../game/eng
 import {
   advanceScene,
   canAdvanceScene,
+  canRewindScene,
   createInitialState,
   currentSceneNode,
+  rewindScene,
   sceneForMonth,
 } from "../game/runtime";
 import type { CharacterId, GameState, ResearchDecision, RoundResult } from "../types";
+
+const SAVE_KEY_PREFIX = "rebirthGameState:v1:";
 
 export function canUsePixiStage(): boolean {
   const params = new URLSearchParams(window.location.search);
@@ -62,8 +66,65 @@ function bestInitialYear(): string {
     : GAME_YEARS[GAME_YEARS.length - 1] || "2025";
 }
 
+function saveKey(year: string): string {
+  return `${SAVE_KEY_PREFIX}${year}`;
+}
+
+function isObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function readStoredState(year: string): GameState | null {
+  try {
+    const raw = localStorage.getItem(saveKey(year));
+    if (!raw) return null;
+    const parsed: unknown = JSON.parse(raw);
+    if (!isObject(parsed) || parsed.year !== year) return null;
+
+    const fresh = createInitialState(year);
+    const saved = parsed as Partial<GameState>;
+    if (!Number.isInteger(saved.monthIndex) || !Number.isInteger(saved.sceneNodeIndex)) return null;
+    if ((saved.monthIndex ?? 0) < 0 || (saved.monthIndex ?? 0) > 11) return null;
+    if ((saved.sceneNodeIndex ?? 0) < 0) return null;
+
+    const restored: GameState = {
+      ...fresh,
+      ...saved,
+      year,
+      relations: isObject(saved.relations)
+        ? { ...fresh.relations, ...saved.relations }
+        : fresh.relations,
+      flags: isObject(saved.flags) ? saved.flags as GameState["flags"] : {},
+      categoryCounts: isObject(saved.categoryCounts)
+        ? saved.categoryCounts as GameState["categoryCounts"]
+        : {},
+      history: Array.isArray(saved.history) ? saved.history : [],
+      knowledgeCards: Array.isArray(saved.knowledgeCards) ? saved.knowledgeCards : [],
+      office: isObject(saved.office)
+        ? { ...fresh.office, ...saved.office }
+        : fresh.office,
+    };
+    const lastSceneIndex = Math.max(0, sceneForMonth(restored).nodes.length - 1);
+    return {
+      ...restored,
+      sceneNodeIndex: Math.min(restored.sceneNodeIndex, lastSceneIndex),
+    };
+  } catch {
+    return null;
+  }
+}
+
+function persistState(state: GameState): void {
+  try {
+    localStorage.setItem(saveKey(state.year), JSON.stringify(state));
+  } catch {
+    // Storage can be unavailable in strict privacy modes or full sandboxes.
+  }
+}
+
 function createState(year = bestInitialYear()): GameState {
-  return createInitialState(readYearFromUrl() ?? year);
+  const actualYear = readYearFromUrl() ?? year;
+  return readStoredState(actualYear) ?? createInitialState(actualYear);
 }
 
 type Scene = ReturnType<typeof sceneForMonth>;
@@ -201,7 +262,9 @@ export type GameAudio = ReturnType<typeof useGameAudio>;
 function useLineVoice(state: GameState, sceneNode: SceneNode, audio: GameAudio): void {
   const { playLineVoice } = audio;
   const lineVoiceKey =
-    sceneNode.type === "dialogue" && sceneNode.voiceCue !== "silent"
+    sceneNode.type === "dialogue"
+      && !sceneNode.id.endsWith("-competing")
+      && sceneNode.voiceCue !== "silent"
       ? `${state.year}-${state.monthIndex}-${state.sceneNodeIndex}`
       : "";
 
@@ -225,19 +288,35 @@ export function useGameSession(audio: GameAudio) {
   const sceneNode = currentSceneNode(state);
   const story = storyForMonth(state.monthIndex, state.year);
   const sceneCanAdvance = canAdvanceScene(state);
+  const canGoBack = canRewindScene(state);
 
   useLineVoice(state, sceneNode, audio);
 
-  const resetState = useCallback((year: string) => {
+  useEffect(() => {
+    persistState(state);
+  }, [state]);
+
+  const changeYear = useCallback((year: string) => {
     resetLineVoice();
-    setState(createInitialState(year));
+    setState(readStoredState(year) ?? createInitialState(year));
   }, [resetLineVoice]);
+
+  const restart = useCallback(() => {
+    resetLineVoice();
+    setState(createInitialState(state.year));
+  }, [resetLineVoice, state.year]);
 
   const advanceCurrentScene = useCallback(() => {
     if (!sceneCanAdvance) return;
     playAdvance();
     setState((current) => advanceScene(current, data));
   }, [data, playAdvance, sceneCanAdvance]);
+
+  const goBack = useCallback(() => {
+    if (!canGoBack) return;
+    resetLineVoice();
+    setState((current) => rewindScene(current));
+  }, [canGoBack, resetLineVoice]);
 
   const selectFocusWithSound = useCallback((focusId: string) => {
     playChoice();
@@ -254,10 +333,12 @@ export function useGameSession(audio: GameAudio) {
 
   return {
     advanceCurrentScene,
-    changeYear: resetState,
+    canGoBack,
+    changeYear,
     data,
+    goBack,
     makeDecisionWithSound,
-    restart: () => resetState(state.year),
+    restart,
     scene,
     sceneCanAdvance,
     sceneNode,

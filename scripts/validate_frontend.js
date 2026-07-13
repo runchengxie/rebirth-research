@@ -71,10 +71,13 @@ for (const file of [
   "src/main.tsx",
   "src/App.tsx",
   "src/app/GameScreen.tsx",
+  "src/app/ImmersiveGameScreen.tsx",
   "src/app/useGameController.ts",
   "src/types.ts",
   "src/styles.css",
+  "src/immersive.css",
   "src/components/PixiStage.tsx",
+  "src/components/ZhaoStage.tsx",
   "src/components/EndingPanel.tsx",
   "src/components/StoryRecapPanel.tsx",
   "src/audio/bgm.ts",
@@ -121,22 +124,29 @@ for (const file of [
   "assets/vn/characters/zhao-thinking.png",
   "assets/vn/characters/zhao-relief.png",
   ".github/workflows/pages.yml",
-  ".github/workflows/ci.yml",
 ]) {
   requireFile(file);
 }
 
-requireText("src/App.tsx", ["GameScreen", "Chapter1Spike", "pixivn"]);
-requireText("src/app/GameScreen.tsx", [
-  "PixiStage",
-  "FocusSelector",
-  "CharacterRoutes",
-  "GAME_YEARS",
+requireText("src/App.tsx", ["ImmersiveGameScreen", "Chapter1Spike", "pixivn"]);
+requireText("src/app/ImmersiveGameScreen.tsx", [
+  "DebatePanel",
+  "ZhaoStage",
+  "canGoBack",
+  "记录与档案",
 ]);
 requireText("src/app/useGameController.ts", [
   "ProceduralBgm",
   "NarrativeAudio",
   "staticStage",
+  "SAVE_KEY_PREFIX",
+  "rewindScene",
+]);
+requireText("src/game/runtime.ts", ["canRewindScene", "rewindScene"]);
+requireText("src/components/ZhaoStage.tsx", [
+  "loadKeyedPortrait",
+  "near-white",
+  "zhao-neutral.png",
 ]);
 
 requireText("src/components/PixiStage.tsx", [

@@ -1,0 +1,965 @@
+html,
+body,
+#root {
+  height: 100%;
+  overflow: hidden;
+}
+
+.immersive-app {
+  width: min(1440px, 100%);
+  height: 100svh;
+  margin: 0 auto;
+  padding: 10px 14px 14px;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: 9px;
+  overflow: hidden;
+}
+
+.immersive-topbar {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.immersive-brand {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, auto) minmax(0, 1fr);
+  align-items: baseline;
+  gap: 8px 12px;
+}
+
+.immersive-brand span {
+  color: var(--pink);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.immersive-brand strong {
+  min-width: 0;
+  font-size: clamp(18px, 2.3vw, 28px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.immersive-brand small {
+  min-width: 0;
+  color: var(--muted);
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.immersive-settings {
+  position: relative;
+  z-index: 40;
+  flex: 0 0 auto;
+}
+
+.immersive-icon-button {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-strong);
+  color: var(--pink);
+  font-size: 18px;
+  font-weight: 900;
+  box-shadow: 0 8px 24px rgba(38, 24, 48, 0.12);
+}
+
+.immersive-icon-button.active,
+.immersive-icon-button:hover {
+  border-color: var(--pink);
+  background: var(--pink-soft);
+}
+
+.immersive-settings-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: min(430px, calc(100vw - 28px));
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-strong);
+  box-shadow: var(--shadow);
+}
+
+.settings-row {
+  display: grid;
+  gap: 8px;
+}
+
+.settings-row + .settings-row {
+  margin-top: 12px;
+}
+
+.settings-row > span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.settings-years,
+.settings-switches {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.settings-years {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.settings-years button,
+.settings-switches button {
+  min-height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.settings-years button.active {
+  border-color: var(--pink);
+  background: var(--pink-soft);
+  color: var(--pink);
+}
+
+.immersive-app .status-band {
+  min-height: 48px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(38, 24, 48, 0.08);
+}
+
+.immersive-app .stat {
+  padding: 8px 12px;
+}
+
+.immersive-app .stat span {
+  margin-bottom: 2px;
+  font-size: 10px;
+}
+
+.immersive-app .stat strong {
+  font-size: clamp(14px, 1.6vw, 20px);
+}
+
+.immersive-workspace {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--canvas-bg);
+  box-shadow: var(--shadow);
+}
+
+.immersive-stage,
+.immersive-stage > .pixi-stage,
+.immersive-stage > .zhao-stage-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.zhao-stage-canvas {
+  display: block;
+}
+
+.debate-stage {
+  position: absolute;
+  inset: 0;
+  background: center / cover no-repeat;
+}
+
+.debate-stage-research-room {
+  background-image: linear-gradient(110deg, rgba(25, 13, 34, 0.2), rgba(75, 105, 140, 0.12)), url("../assets/vn/backgrounds/research-room.png");
+}
+
+.debate-stage-briefing-room {
+  background-image: linear-gradient(110deg, rgba(25, 13, 34, 0.2), rgba(75, 105, 140, 0.12)), url("../assets/vn/backgrounds/briefing-room.png");
+}
+
+.debate-stage-night-cafe {
+  background-image: linear-gradient(110deg, rgba(25, 13, 34, 0.2), rgba(75, 105, 140, 0.12)), url("../assets/vn/backgrounds/night-cafe.png");
+}
+
+.immersive-static {
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, rgba(255, 247, 252, 0.8), rgba(255, 247, 252, 0.14)),
+    url("../assets/vn/backgrounds/research-room.png") center / cover;
+}
+
+.immersive-static::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -18px;
+  width: min(38vw, 420px);
+  height: 92%;
+  transform: translateX(-50%);
+  background: center bottom / contain no-repeat;
+  filter: drop-shadow(0 22px 30px rgba(47, 22, 51, 0.22));
+}
+
+.immersive-static.character-pink::after {
+  background-image: url("../assets/vn/characters/rina-smile.png");
+}
+
+.immersive-static.character-blue::after {
+  background-image: url("../assets/vn/characters/misaki-neutral.png");
+}
+
+.immersive-static.character-lavender::after {
+  background-image: url("../assets/vn/characters/mei-neutral.png");
+}
+
+.immersive-stage-meta {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 3;
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  max-width: 48%;
+  flex-wrap: wrap;
+}
+
+.immersive-stage-meta span {
+  min-height: 27px;
+  display: inline-grid;
+  place-items: center;
+  padding: 0 9px;
+  border: 1px solid rgba(255, 255, 255, 0.56);
+  border-radius: 999px;
+  background: rgba(36, 25, 48, 0.68);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  backdrop-filter: blur(8px);
+}
+
+.interaction-panel {
+  position: absolute;
+  z-index: 4;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  max-height: min(62%, 540px);
+  overflow: hidden;
+  border: 1px solid var(--glass-line);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--glass) 94%, transparent);
+  box-shadow: 0 20px 48px rgba(29, 15, 38, 0.3);
+  backdrop-filter: blur(16px);
+}
+
+.interaction-panel.dialogue-mode {
+  width: min(900px, calc(100% - 28px));
+  right: auto;
+}
+
+.interaction-panel.decision-mode {
+  max-height: min(72%, 650px);
+}
+
+.interaction-scroll {
+  min-height: 0;
+  overflow-y: auto;
+  padding: 16px 18px 12px;
+  scrollbar-gutter: stable;
+}
+
+.interaction-panel .speaker-row {
+  position: sticky;
+  top: -16px;
+  z-index: 2;
+  margin: -16px -18px 12px;
+  padding: 12px 18px 9px;
+  background: color-mix(in srgb, var(--glass) 96%, transparent);
+  backdrop-filter: blur(16px);
+}
+
+.immersive-dialogue-copy p {
+  margin: 0;
+  font-size: clamp(16px, 1.8vw, 21px);
+  line-height: 1.75;
+}
+
+.immersive-dialogue-copy small {
+  display: block;
+  margin-top: 8px;
+  color: var(--stage-muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.interaction-actions {
+  display: grid;
+  grid-template-columns: auto auto minmax(132px, 1fr);
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--glass-line);
+  background: color-mix(in srgb, var(--surface-strong) 90%, transparent);
+}
+
+.interaction-actions button {
+  min-height: 40px;
+  border-radius: 9px;
+  font-weight: 900;
+}
+
+.secondary-action {
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.primary-action {
+  justify-self: end;
+  min-width: 150px;
+  padding: 0 18px;
+  border: 1px solid var(--button-bg);
+  background: var(--button-bg);
+  color: var(--button-ink);
+}
+
+.interaction-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.46;
+}
+
+.debate-panel {
+  display: grid;
+  gap: 10px;
+}
+
+.debate-intro {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.debate-intro strong {
+  color: var(--pink);
+  font-size: 15px;
+}
+
+.debate-intro span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.debate-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.debate-card {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-strong);
+}
+
+.debate-card.pink { border-color: rgba(255, 142, 195, 0.65); }
+.debate-card.blue { border-color: rgba(143, 199, 255, 0.68); }
+.debate-card.lavender { border-color: rgba(198, 167, 255, 0.68); }
+
+.debate-card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.debate-card header span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.debate-card header strong {
+  font-size: 13px;
+}
+
+.debate-card p,
+.debate-conclusion {
+  margin: 7px 0 0;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.debate-conclusion {
+  color: var(--stage-muted);
+}
+
+.decision-prompt {
+  display: flex;
+  align-items: baseline;
+  gap: 8px 12px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.decision-prompt span {
+  color: var(--pink);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.decision-prompt strong {
+  font-size: 14px;
+}
+
+.immersive-briefs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.immersive-brief {
+  min-width: 0;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--surface-strong);
+}
+
+.immersive-brief span,
+.immersive-brief strong {
+  display: block;
+}
+
+.immersive-brief span {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.immersive-brief strong {
+  margin-top: 2px;
+  font-size: 12px;
+}
+
+.immersive-brief p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.immersive-decision-panel .focus-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.immersive-decision-panel .focus-card {
+  min-height: 76px;
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-items: center;
+  gap: 1px 8px;
+  padding: 8px;
+}
+
+.immersive-decision-panel .focus-icon {
+  grid-row: 1 / 3;
+  width: 28px;
+  height: 28px;
+  margin: 0;
+}
+
+.immersive-decision-panel .focus-card strong {
+  font-size: 13px;
+}
+
+.immersive-decision-panel .focus-card small {
+  margin-top: 0;
+  font-size: 10px;
+}
+
+.immersive-decision-panel .focus-card p {
+  display: none;
+}
+
+.immersive-decision-panel .options {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.immersive-decision-panel .option {
+  min-height: 118px;
+  grid-template-rows: auto auto 1fr;
+  gap: 6px;
+  padding: 10px;
+}
+
+.immersive-decision-panel .option-kicker {
+  font-size: 10px;
+}
+
+.immersive-decision-panel .stock-name strong {
+  font-size: 15px;
+  line-height: 1.3;
+}
+
+.immersive-decision-panel .analysis-note {
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.decision-result {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.42fr) minmax(0, 1fr);
+  gap: 12px;
+}
+
+.decision-result-copy {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-strong);
+}
+
+.decision-result-copy span {
+  color: var(--pink);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.decision-result-copy strong {
+  display: block;
+  margin-top: 5px;
+  font-size: 18px;
+}
+
+.decision-result-copy p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.decision-result .story-recap {
+  margin-top: 0;
+}
+
+.archive-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgba(12, 8, 17, 0.4);
+  backdrop-filter: blur(3px);
+}
+
+.archive-drawer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: min(470px, 100%);
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  border-left: 1px solid var(--line);
+  background: var(--surface-strong);
+  box-shadow: -20px 0 54px rgba(13, 7, 18, 0.28);
+}
+
+.archive-drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 15px 16px 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.archive-drawer-head div {
+  min-width: 0;
+}
+
+.archive-drawer-head span,
+.archive-drawer-head strong {
+  display: block;
+}
+
+.archive-drawer-head span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.archive-drawer-head strong {
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.archive-drawer-head button {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 22px;
+}
+
+.archive-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 10px 12px;
+  gap: 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.archive-tabs button {
+  min-height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.archive-tabs button.active {
+  border-color: var(--pink);
+  background: var(--pink-soft);
+  color: var(--pink);
+}
+
+.archive-scroll {
+  min-height: 0;
+  overflow-y: auto;
+  padding: 14px;
+}
+
+.archive-section + .archive-section {
+  margin-top: 18px;
+}
+
+.archive-section h3 {
+  margin: 0 0 10px;
+  font-size: 14px;
+}
+
+.dialogue-history,
+.archive-history,
+.archive-knowledge {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dialogue-history li,
+.archive-history li,
+.archive-knowledge li {
+  padding: 10px 11px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--surface);
+}
+
+.dialogue-history span,
+.archive-history span,
+.archive-knowledge span,
+.archive-history small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.dialogue-history p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.archive-history strong,
+.archive-history small,
+.archive-knowledge strong,
+.archive-knowledge span {
+  display: block;
+}
+
+.archive-history strong,
+.archive-knowledge strong {
+  margin-top: 3px;
+  font-size: 13px;
+}
+
+.archive-history small,
+.archive-knowledge span {
+  margin-top: 3px;
+  line-height: 1.45;
+}
+
+.archive-empty {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.archive-relations {
+  display: grid;
+  gap: 8px;
+}
+
+.archive-relations article {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  padding: 10px 10px 15px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.archive-relations article div strong,
+.archive-relations article div span {
+  display: block;
+}
+
+.archive-relations article div strong {
+  font-size: 13px;
+}
+
+.archive-relations article div span {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.archive-relations article b {
+  font-size: 13px;
+}
+
+.archive-relations article i {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 5px;
+  background: var(--pink);
+}
+
+.archive-relations article.blue i { background: var(--blue); }
+.archive-relations article.lavender i { background: var(--lavender); }
+.archive-relations article.slate i { background: var(--slate); }
+
+.archive-scroll .ending-panel {
+  grid-template-columns: 1fr;
+  margin-top: 18px;
+  padding: 12px;
+  box-shadow: none;
+}
+
+@media (max-width: 760px) {
+  .immersive-app {
+    padding: 6px 7px 8px;
+    gap: 6px;
+  }
+
+  .immersive-topbar {
+    min-height: 40px;
+  }
+
+  .immersive-brand {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 4px 8px;
+  }
+
+  .immersive-brand span {
+    font-size: 10px;
+  }
+
+  .immersive-brand strong {
+    font-size: 17px;
+  }
+
+  .immersive-brand small {
+    display: none;
+  }
+
+  .immersive-icon-button {
+    width: 36px;
+    height: 36px;
+  }
+
+  .immersive-app .status-band {
+    min-height: 40px;
+  }
+
+  .immersive-app .stat {
+    padding: 6px 5px;
+  }
+
+  .immersive-app .stat span {
+    font-size: 9px;
+  }
+
+  .immersive-app .stat strong {
+    font-size: 13px;
+  }
+
+  .immersive-stage-meta {
+    top: 8px;
+    right: 8px;
+    max-width: 58%;
+  }
+
+  .immersive-stage-meta span {
+    min-height: 23px;
+    padding: 0 7px;
+    font-size: 9px;
+  }
+
+  .interaction-panel,
+  .interaction-panel.dialogue-mode {
+    left: 7px;
+    right: 7px;
+    bottom: 7px;
+    width: auto;
+    max-height: 67%;
+  }
+
+  .interaction-panel.decision-mode {
+    max-height: 78%;
+  }
+
+  .interaction-scroll {
+    padding: 12px 11px 9px;
+  }
+
+  .interaction-panel .speaker-row {
+    top: -12px;
+    margin: -12px -11px 9px;
+    padding: 9px 11px 7px;
+  }
+
+  .interaction-actions {
+    grid-template-columns: auto auto minmax(0, 1fr);
+    padding: 7px;
+  }
+
+  .interaction-actions button {
+    min-height: 37px;
+    padding-inline: 9px;
+    font-size: 11px;
+  }
+
+  .primary-action {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .debate-grid,
+  .immersive-briefs {
+    grid-template-columns: 1fr;
+  }
+
+  .immersive-briefs {
+    max-height: 112px;
+    overflow-y: auto;
+  }
+
+  .immersive-decision-panel .options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .immersive-decision-panel .option {
+    min-height: 108px;
+    padding: 8px;
+  }
+
+  .immersive-decision-panel .option-kicker span:first-child {
+    display: none;
+  }
+
+  .decision-result {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-switches {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .immersive-decision-panel .focus-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .immersive-decision-panel .focus-card {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .immersive-decision-panel .focus-icon {
+    grid-row: auto;
+  }
+
+  .immersive-decision-panel .focus-card small {
+    display: none;
+  }
+
+  .immersive-decision-panel .options {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-height: 620px) and (orientation: landscape) {
+  .immersive-app {
+    padding: 5px 8px 7px;
+    grid-template-rows: 38px 40px minmax(0, 1fr);
+    gap: 5px;
+  }
+
+  .immersive-brand strong {
+    font-size: 17px;
+  }
+
+  .interaction-panel.decision-mode {
+    max-height: 86%;
+  }
+
+  .immersive-briefs {
+    display: none;
+  }
+
+  .immersive-decision-panel .focus-card {
+    min-height: 58px;
+  }
+
+  .immersive-decision-panel .option {
+    min-height: 92px;
+  }
+}

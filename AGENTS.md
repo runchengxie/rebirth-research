@@ -8,12 +8,14 @@
 
 主要入口：
 
-- `src/main.tsx`：前端入口
+- `src/main.tsx`：前端入口和样式加载顺序
 - `src/App.tsx`：顶层入口和 Pixi'VN 原型切换
-- `src/app/useGameController.ts`：游戏状态、设置、主题和音频控制
-- `src/app/GameScreen.tsx`：主游戏页面装配和展示组件
-- `src/components/PixiStage.tsx`：PixiJS 舞台
-- `src/game/runtime.ts`：状态初始化、剧情游标和跨月推进
+- `src/app/useGameController.ts`：游戏状态、存档、设置、主题和音频控制
+- `src/app/ImmersiveGameScreen.tsx`：主游戏的单视口页面和档案抽屉
+- `src/app/GameScreen.tsx`：旧版长页面展示，暂时保留用于对照
+- `src/components/PixiStage.tsx`：常规角色的 PixiJS 舞台
+- `src/components/ZhaoStage.tsx`：赵承宇立绘的透明底清理和轻度调色舞台
+- `src/game/runtime.ts`：状态初始化、剧情游标、回看和跨月推进
 - `src/game/engine.ts`：评分、数值、关系、旗标和结局相关计算
 - `src/game/sceneBuilders.ts`：场景和研究方案装配
 - `src/game/content.ts`：叙事模块统一导出入口
@@ -24,7 +26,8 @@
 - `demo` 只通过 `?year=demo` 深链访问，不出现在年份选择器。
 - 月度结算依据研究方案、多维评分和编写好的业务事实。运行时不读取真实月度涨跌幅。
 - `src/data/gameData.ts` 中的 `themeReturn` 当前固定为 0，行业轮动和风格因子为空。
-- 运行状态保存在 React 内存中，刷新页面后会重置。浏览器本地只保存主题设置。
+- 游戏按年份把完整 `GameState` 保存在浏览器本地。刷新和切换年份会恢复最近状态，重新开始会覆盖当前年份存档。
+- 结算前可以返回当前话的上一段对白。结算后只通过记录抽屉回看，不撤销数值和旗标。
 - 背景音乐和提示音使用 Web Audio API。关键对白可以使用 Web Speech API 调用系统中文语音。
 - `?pixivn=1` 会动态加载第一话 Pixi'VN 原型。默认线路不会挂载该原型。
 - 赵承宇是量化组同级同事，走友情和搭档路线，不进入导师关系路线和研究图鉴。
@@ -49,11 +52,13 @@
 - 各年份主题与研究方案：`src/game/content/*.json`
 - 2025 年补充业务事实和分歧假设：`src/game/content2025.ts`
 - 数值结算和旗标：`src/game/engine.ts`
-- 剧情推进和初始状态：`src/game/runtime.ts`
+- 剧情推进、回看和初始状态：`src/game/runtime.ts`
 - 顶层入口和原型切换：`src/App.tsx`
-- 页面展示：`src/app/GameScreen.tsx`
-- 游戏状态、设置、主题和音频控制：`src/app/useGameController.ts`
-- 舞台资源映射：`src/components/PixiStage.tsx`
+- 主页面展示：`src/app/ImmersiveGameScreen.tsx`
+- 主页面覆盖样式：`src/immersive.css`
+- 游戏状态、存档、设置、主题和音频控制：`src/app/useGameController.ts`
+- 常规舞台资源映射：`src/components/PixiStage.tsx`
+- 赵承宇立绘透明底处理：`src/components/ZhaoStage.tsx`
 - 音频：`src/audio/bgm.ts` 和 `src/audio/sfx.ts`
 
 新增玩法逻辑时优先放在 `src/game/`，React 组件只负责展示和交互。修改角色编号或类型时，以 `src/types.ts` 为唯一类型来源，并同步检查 JSON 校验器、关系初始值、资源映射和测试。
@@ -81,7 +86,7 @@ Python 与前端联合检查：
 uv run python scripts/check.py
 ```
 
-完整检查默认包含 BasedPyright 和 ty。`--all` 仅作为旧命令的兼容参数保留。
+联合检查会运行 BasedPyright 和 ty，但当前作为非阻塞诊断。`--all` 仅作为旧命令的兼容参数保留。
 
 需要逐项排查时运行：
 
@@ -100,7 +105,7 @@ npm run test:run
 npm run build
 ```
 
-`basedpyright` 和 `ty` 都是默认阻塞检查。`.github/workflows/ci.yml` 会在拉取请求和 `main` 分支推送时运行完整质量检查，失败日志会作为短期工件上传。
+`scripts/check.py` 默认把 BasedPyright 和 ty 作为非阻塞诊断，其余检查失败会返回非零状态。仓库当前没有拉取请求代码检查工作流，提交前需要本地运行完整检查。GitHub Pages 在 `main` 更新后执行 `npm run build`。
 
 ## 测试要求
 
@@ -119,7 +124,7 @@ npm run build
 ## 文档要求
 
 - 根目录 `README.md` 面向第一次接触项目的玩家和开发者，只保留项目介绍、在线试玩、核心体验、快速开始、文档入口和必要边界。
-- 玩法和当前功能写入 `docs/GAMEPLAY.md`，工程细节写入 `docs/ARCHITECTURE.md`，操作命令写入 `docs/maintenance.md`。
+- 玩法和当前功能写入 `docs/GAMEPLAY.md`，操作体验写入 `docs/UX.md`，工程细节写入 `docs/ARCHITECTURE.md`，操作命令写入 `docs/maintenance.md`。
 - `docs/README.md` 负责提供文档索引和阅读顺序。
 - 文档以中文为主，使用中文标点。
 - 命令、路径、参数、代码符号和字段名保留行内代码格式。
@@ -134,5 +139,5 @@ npm run build
 - `dist/` 和 `dist-package/` 不提交到 Git。
 - 离线包由 `scripts/package.ps1` 生成。
 - 第三方音频只有在授权明确时才能加入仓库，并在相关说明文档中记录来源和授权。
-- 角色图片和背景图片放在 `assets/vn/`，新增资源后同步更新 `PixiStage.tsx` 和 `scripts/validate_frontend.js`。
+- 角色图片和背景图片放在 `assets/vn/`，新增资源后同步更新舞台组件和 `scripts/validate_frontend.js`。
 - 页面运行时不能依赖作者本机路径、本地 Python 环境或外部数据服务。

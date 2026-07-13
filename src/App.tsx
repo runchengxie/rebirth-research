@@ -1,5 +1,5 @@
 import { lazy, Suspense, useState } from "react";
-import { GameScreen } from "./app/GameScreen";
+import { ImmersiveGameScreen } from "./app/ImmersiveGameScreen";
 import {
   canUsePixiStage,
   useGameAudio,
@@ -43,7 +43,7 @@ export default function App() {
   }
 
   return (
-    <GameScreen
+    <ImmersiveGameScreen
       audio={audio}
       session={session}
       settingsOpen={settings.settingsOpen}

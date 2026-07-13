@@ -24,7 +24,11 @@ import {
   readRebirthMeta,
   resetRebirthRun,
 } from "../game/rebirth";
-import { isSceneNodeRead, markSceneNodeRead } from "../game/rebirthFlow";
+import {
+  isSceneNodeRead,
+  markSceneNodeRead,
+  skipReadSceneNodes,
+} from "../game/rebirthFlow";
 import { inspectOfficeProp, type OfficePropId } from "../game/rebirthOffice";
 import { persistStoredState, readStoredState as readStoredStateFromStorage } from "../game/saveState";
 import type { CharacterId, GameState, ResearchDecision, RoundResult } from "../types";
@@ -338,18 +342,12 @@ export function useGameSession(audio: GameAudio) {
   const skipReadScene = useCallback(() => {
     if (!canSkipRead) return;
     resetLineVoice();
-    setState((current) => {
-      let next = current;
-      const meta = branchMetaContext(rebirth);
-      for (let guard = 0; guard < 40; guard += 1) {
-        const node = currentSceneNode(next, meta);
-        if (node.type !== "dialogue" || !isSceneNodeRead(rebirth, next, node.id)) break;
-        const advanced = advanceScene(next, data, meta);
-        if (advanced === next || advanced.monthIndex !== current.monthIndex) break;
-        next = advanced;
-      }
-      return next;
-    });
+    setState((current) => skipReadSceneNodes(
+      rebirth,
+      current,
+      data,
+      branchMetaContext(rebirth),
+    ));
   }, [canSkipRead, data, rebirth, resetLineVoice]);
 
   const inspectOfficeWithSound = useCallback((propId: OfficePropId) => {

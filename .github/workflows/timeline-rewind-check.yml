@@ -1,4 +1,4 @@
-name: Timeline rewind integration
+name: Timeline rewind check
 
 on:
   pull_request:
@@ -8,23 +8,23 @@ permissions:
   contents: write
 
 jobs:
-  integrate:
+  check:
     if: github.head_ref == 'feat/timeline-rewind-system'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
-      - name: Apply timeline integration
-        run: python scripts/dev/apply_timeline_rewind.py
-      - name: Commit integration
+      - name: Apply lint fixes
+        run: python scripts/dev/fix_timeline_lint.py
+      - name: Commit fixes
         shell: bash
         run: |
           if ! git diff --quiet; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add src scripts
-            git commit -m "feat: 接入互动影游式回溯系统"
+            git add src
+            git commit -m "fix: 修正回溯系统检查问题"
             git push origin HEAD:${{ github.head_ref }}
           fi
       - uses: actions/setup-node@v4

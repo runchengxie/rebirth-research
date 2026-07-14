@@ -23,7 +23,6 @@ import {
   persistRebirthMeta,
   prepareDecisionForRebirth,
   readRebirthMeta,
-  resetRebirthRun,
 } from "../game/rebirth";
 import {
   isSceneNodeRead,
@@ -308,17 +307,11 @@ export function useGameSession(audio: GameAudio) {
     persistRebirth(rebirth);
   }, [rebirth]);
 
-  useEffect(() => {
-    setRebirth((current) => captureTimelineAnchor(
-      syncActiveTimelineBranch(current, state),
-      state,
-    ));
-  }, [state]);
-
   const changeYear = useCallback((year: string) => {
     resetLineVoice();
-    setState(readStoredState(year) ?? createInitialState(year));
-    setRebirth(readStoredRebirth(year));
+    const nextSession = createSessionState(year);
+    setState(nextSession.state);
+    setRebirth(nextSession.rebirth);
   }, [resetLineVoice]);
 
   const restart = useCallback(() => {
@@ -347,7 +340,10 @@ export function useGameSession(audio: GameAudio) {
       return;
     }
     const nextState = advanceScene(state, data, branchMetaContext(nextMeta));
-    nextMeta = syncActiveTimelineBranch(nextMeta, nextState);
+    nextMeta = captureTimelineAnchor(
+      syncActiveTimelineBranch(nextMeta, nextState),
+      nextState,
+    );
     setRebirth(nextMeta);
     setState(nextState);
   }, [

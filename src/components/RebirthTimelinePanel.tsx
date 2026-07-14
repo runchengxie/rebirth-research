@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import type { GameState } from "../types";
 import type { RebirthMetaState } from "../game/rebirth";
 import {
@@ -220,18 +220,15 @@ export function RebirthTimelinePanel({
   const [selectedBranchId, setSelectedBranchId] = useState(defaultBranchId);
   const [selectedAnchorId, setSelectedAnchorId] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (branches.some((branch) => branch.id === selectedBranchId)) return;
-    setSelectedBranchId(meta.timeline.activeBranchId ?? branches[0]?.id ?? "");
-    setSelectedAnchorId(null);
-  }, [branches, meta.timeline.activeBranchId, selectedBranchId]);
-
+  const resolvedBranchId = branches.some((branch) => branch.id === selectedBranchId)
+    ? selectedBranchId
+    : defaultBranchId;
   const selectedBranch = useMemo(
-    () => branches.find((branch) => branch.id === selectedBranchId) ?? null,
-    [branches, selectedBranchId],
+    () => branches.find((branch) => branch.id === resolvedBranchId) ?? null,
+    [branches, resolvedBranchId],
   );
   const selectedEvents = meta.timeline.branches
-    .find((branch) => branch.id === selectedBranchId)?.events.slice(-8) ?? [];
+    .find((branch) => branch.id === resolvedBranchId)?.events.slice(-8) ?? [];
 
   if (branches.length === 0) {
     return (
@@ -259,7 +256,7 @@ export function RebirthTimelinePanel({
 
       <BranchSelector
         meta={meta}
-        selectedBranchId={selectedBranchId}
+        selectedBranchId={resolvedBranchId}
         onSelect={(branchId) => {
           setSelectedBranchId(branchId);
           setSelectedAnchorId(null);

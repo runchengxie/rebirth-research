@@ -238,11 +238,25 @@ function restoreAnchor(value: unknown): TimelineAnchor | null {
   };
 }
 
+function restoreProjection(value: unknown): TimelineProjection {
+  const projection = isObject(value) ? value : {};
+  return {
+    researchCredibility: typeof projection.researchCredibility === "number"
+      ? projection.researchCredibility
+      : 0,
+    committeeAdoption: typeof projection.committeeAdoption === "number"
+      ? projection.committeeAdoption
+      : 0,
+    teamTrust: typeof projection.teamTrust === "number" ? projection.teamTrust : 0,
+    fatigue: typeof projection.fatigue === "number" ? projection.fatigue : 0,
+    lifeBalance: typeof projection.lifeBalance === "number" ? projection.lifeBalance : 0,
+  };
+}
+
 function restoreSimulation(value: unknown): TimelineSimulation | null {
   if (!isObject(value) || typeof value.id !== "string" || typeof value.anchorId !== "string") {
     return null;
   }
-  const projection = isObject(value.projection) ? value.projection : {};
   return {
     id: value.id,
     anchorId: value.anchorId,
@@ -253,17 +267,7 @@ function restoreSimulation(value: unknown): TimelineSimulation | null {
     label: typeof value.label === "string" ? value.label : "反事实推演",
     explanation: typeof value.explanation === "string" ? value.explanation : "",
     caveat: typeof value.caveat === "string" ? value.caveat : "反事实结果不会改写实际时间线。",
-    projection: {
-      researchCredibility: typeof projection.researchCredibility === "number"
-        ? projection.researchCredibility
-        : 0,
-      committeeAdoption: typeof projection.committeeAdoption === "number"
-        ? projection.committeeAdoption
-        : 0,
-      teamTrust: typeof projection.teamTrust === "number" ? projection.teamTrust : 0,
-      fatigue: typeof projection.fatigue === "number" ? projection.fatigue : 0,
-      lifeBalance: typeof projection.lifeBalance === "number" ? projection.lifeBalance : 0,
-    },
+    projection: restoreProjection(value.projection),
     sequence: typeof value.sequence === "number" ? value.sequence : 0,
   };
 }

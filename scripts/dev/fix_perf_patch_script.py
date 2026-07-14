@@ -13,5 +13,9 @@ text = text.replace(
     'requireText("vite.config.ts", ["react-vendor", "tone"]);\n',
     1,
 )
+text = text.replace(
+    "node_modules[\\\\/]",
+    "node_modules[\\\\\\\\/]",
+)
 path.write_text(text, encoding="utf-8")
 print("performance patch script fixed")

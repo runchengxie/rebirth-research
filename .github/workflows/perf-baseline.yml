@@ -20,11 +20,10 @@ jobs:
         shell: bash
         run: |
           set +e
-          if grep -q 'loadArchiveDrawer' src/app/ImmersiveGameScreen.tsx; then
-            echo "optimization already applied" > apply.log
-            code=0
-          else
-            python scripts/dev/fix_perf_patch_script.py > apply.log 2>&1
+          : > apply.log
+          code=0
+          if ! grep -q 'loadArchiveDrawer' src/app/ImmersiveGameScreen.tsx; then
+            python scripts/dev/fix_perf_patch_script.py >> apply.log 2>&1
             first=$?
             if [ "$first" -eq 0 ]; then
               python scripts/dev/apply_perf_lazy_tree.py >> apply.log 2>&1
@@ -32,6 +31,12 @@ jobs:
             else
               code=$first
             fi
+          else
+            echo "optimization already applied" >> apply.log
+          fi
+          if [ "$code" -eq 0 ] && ! grep -q '父子分支树' docs/ux.md; then
+            python scripts/dev/update_perf_docs.py >> apply.log 2>&1
+            code=$?
           fi
           echo "exit_code=$code" >> "$GITHUB_OUTPUT"
           exit 0
@@ -42,8 +47,8 @@ jobs:
           if ! git diff --quiet; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add src scripts package.json vite.config.ts
-            git commit -m "perf: 懒加载档案并拆分回溯时间线"
+            git add AGENTS.md docs src scripts package.json vite.config.ts
+            git commit -m "perf: 完成懒加载与树状回溯优化"
             git push origin HEAD:${{ github.head_ref }}
           fi
       - uses: actions/setup-node@v4

@@ -255,12 +255,12 @@ describe("重生元状态", () => {
     }));
 
     const restored = readRebirthMeta(storage, "2025");
-    expect(restored.version).toBe(2);
+    expect(restored.version).toBe(3);
     expect(restored.investigations["2025-01"]?.completedNodeIds)
       .toEqual(["public_materials"]);
   });
 
-  it("持久化使用 v2 键并保留跨周目状态", () => {
+  it("持久化使用 v3 键并保留跨周目状态", () => {
     const storage = new MemoryStorage();
     const saved = completeRebirthCycle(
       createRebirthMeta("2025"),

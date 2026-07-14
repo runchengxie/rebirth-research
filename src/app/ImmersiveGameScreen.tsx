@@ -9,8 +9,8 @@ import {
   InvestigationPanel,
   OfficeHubPanel,
   RebirthArchiveSection,
-  RebirthFlowPanel,
 } from "../components/RebirthPanel";
+import { RebirthTimelinePanel } from "../components/RebirthTimelinePanel";
 import { StatusBar } from "../components/StatusBar";
 import { StoryRecapPanel } from "../components/StoryRecapPanel";
 import { buildSceneView } from "./useGameController";
@@ -285,14 +285,20 @@ function ArchiveDrawer({
         <div className="archive-tabs" role="tablist">
           <button aria-controls="archive-tabpanel" aria-selected={tab === "log"} className={tab === "log" ? "active" : ""} role="tab" type="button" onClick={() => setTab("log")}>本话记录</button>
           <button aria-controls="archive-tabpanel" aria-selected={tab === "archive"} className={tab === "archive" ? "active" : ""} role="tab" type="button" onClick={() => setTab("archive")}>研究档案</button>
-          <button aria-controls="archive-tabpanel" aria-selected={tab === "flow"} className={tab === "flow" ? "active" : ""} role="tab" type="button" onClick={() => setTab("flow")}>年度流程</button>
+          <button aria-controls="archive-tabpanel" aria-selected={tab === "flow"} className={tab === "flow" ? "active" : ""} role="tab" type="button" onClick={() => setTab("flow")}>因果回溯</button>
           <button aria-controls="archive-tabpanel" aria-selected={tab === "office"} className={tab === "office" ? "active" : ""} role="tab" type="button" onClick={() => setTab("office")}>研究室</button>
         </div>
         <div className="archive-scroll" id="archive-tabpanel" role="tabpanel">
           {tab === "log" ? <DialogueHistory session={session} /> : null}
           {tab === "archive" ? <ResearchArchive session={session} /> : null}
           {tab === "flow" ? (
-            <RebirthFlowPanel meta={session.rebirth} state={session.state} />
+            <RebirthTimelinePanel
+              meta={session.rebirth}
+              state={session.state}
+              onFork={session.forkTimelineWithSound}
+              onResume={session.resumeTimelineWithSound}
+              onSimulate={session.simulateTimeline}
+            />
           ) : null}
           {tab === "office" ? (
             <OfficeHubPanel

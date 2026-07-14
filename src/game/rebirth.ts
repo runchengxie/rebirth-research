@@ -13,8 +13,14 @@ import {
   chapterForMonth,
 } from "./rebirthInvestigationData";
 import { specialDecisionsForInvestigation } from "./rebirthSpecialDecisions";
+import {
+  createRebirthTimelineState,
+  restoreRebirthTimelineState,
+  type RebirthTimelineState,
+} from "./rebirthTimelineState";
 
-export const REBIRTH_META_KEY_PREFIX = "rebirthMeta:v2:";
+export const REBIRTH_META_KEY_PREFIX = "rebirthMeta:v3:";
+export const LEGACY_REBIRTH_META_V2_KEY_PREFIX = "rebirthMeta:v2:";
 export const LEGACY_REBIRTH_META_KEY_PREFIX = "rebirthMeta:v1:";
 
 export type MemoryKeyId =
@@ -58,7 +64,7 @@ export interface CycleRecord {
 }
 
 export interface RebirthMetaState {
-  version: 2;
+  version: 3;
   year: string;
   cycle: number;
   memoryKeys: MemoryKeyId[];
@@ -70,6 +76,7 @@ export interface RebirthMetaState {
   investigations: Record<string, InvestigationProgress>;
   readSceneNodeIds: string[];
   officeDiscoveries: string[];
+  timeline: RebirthTimelineState;
 }
 
 interface StorageLike {
@@ -222,7 +229,7 @@ function initialProgress(monthKey: string): InvestigationProgress | null {
 
 export function createRebirthMeta(year: string): RebirthMetaState {
   return {
-    version: 2,
+    version: 3,
     year,
     cycle: 1,
     memoryKeys: [],
@@ -234,6 +241,7 @@ export function createRebirthMeta(year: string): RebirthMetaState {
     investigations: {},
     readSceneNodeIds: [],
     officeDiscoveries: [],
+    timeline: createRebirthTimelineState(),
   };
 }
 
@@ -315,11 +323,16 @@ export function restoreRebirthMeta(year: string, parsed: unknown): RebirthMetaSt
     officeDiscoveries: Array.isArray(parsed.officeDiscoveries)
       ? unique(parsed.officeDiscoveries.filter((item): item is string => typeof item === "string"))
       : [],
+    timeline: restoreRebirthTimelineState(parsed.timeline),
   };
 }
 
 export function readRebirthMeta(storage: StorageLike, year: string): RebirthMetaState {
-  for (const prefix of [REBIRTH_META_KEY_PREFIX, LEGACY_REBIRTH_META_KEY_PREFIX]) {
+  for (const prefix of [
+    REBIRTH_META_KEY_PREFIX,
+    LEGACY_REBIRTH_META_V2_KEY_PREFIX,
+    LEGACY_REBIRTH_META_KEY_PREFIX,
+  ]) {
     try {
       const raw = storage.getItem(`${prefix}${year}`);
       if (raw) return restoreRebirthMeta(year, JSON.parse(raw) as unknown);
@@ -575,7 +588,7 @@ function averageReasoning(history: RoundResult[]): number {
   return Math.round(scores.reduce((sum, value) => sum + value, 0) / scores.length);
 }
 
-function endingIdFor(state: GameState): string {
+export function endingIdFor(state: GameState): string {
   if (state.flags.rebirth_truth_route) return "truth_audit";
   if (state.fatigue >= 85 || state.flags.route_burnout) return "burnout";
   if (state.history.some((result) => result.isParachuted)) return "parachuted";

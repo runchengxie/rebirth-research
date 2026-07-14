@@ -18,6 +18,7 @@ import {
   completeRebirthCycle,
   createRebirthMeta,
   decisionOptionsForRebirth,
+  endingIdFor,
   performInvestigation,
   persistRebirthMeta,
   prepareDecisionForRebirth,
@@ -30,6 +31,19 @@ import {
   skipReadSceneNodes,
 } from "../game/rebirthFlow";
 import { inspectOfficeProp, type OfficePropId } from "../game/rebirthOffice";
+import {
+  captureTimelineAnchor,
+  completeActiveTimelineBranch,
+  ensureTimelineInitialized,
+  forkTimelineAtAnchor,
+  recordTimelineEvent,
+  restartTimelineRun,
+  resumeTimelineBranch,
+  startTimelineCycle,
+  syncActiveTimelineBranch,
+} from "../game/rebirthTimeline";
+import { simulateTimelineAnchor } from "../game/rebirthTimelineInsights";
+import type { TimelineSimulationProfileId } from "../game/rebirthTimelineState";
 import { persistStoredState, readStoredState as readStoredStateFromStorage } from "../game/saveState";
 import type { CharacterId, GameState, ResearchDecision, RoundResult } from "../types";
 
@@ -116,10 +130,9 @@ function persistRebirth(meta: ReturnType<typeof createRebirthMeta>): void {
 
 function createSessionState(year = bestInitialYear()) {
   const actualYear = readYearFromUrl() ?? year;
-  return {
-    state: readStoredState(actualYear) ?? createInitialState(actualYear),
-    rebirth: readStoredRebirth(actualYear),
-  };
+  const state = readStoredState(actualYear) ?? createInitialState(actualYear);
+  const rebirth = ensureTimelineInitialized(readStoredRebirth(actualYear), state);
+  return { state, rebirth };
 }
 
 type Scene = ReturnType<typeof sceneForMonth>;
@@ -295,6 +308,13 @@ export function useGameSession(audio: GameAudio) {
     persistRebirth(rebirth);
   }, [rebirth]);
 
+  useEffect(() => {
+    setRebirth((current) => captureTimelineAnchor(
+      syncActiveTimelineBranch(current, state),
+      state,
+    ));
+  }, [state]);
+
   const changeYear = useCallback((year: string) => {
     resetLineVoice();
     setState(readStoredState(year) ?? createInitialState(year));
@@ -303,25 +323,33 @@ export function useGameSession(audio: GameAudio) {
 
   const restart = useCallback(() => {
     resetLineVoice();
-    setState(createInitialState(state.year));
-    setRebirth((current) => resetRebirthRun(current));
-  }, [resetLineVoice, state.year]);
+    const nextState = createInitialState(state.year);
+    const nextMeta = restartTimelineRun(rebirth, state, nextState);
+    setState(nextState);
+    setRebirth(nextMeta);
+  }, [rebirth, resetLineVoice, state]);
 
   const advanceCurrentScene = useCallback(() => {
     if (!sceneCanAdvance) return;
     playAdvance();
-    if (sceneNode.type === "dialogue") {
-      setRebirth((current) => markSceneNodeRead(current, state, sceneNode.id));
-    }
+    let nextMeta = sceneNode.type === "dialogue"
+      ? markSceneNodeRead(rebirth, state, sceneNode.id)
+      : rebirth;
     const isCycleEnd = state.finished && state.sceneNodeIndex >= scene.nodes.length - 1;
     if (isCycleEnd) {
-      const nextRebirth = completeRebirthCycle(rebirth, state);
-      setRebirth(nextRebirth);
-      setState(createInitialState(state.year));
+      nextMeta = completeActiveTimelineBranch(nextMeta, state, endingIdFor(state));
+      nextMeta = completeRebirthCycle(nextMeta, state);
+      const nextState = createInitialState(state.year);
+      nextMeta = startTimelineCycle(nextMeta, nextState);
+      setRebirth(nextMeta);
+      setState(nextState);
       resetLineVoice();
       return;
     }
-    setState((current) => advanceScene(current, data, branchMetaContext(rebirth)));
+    const nextState = advanceScene(state, data, branchMetaContext(nextMeta));
+    nextMeta = syncActiveTimelineBranch(nextMeta, nextState);
+    setRebirth(nextMeta);
+    setState(nextState);
   }, [
     data,
     playAdvance,
@@ -336,48 +364,109 @@ export function useGameSession(audio: GameAudio) {
   const goBack = useCallback(() => {
     if (!canGoBack) return;
     resetLineVoice();
-    setState((current) => rewindScene(current, branchMetaContext(rebirth)));
-  }, [canGoBack, rebirth, resetLineVoice]);
+    const nextState = rewindScene(state, branchMetaContext(rebirth));
+    setState(nextState);
+    setRebirth(syncActiveTimelineBranch(rebirth, nextState));
+  }, [canGoBack, rebirth, resetLineVoice, state]);
 
   const skipReadScene = useCallback(() => {
     if (!canSkipRead) return;
     resetLineVoice();
-    setState((current) => skipReadSceneNodes(
+    const nextState = skipReadSceneNodes(
       rebirth,
-      current,
+      state,
       data,
       branchMetaContext(rebirth),
-    ));
-  }, [canSkipRead, data, rebirth, resetLineVoice]);
+    );
+    setState(nextState);
+    setRebirth(syncActiveTimelineBranch(rebirth, nextState));
+  }, [canSkipRead, data, rebirth, resetLineVoice, state]);
 
   const inspectOfficeWithSound = useCallback((propId: OfficePropId) => {
     const result = inspectOfficeProp(rebirth, state, propId);
     if (!result.changed) return;
     playChoice();
-    setRebirth(result.meta);
+    const nextMeta = recordTimelineEvent(
+      result.meta,
+      result.state,
+      "office",
+      `整理研究室：${propId}`,
+      { propId },
+    );
+    setRebirth(nextMeta);
     setState(result.state);
   }, [playChoice, rebirth, state]);
 
   const selectFocusWithSound = useCallback((focusId: string) => {
     playChoice();
-    setState((current) => selectFocus(current, focusId));
-  }, [playChoice]);
+    const nextState = selectFocus(state, focusId);
+    const focus = focusById(focusId);
+    const nextMeta = recordTimelineEvent(
+      rebirth,
+      nextState,
+      "focus",
+      `安排日程：${focus.label}`,
+      { focusId },
+    );
+    setState(nextState);
+    setRebirth(nextMeta);
+  }, [playChoice, rebirth, state]);
 
   const investigateWithSound = useCallback((nodeId: Parameters<typeof performInvestigation>[2]) => {
     const result = performInvestigation(rebirth, state, nodeId);
     if (!result.changed) return;
     playChoice();
-    setRebirth(result.meta);
+    const nextMeta = recordTimelineEvent(
+      result.meta,
+      result.state,
+      "investigation",
+      `完成调查：${nodeId}`,
+      { nodeId },
+    );
+    setRebirth(nextMeta);
     setState(result.state);
   }, [playChoice, rebirth, state]);
 
   const makeDecisionWithSound = useCallback((decision: ResearchDecision) => {
     playChoice();
-    setState((current) => {
-      const prepared = prepareDecisionForRebirth(rebirth, current, decision);
-      return makeDecision(current, data, prepared, branchMetaContext(rebirth));
-    });
-  }, [data, playChoice, rebirth]);
+    const prepared = prepareDecisionForRebirth(rebirth, state, decision);
+    const nextState = makeDecision(state, data, prepared, branchMetaContext(rebirth));
+    const nextMeta = recordTimelineEvent(
+      rebirth,
+      nextState,
+      "decision",
+      `提交研究判断：${decision.label}`,
+      { decisionId: decision.id },
+    );
+    setState(nextState);
+    setRebirth(nextMeta);
+  }, [data, playChoice, rebirth, state]);
+
+  const forkTimelineWithSound = useCallback((anchorId: string) => {
+    const result = forkTimelineAtAnchor(rebirth, state, anchorId);
+    if (!result.changed) return;
+    playChoice();
+    resetLineVoice();
+    setRebirth(result.meta);
+    setState(result.state);
+  }, [playChoice, rebirth, resetLineVoice, state]);
+
+  const resumeTimelineWithSound = useCallback((branchId: string) => {
+    const result = resumeTimelineBranch(rebirth, state, branchId);
+    if (!result.changed) return;
+    playChoice();
+    resetLineVoice();
+    setRebirth(result.meta);
+    setState(result.state);
+  }, [playChoice, rebirth, resetLineVoice, state]);
+
+  const simulateTimeline = useCallback((
+    anchorId: string,
+    profileId: TimelineSimulationProfileId,
+  ) => {
+    playChoice();
+    setRebirth((current) => simulateTimelineAnchor(current, anchorId, profileId));
+  }, [playChoice]);
 
   return {
     advanceCurrentScene,
@@ -385,16 +474,19 @@ export function useGameSession(audio: GameAudio) {
     canSkipRead,
     changeYear,
     data,
+    forkTimelineWithSound,
     goBack,
     inspectOfficeWithSound,
     investigateWithSound,
     makeDecisionWithSound,
     rebirth,
     restart,
+    resumeTimelineWithSound,
     scene,
     sceneCanAdvance,
     sceneNode,
     selectFocusWithSound,
+    simulateTimeline,
     skipReadScene,
     state,
     story,

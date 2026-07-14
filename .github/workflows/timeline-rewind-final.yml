@@ -1,0 +1,49 @@
+name: Timeline rewind final
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  check:
+    if: github.head_ref == 'feat/timeline-rewind-system'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Apply branch limit fix
+        run: python scripts/dev/fix_timeline_branch_limit.py
+      - name: Commit fix
+        shell: bash
+        run: |
+          if ! git diff --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add src docs
+            git commit -m "fix: 统一回溯时间线容量上限"
+            git push origin HEAD:${{ github.head_ref }}
+          fi
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - id: full-check
+        shell: bash
+        run: |
+          set +e
+          npm run check > timeline-final.log 2>&1
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+      - uses: actions/upload-artifact@v4
+        with:
+          name: timeline-rewind-final-log
+          path: timeline-final.log
+      - name: Fail when check failed
+        if: steps.full-check.outputs.exit_code != '0'
+        run: exit 1

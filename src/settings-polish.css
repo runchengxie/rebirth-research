@@ -59,6 +59,11 @@
   border-radius: 10px;
 }
 
+.settings-disclosure > summary,
+.cloud-sync-panel > summary {
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+}
+
 @media (max-width: 780px) {
   .immersive-settings-popover > .settings-row {
     margin: 10px;
@@ -75,5 +80,10 @@
 
   .immersive-settings-popover > .metric-mode-note {
     margin-inline: 14px;
+  }
+
+  .settings-disclosure > summary,
+  .cloud-sync-panel > summary {
+    grid-template-columns: auto minmax(0, 1fr) auto;
   }
 }

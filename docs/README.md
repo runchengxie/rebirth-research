@@ -7,19 +7,21 @@
 建议按以下顺序阅读：
 
 1. [`gameplay.md`](gameplay.md)：了解 2025 主线、往年档案、角色路线和当前边界。
-2. [`rebirth-system.md`](rebirth-system.md)：了解时间块调查、记忆钥匙、研究捷径和跨周目存档。
-3. [`2025-source-ledger.md`](2025-source-ledger.md)：了解每个月现实事件的来源、时间和叙事改编边界。
-4. [`ux.md`](ux.md)：了解单视口操作、回看、自动保存和观点交锋的界面规则。
-5. [`characters.md`](characters.md)：了解角色定位、语言特点和剧情写作边界。
-6. [`dialogue-writing.md`](dialogue-writing.md)：了解对白去重、回调设计、术语密度和中文表达要求。
-7. [`architecture.md`](architecture.md)：了解 React、PixiJS、剧情运行时、结算引擎和数据文件之间的关系。
-8. [`maintenance.md`](maintenance.md)：了解本地环境、测试命令、数据维护和发布流程。
+2. [`research-commitment.md`](research-commitment.md)：了解置信度、失效条件、投委会自检、组织压力和存档转移。
+3. [`rebirth-system.md`](rebirth-system.md)：了解时间块调查、记忆钥匙、研究捷径和跨周目存档。
+4. [`2025-source-ledger.md`](2025-source-ledger.md)：了解每个月现实事件的来源、时间和叙事改编边界。
+5. [`ux.md`](ux.md)：了解单视口操作、回看、自动保存和观点交锋的界面规则。
+6. [`characters.md`](characters.md)：了解角色定位、语言特点和剧情写作边界。
+7. [`dialogue-writing.md`](dialogue-writing.md)：了解对白去重、回调设计、术语密度和中文表达要求。
+8. [`architecture.md`](architecture.md)：了解 React、PixiJS、剧情运行时、结算引擎和数据文件之间的关系。
+9. [`maintenance.md`](maintenance.md)：了解本地环境、测试命令、数据维护和发布流程。
 
 ## 按需求查找
 
 | 需求 | 文档 |
 |---|---|
 | 了解玩法、年份线、角色路线和当前限制 | [`gameplay.md`](gameplay.md) |
+| 了解研究承诺、置信度、失效条件和投委会自检 | [`research-commitment.md`](research-commitment.md) |
 | 了解时间块调查、记忆钥匙、研究捷径和跨周目状态 | [`rebirth-system.md`](rebirth-system.md) |
 | 核对 2025 现实事件与月份映射 | [`2025-source-ledger.md`](2025-source-ledger.md) |
 | 了解一屏操作、剧情回看、自动保存和档案抽屉 | [`ux.md`](ux.md) |
@@ -33,6 +35,7 @@
 
 - 根目录 `README.md` 面向第一次接触项目的玩家和开发者。
 - `gameplay.md` 记录当前可以看到和操作的功能。
+- `research-commitment.md` 记录研究承诺、投委会自检、组织压力、存档转移和本地游玩数据。
 - `rebirth-system.md` 记录调查与跨周目系统的当前行为和存储边界。
 - `2025-source-ledger.md` 记录现实事件来源和叙事改编边界。
 - `ux.md` 记录主界面的操作规则和呈现约束。

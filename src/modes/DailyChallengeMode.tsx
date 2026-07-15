@@ -29,7 +29,7 @@ function dailyCases(): CommitteeCase[] {
 }
 
 export function DailyChallengeMode() {
-  const cases = useMemo(dailyCases, []);
+  const cases = useMemo(() => dailyCases(), []);
   const challenge = useMemo(() => dailyChallengeFor(cases), [cases]);
   const existing = readDailyResults().find((item) => item.date === challenge.date) ?? null;
   const [decisionId, setDecisionId] = useState("");
@@ -49,7 +49,7 @@ export function DailyChallengeMode() {
 
   const start = () => {
     if (!decision) {
-      setStatus("先选研究方案。每日挑战也没有替人承担结论的服务窗口。") ;
+      setStatus("先选研究方案。每日挑战也没有替人承担结论的服务窗口。");
       return;
     }
     setResponses([]);
@@ -88,7 +88,7 @@ export function DailyChallengeMode() {
     setRoundIndex(-1);
     setResponses([]);
     setResult(null);
-    setStatus("练习结果不会覆盖今日首次记录。人类总算允许一次不写进绩效的重来。") ;
+    setStatus("练习结果不会覆盖今日首次记录。人类总算允许一次不写进绩效的重来。");
   };
 
   const copyShare = async () => {
@@ -96,7 +96,7 @@ export function DailyChallengeMode() {
     const text = dailyShareText(result, currentDailyStreak(readDailyResults()));
     try {
       await navigator.clipboard.writeText(text);
-      setStatus("每日挑战结果已复制。") ;
+      setStatus("每日挑战结果已复制。");
     } catch {
       setStatus(text);
     }

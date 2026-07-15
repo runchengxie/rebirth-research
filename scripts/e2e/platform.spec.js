@@ -7,6 +7,16 @@ async function openClean(page, path) {
   await page.reload();
 }
 
+async function openDark(page, path) {
+  await page.goto(path);
+  await page.evaluate(() => {
+    localStorage.clear();
+    localStorage.setItem("rebirthGameTheme", "dark");
+  });
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+}
+
 async function answerCommittee(page) {
   for (let index = 0; index < 5; index += 1) {
     const response = page.locator(".committee-responses button").first();
@@ -29,6 +39,76 @@ async function expectNoSeriousAccessibilityViolations(page) {
   expect(summary).toEqual([]);
 }
 
+async function contrastRatio(page, foregroundSelector, backgroundSelector) {
+  return page.evaluate(({ foregroundSelector: foreground, backgroundSelector: background }) => {
+    function parseColor(value) {
+      const channels = value.match(/[\d.]+/g)?.map(Number) ?? [];
+      if (channels.length < 3) throw new Error(`无法解析颜色：${value}`);
+      return {
+        red: channels[0],
+        green: channels[1],
+        blue: channels[2],
+        alpha: channels[3] ?? 1,
+      };
+    }
+
+    function blend(front, back) {
+      const alpha = front.alpha + back.alpha * (1 - front.alpha);
+      if (alpha === 0) return { red: 0, green: 0, blue: 0, alpha: 0 };
+      return {
+        red: (front.red * front.alpha + back.red * back.alpha * (1 - front.alpha)) / alpha,
+        green: (front.green * front.alpha + back.green * back.alpha * (1 - front.alpha)) / alpha,
+        blue: (front.blue * front.alpha + back.blue * back.alpha * (1 - front.alpha)) / alpha,
+        alpha,
+      };
+    }
+
+    function luminance(color) {
+      const transform = (channel) => {
+        const value = channel / 255;
+        return value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+      };
+      return 0.2126 * transform(color.red)
+        + 0.7152 * transform(color.green)
+        + 0.0722 * transform(color.blue);
+    }
+
+    const foregroundElement = document.querySelector(foreground);
+    const backgroundElement = document.querySelector(background);
+    if (!foregroundElement || !backgroundElement) {
+      throw new Error(`缺少对比度目标：${foreground} / ${background}`);
+    }
+
+    const pageBackground = parseColor(getComputedStyle(document.body).backgroundColor);
+    const backgroundColor = blend(
+      parseColor(getComputedStyle(backgroundElement).backgroundColor),
+      pageBackground,
+    );
+    const foregroundColor = blend(
+      parseColor(getComputedStyle(foregroundElement).color),
+      backgroundColor,
+    );
+    const foregroundLuminance = luminance(foregroundColor);
+    const backgroundLuminance = luminance(backgroundColor);
+    const lighter = Math.max(foregroundLuminance, backgroundLuminance);
+    const darker = Math.min(foregroundLuminance, backgroundLuminance);
+    return (lighter + 0.05) / (darker + 0.05);
+  }, { foregroundSelector, backgroundSelector });
+}
+
+async function expectScrollablePage(page, path) {
+  await openClean(page, path);
+  const metrics = await page.evaluate(() => ({
+    clientHeight: document.documentElement.clientHeight,
+    scrollHeight: document.documentElement.scrollHeight,
+    overflowY: getComputedStyle(document.body).overflowY,
+  }));
+  expect(metrics.scrollHeight).toBeGreaterThan(metrics.clientHeight + 40);
+  expect(["auto", "visible", "scroll"]).toContain(metrics.overflowY);
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+}
+
 test("键盘可以跳过导航，并在档案弹窗关闭后恢复焦点", async ({ page }) => {
   await openClean(page, "/?staticStage=1");
 
@@ -46,6 +126,18 @@ test("键盘可以跳过导航，并在档案弹窗关闭后恢复焦点", async
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).toBeHidden();
   await expect(archiveButton).toBeFocused();
+});
+
+test("年度剧情的研究平台栏不会遮挡操作按钮", async ({ page }) => {
+  await page.setViewportSize({ width: 1365, height: 768 });
+  await openClean(page, "/?staticStage=1");
+
+  const actionBox = await page.locator(".interaction-actions").boundingBox();
+  const dockBox = await page.locator(".platform-mode-switcher").boundingBox();
+  expect(actionBox).not.toBeNull();
+  expect(dockBox).not.toBeNull();
+  expect(actionBox.y + actionBox.height).toBeLessThanOrEqual(dockBox.y - 3);
+  await expect(page.getByRole("button", { name: /继续/ })).toBeVisible();
 });
 
 test("独立投委会完成五轮答辩并保存历史", async ({ page }) => {
@@ -93,6 +185,41 @@ test("内容工坊保存的案例会进入投委会案例库", async ({ page }) 
 
   await expect(page).toHaveURL(/mode=committee/);
   await expect(page.getByRole("button", { name: /利润增长，现金流下降/ })).toBeVisible();
+});
+
+test("投委会、每日挑战和内容工坊都可以滚动到底部", async ({ page }) => {
+  await page.setViewportSize({ width: 1000, height: 640 });
+  await expectScrollablePage(page, "/?mode=committee");
+  await expectScrollablePage(page, "/?mode=daily");
+  await expectScrollablePage(page, "/?mode=studio");
+});
+
+test("窄屏平台模式没有横向裁切", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  for (const path of ["/?mode=committee", "/?mode=daily", "/?mode=studio"]) {
+    await openClean(page, path);
+    const overflow = await page.evaluate(() =>
+      document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    expect(overflow).toBeLessThanOrEqual(1);
+  }
+});
+
+test("深色模式关键平台文字和设置说明保持可读对比度", async ({ page }) => {
+  await openDark(page, "/?mode=committee");
+  expect(await contrastRatio(page, ".case-brief > p", ".committee-workspace")).toBeGreaterThanOrEqual(4.5);
+
+  await openDark(page, "/?mode=daily");
+  expect(await contrastRatio(page, ".daily-card > p", ".daily-card")).toBeGreaterThanOrEqual(4.5);
+
+  await openDark(page, "/?mode=studio");
+  expect(await contrastRatio(page, ".studio-field > span", ".studio-editor")).toBeGreaterThanOrEqual(4.5);
+
+  await openDark(page, "/?staticStage=1");
+  await page.getByRole("button", { name: "打开设置" }).click();
+  await page.getByText("存档与跨设备转移", { exact: true }).click();
+  await page.getByText("加密云同步", { exact: true }).click();
+  await expect(page.locator(".cloud-sync-warning")).toBeVisible();
+  expect(await contrastRatio(page, ".cloud-sync-warning", ".cloud-sync-panel")).toBeGreaterThanOrEqual(4.5);
 });
 
 test("模式代码加载失败时显示恢复界面而不是白屏", async ({ page }) => {

@@ -1,13 +1,23 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { GAME_YEARS } from "../data/gameData";
 import { CHARACTERS } from "../game/content";
-import type { CharacterId, CompetingHypotheses, SceneNode } from "../types";
+import type { CharacterId, CompetingHypotheses, GameState, SceneNode } from "../types";
 import { DecisionCard } from "../components/DecisionCard";
 import { EndingPanel } from "../components/EndingPanel";
 import { FocusSelector } from "../components/FocusSelector";
 import { InvestigationPanel } from "../components/InvestigationPanel";
+import { ResearchCommitmentPanel } from "../components/ResearchCommitmentPanel";
+import { SaveTransferPanel } from "../components/SaveTransferPanel";
 import { StatusBar } from "../components/StatusBar";
 import { StoryRecapPanel } from "../components/StoryRecapPanel";
+import {
+  applyResearchCommitment,
+  completedReviewCount,
+  createDefaultResearchCommitment,
+} from "../game/researchCommitment";
+import { recordPlaytestEvent } from "../game/playtestTelemetry";
+import { writeSessionEnvelope } from "../game/sessionEnvelope";
+import { stakeholderPressureFor } from "../game/stakeholderPressure";
 import { buildSceneView } from "./useGameController";
 import type {
   GameAudio,
@@ -40,24 +50,70 @@ interface DebateItem {
   text: string;
 }
 
+function readExactMetricPreference(): boolean {
+  try {
+    return localStorage.getItem("rebirthShowExactMetrics") === "1";
+  } catch {
+    return false;
+  }
+}
+
+function relationshipSignal(value: number): string {
+  if (value >= 80) return "关系已进入长期承诺";
+  if (value >= 60) return "关系明显深化";
+  if (value >= 40) return "专业默契形成";
+  return "仍在互相观察";
+}
+
 function StaticStage({ color }: { color: string }) {
   return <div className={`pixi-stage pixi-stage-fallback immersive-static character-${color}`} aria-hidden="true" />;
 }
 
+function OfficeMemoryLayer({ state }: { state: GameState }) {
+  const postIts = Math.min(6, state.office.postIts);
+  const whiteboardMarks = Math.min(7, state.office.whiteboardMarkers);
+  const coffeeCups = Math.min(6, state.office.coffeeCups);
+  if (postIts + whiteboardMarks + coffeeCups === 0) return null;
+
+  return (
+    <div className="office-memory-layer" aria-hidden="true">
+      <div className="office-postits">
+        {Array.from({ length: postIts }, (_, index) => <span className="office-postit" key={`postit-${index}`} />)}
+      </div>
+      <div className="office-whiteboard">
+        {Array.from({ length: whiteboardMarks }, (_, index) => <span key={`mark-${index}`} />)}
+      </div>
+      <div className="office-coffee">
+        {Array.from({ length: coffeeCups }, (_, index) => <span key={`coffee-${index}`} />)}
+      </div>
+    </div>
+  );
+}
+
 function StageArt({ session, usePixiStage }: { session: GameSession; usePixiStage: boolean }) {
   const view = buildSceneView(session);
+  let artwork;
   if (session.sceneNode.id.endsWith("-competing")) {
-    return <div className={`debate-stage debate-stage-${view.sceneBackground}`} aria-hidden="true" />;
+    artwork = <div className={`debate-stage debate-stage-${view.sceneBackground}`} aria-hidden="true" />;
+  } else if (!usePixiStage) {
+    artwork = <StaticStage color={view.activeCharacter.color} />;
+  } else {
+    artwork = (
+      <Suspense fallback={<StaticStage color={view.activeCharacter.color} />}>
+        <PixiStage
+          activeCharacter={view.activeCharacter}
+          activePose={view.scenePose}
+          backgroundId={view.sceneBackground}
+        />
+      </Suspense>
+    );
   }
-  if (!usePixiStage) return <StaticStage color={view.activeCharacter.color} />;
+
   return (
-    <Suspense fallback={<StaticStage color={view.activeCharacter.color} />}>
-      <PixiStage
-        activeCharacter={view.activeCharacter}
-        activePose={view.scenePose}
-        backgroundId={view.sceneBackground}
-      />
-    </Suspense>
+    <>
+      {artwork}
+      <OfficeMemoryLayer state={session.state} />
+    </>
   );
 }
 
@@ -125,10 +181,12 @@ function ResearchBriefs({ node }: { node: SceneNode }) {
 }
 
 function DecisionPanel({ session }: { session: GameSession }) {
+  const [commitment, setCommitment] = useState(createDefaultResearchCommitment);
   const view = buildSceneView(session);
   const decisionNode = view.decisionNode;
   if (!decisionNode) return null;
   const result = session.state.locked ? view.last : undefined;
+  const pressure = stakeholderPressureFor(session.state.year, session.state.monthIndex);
 
   if (session.state.locked) {
     return (
@@ -143,19 +201,55 @@ function DecisionPanel({ session }: { session: GameSession }) {
     );
   }
 
+  const submitDecision: GameSession["makeDecisionWithSound"] = (decision) => {
+    const committedDecision = applyResearchCommitment(decision, commitment);
+    recordPlaytestEvent("decision_submit", {
+      year: session.state.year,
+      month: session.state.monthIndex + 1,
+      cycle: session.rebirth.cycle,
+      decisionId: decision.id,
+      confidence: commitment.confidence,
+      falsifier: commitment.falsifier,
+      reviewChecks: completedReviewCount(commitment),
+    });
+    session.makeDecisionWithSound(committedDecision);
+  };
+
   return (
     <div className="immersive-decision-panel">
       <div className="decision-prompt">
         <span>本话研究选择</span>
         <strong>{decisionNode.decisionPrompt || session.story.mission}</strong>
       </div>
+      <aside className="stakeholder-pressure">
+        <header>
+          <span>{pressure.source}</span>
+          <strong>{pressure.title}</strong>
+        </header>
+        <p>{pressure.detail}</p>
+        <small>{pressure.tradeoff}</small>
+      </aside>
       <ResearchBriefs node={decisionNode} />
       <InvestigationPanel
         meta={session.rebirth}
         state={session.state}
         onInvestigate={session.investigateWithSound}
       />
-      <FocusSelector state={session.state} onSelect={session.selectFocusWithSound} />
+      <FocusSelector
+        monthIndex={session.state.monthIndex}
+        state={session.state}
+        theme={session.scene.theme}
+        onSelect={(focusId) => {
+          recordPlaytestEvent("focus_select", {
+            year: session.state.year,
+            month: session.state.monthIndex + 1,
+            cycle: session.rebirth.cycle,
+            focusId,
+          });
+          session.selectFocusWithSound(focusId);
+        }}
+      />
+      <ResearchCommitmentPanel commitment={commitment} onChange={setCommitment} />
       <div className="options">
         {view.topDecisions.map((decision, index) => (
           <DecisionCard
@@ -163,12 +257,25 @@ function DecisionPanel({ session }: { session: GameSession }) {
             index={index}
             key={decision.id}
             state={session.state}
-            onChoose={session.makeDecisionWithSound}
+            onChoose={submitDecision}
           />
         ))}
       </div>
     </div>
   );
+}
+
+function changeYearFromSettings(session: GameSession, year: string): void {
+  const url = new URL(window.location.href);
+  if (year === "2025") url.searchParams.delete("year");
+  else url.searchParams.set("year", year);
+  window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
+  session.changeYear(year);
+}
+
+interface SettingsPopoverProps extends Omit<ImmersiveGameScreenProps, "usePixiStage"> {
+  showExactMetrics: boolean;
+  onToggleExactMetrics: () => void;
 }
 
 function SettingsPopover({
@@ -178,7 +285,9 @@ function SettingsPopover({
   settingsRef,
   setSettingsOpen,
   themeControl,
-}: Omit<ImmersiveGameScreenProps, "usePixiStage">) {
+  showExactMetrics,
+  onToggleExactMetrics,
+}: SettingsPopoverProps) {
   return (
     <div className="immersive-settings" ref={settingsRef}>
       <button
@@ -201,7 +310,7 @@ function SettingsPopover({
                   aria-pressed={year === session.state.year}
                   key={year}
                   type="button"
-                  onClick={() => session.changeYear(year)}
+                  onClick={() => changeYearFromSettings(session, year)}
                 >
                   {year}
                 </button>
@@ -218,6 +327,9 @@ function SettingsPopover({
             <button aria-pressed={audio.soundOn} type="button" onClick={() => void audio.toggleSound()}>
               音效 {audio.soundOn ? "开" : "关"}
             </button>
+            <button aria-pressed={showExactMetrics} type="button" onClick={onToggleExactMetrics}>
+              指标 {showExactMetrics ? "精确" : "叙事"}
+            </button>
             <button
               type="button"
               onClick={() => {
@@ -227,6 +339,10 @@ function SettingsPopover({
               重新开始
             </button>
           </div>
+          <small className="metric-mode-note">
+            叙事模式隐藏精确关系与职业数值；精确模式用于攻略、调试和复盘。
+          </small>
+          <SaveTransferPanel year={session.state.year} />
         </div>
       ) : null}
     </div>
@@ -237,6 +353,7 @@ export function ImmersiveGameScreen(props: ImmersiveGameScreenProps) {
   const { session, usePixiStage } = props;
   const view = buildSceneView(session);
   const [archiveOpen, setArchiveOpen] = useState(false);
+  const [showExactMetrics, setShowExactMetrics] = useState(readExactMetricPreference);
   const isDebate = session.sceneNode.id.endsWith("-competing")
     && Boolean(session.scene.theme.competingHypotheses);
   const headerCopy = useMemo(() => {
@@ -246,9 +363,28 @@ export function ImmersiveGameScreen(props: ImmersiveGameScreenProps) {
   }, [isDebate, session.state.finished, session.state.year, view.activeCharacter.tag, view.speakerName, view.speakerRole]);
 
   useEffect(() => {
+    writeSessionEnvelope(localStorage, session.state, session.rebirth);
+  }, [session.rebirth, session.state]);
+
+  useEffect(() => {
+    recordPlaytestEvent("scene_view", {
+      year: session.state.year,
+      month: session.state.monthIndex + 1,
+      cycle: session.rebirth.cycle,
+      sceneNodeId: session.sceneNode.id,
+      sceneNodeType: session.sceneNode.type,
+    });
+  }, [session.rebirth.cycle, session.sceneNode.id, session.sceneNode.type, session.state.monthIndex, session.state.year]);
+
+  useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const target = event.target;
-      if (target instanceof HTMLButtonElement || target instanceof HTMLInputElement) return;
+      if (
+        target instanceof HTMLButtonElement
+        || target instanceof HTMLInputElement
+        || target instanceof HTMLSelectElement
+        || target instanceof HTMLTextAreaElement
+      ) return;
       if (event.key === "Escape" && archiveOpen) {
         event.preventDefault();
         setArchiveOpen(false);
@@ -268,6 +404,18 @@ export function ImmersiveGameScreen(props: ImmersiveGameScreenProps) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [archiveOpen, props.settingsOpen, session]);
 
+  const toggleExactMetrics = () => {
+    setShowExactMetrics((current) => {
+      const next = !current;
+      try {
+        localStorage.setItem("rebirthShowExactMetrics", next ? "1" : "0");
+      } catch {
+        // Storage may be unavailable in strict privacy modes.
+      }
+      return next;
+    });
+  };
+
   return (
     <main className={`immersive-app character-${view.activeCharacter.color}`}>
       <header className="immersive-topbar">
@@ -276,9 +424,13 @@ export function ImmersiveGameScreen(props: ImmersiveGameScreenProps) {
           <strong>{session.scene.theme.title}</strong>
           <small>{session.scene.label} · 第 {session.rebirth.cycle} 周目 · 剧情 {view.sceneProgress}</small>
         </div>
-        <SettingsPopover {...props} />
+        <SettingsPopover
+          {...props}
+          showExactMetrics={showExactMetrics}
+          onToggleExactMetrics={toggleExactMetrics}
+        />
       </header>
-      <StatusBar state={session.state} />
+      <StatusBar state={session.state} showExactMetrics={showExactMetrics} />
       <section className="immersive-workspace" aria-label="剧情舞台与操作区">
         <div className="immersive-stage" aria-hidden="true">
           <StageArt session={session} usePixiStage={usePixiStage} />
@@ -289,7 +441,11 @@ export function ImmersiveGameScreen(props: ImmersiveGameScreenProps) {
           ) : (
             <>
               <span>{view.activeCharacter.name}路线</span>
-              <span>关系 {session.state.relations[view.activeCharacter.id]}</span>
+              <span>
+                {showExactMetrics
+                  ? `关系 ${session.state.relations[view.activeCharacter.id]}`
+                  : relationshipSignal(session.state.relations[view.activeCharacter.id])}
+              </span>
             </>
           )}
           <span>{view.sceneMood}</span>

@@ -55,7 +55,6 @@ export class AppErrorBoundary extends Component<
     return (
       <main
         className="app-error-boundary"
-        id="main-content"
         ref={this.fallbackRef}
         role="alert"
         tabIndex={-1}

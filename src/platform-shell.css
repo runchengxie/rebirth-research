@@ -1,0 +1,178 @@
+:root {
+  --platform-bg: color-mix(in srgb, var(--bg, #f5f1e8) 92%, #dce7f3);
+  --platform-panel: color-mix(in srgb, var(--panel, #ffffff) 92%, transparent);
+  --platform-border: color-mix(in srgb, var(--ink, #24222a) 16%, transparent);
+  --platform-accent: #315f75;
+  --platform-accent-soft: color-mix(in srgb, var(--platform-accent) 14%, transparent);
+}
+
+body {
+  padding-bottom: 78px;
+}
+
+.platform-mode-switcher {
+  position: fixed;
+  z-index: 1200;
+  left: 50%;
+  bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: min(760px, calc(100vw - 24px));
+  padding: 8px 10px;
+  border: 1px solid var(--platform-border);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--platform-panel) 94%, transparent);
+  box-shadow: 0 16px 42px rgba(18, 24, 32, 0.22);
+  backdrop-filter: blur(18px);
+  transform: translateX(-50%);
+}
+
+.platform-mode-switcher > strong {
+  padding: 0 8px;
+  white-space: nowrap;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--muted, #666);
+}
+
+.platform-mode-switcher > div {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  width: 100%;
+}
+
+.platform-mode-switcher button {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 12px;
+  color: var(--ink, #24222a);
+  background: transparent;
+  cursor: pointer;
+}
+
+.platform-mode-switcher button:hover,
+.platform-mode-switcher button.active {
+  background: var(--platform-accent-soft);
+}
+
+.platform-mode-switcher button.active {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--platform-accent) 35%, transparent);
+}
+
+.platform-mode-switcher span,
+.platform-mode-switcher small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.platform-mode-switcher span {
+  font-weight: 700;
+}
+
+.platform-mode-switcher small,
+.cloud-sync-heading span,
+.cloud-sync-warning {
+  color: var(--muted, #666);
+}
+
+.cloud-sync-panel {
+  margin-top: 18px;
+  padding: 16px;
+  border: 1px solid var(--platform-border);
+  border-radius: 18px;
+  background: var(--platform-accent-soft);
+}
+
+.cloud-sync-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cloud-sync-heading div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cloud-sync-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.cloud-sync-grid label {
+  display: grid;
+  gap: 6px;
+}
+
+.cloud-sync-grid label > span {
+  color: var(--muted, #666);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.cloud-sync-grid input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 10px;
+  border: 1px solid var(--platform-border);
+  border-radius: 10px;
+  color: var(--ink, #24222a);
+  background: color-mix(in srgb, var(--platform-panel) 96%, transparent);
+  font: inherit;
+}
+
+.cloud-sync-panel button {
+  border: 1px solid var(--platform-border);
+  border-radius: 12px;
+  color: var(--ink, #24222a);
+  background: color-mix(in srgb, var(--platform-panel) 88%, var(--platform-accent-soft));
+  cursor: pointer;
+}
+
+.cloud-sync-panel button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.cloud-sync-warning {
+  display: block;
+  margin-top: 10px;
+  line-height: 1.5;
+}
+
+@media (max-width: 780px) {
+  body {
+    padding-bottom: 96px;
+  }
+
+  .platform-mode-switcher {
+    align-items: stretch;
+    bottom: 8px;
+  }
+
+  .platform-mode-switcher > strong,
+  .platform-mode-switcher small {
+    display: none;
+  }
+
+  .platform-mode-switcher button {
+    align-items: center;
+    padding-inline: 4px;
+    font-size: 12px;
+  }
+
+  .cloud-sync-grid {
+    grid-template-columns: 1fr;
+  }
+}

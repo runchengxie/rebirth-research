@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import type { GameState } from "../types";
+import { CloudSyncPanel } from "./CloudSyncPanel";
 import {
   clearPlaytestTelemetry,
   playtestTelemetryExport,
@@ -155,7 +156,7 @@ export function SaveTransferPanel({ year }: { year: string }) {
     <section className="save-transfer-panel" aria-label="存档与游玩数据">
       <div className="save-transfer-heading">
         <strong>存档与跨设备转移</strong>
-        <span>数据只保存在本地，导出前不会发送到服务器。</span>
+        <span>数据默认只保存在本地；云同步需要玩家主动配置。</span>
       </div>
       <div className="save-transfer-actions">
         <button type="button" onClick={exportSave}>导出存档</button>
@@ -197,6 +198,7 @@ export function SaveTransferPanel({ year }: { year: string }) {
           清除游玩记录
         </button>
       </div>
+      <CloudSyncPanel year={year} />
       {status ? <p className="save-transfer-status" role="status">{status}</p> : null}
     </section>
   );

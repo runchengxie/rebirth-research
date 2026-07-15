@@ -6,17 +6,13 @@ function fail(message) {
 }
 
 function requireFile(path) {
-  if (!fs.existsSync(path)) {
-    fail(`缺少文件：${path}`);
-  }
+  if (!fs.existsSync(path)) fail(`缺少文件：${path}`);
 }
 
 function requireText(path, expected) {
   const text = fs.readFileSync(path, "utf8");
   for (const item of expected) {
-    if (!text.includes(item)) {
-      fail(`${path} 缺少：${item}`);
-    }
+    if (!text.includes(item)) fail(`${path} 缺少：${item}`);
   }
   return text;
 }
@@ -29,9 +25,7 @@ const html = requireText("index.html", [
 ]);
 
 const inlineScripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)];
-for (const [, script] of inlineScripts) {
-  new Function(script);
-}
+for (const [, script] of inlineScripts) new Function(script);
 
 const packageJson = JSON.parse(fs.readFileSync("package.json", "utf8"));
 for (const dependency of [
@@ -46,9 +40,7 @@ for (const dependency of [
 ]) {
   const installed = packageJson.dependencies?.[dependency]
     || packageJson.devDependencies?.[dependency];
-  if (!installed) {
-    fail(`package.json 缺少依赖：${dependency}`);
-  }
+  if (!installed) fail(`package.json 缺少依赖：${dependency}`);
 }
 
 for (const script of [
@@ -64,9 +56,7 @@ for (const script of [
   "validate:bundle",
   "validate:frontend",
 ]) {
-  if (!packageJson.scripts?.[script]) {
-    fail(`package.json 缺少脚本：${script}`);
-  }
+  if (!packageJson.scripts?.[script]) fail(`package.json 缺少脚本：${script}`);
 }
 
 const rasterAssets = [
@@ -94,19 +84,29 @@ for (const file of [
   "src/app/GameScreen.tsx",
   "src/app/ImmersiveGameScreen.tsx",
   "src/app/useGameController.ts",
+  "src/app/useGameSessionMachine.ts",
   "src/types.ts",
   "src/styles.css",
   "src/immersive.css",
   "src/rebirth.css",
   "src/rebirth-v2.css",
+  "src/research-ux.css",
+  "src/platform.css",
   "src/timeline.css",
   "src/components/PixiStage.tsx",
   "src/components/ArchiveDrawer.tsx",
+  "src/components/CloudSyncPanel.tsx",
   "src/components/EndingPanel.tsx",
   "src/components/InvestigationPanel.tsx",
+  "src/components/ModeSwitcher.tsx",
   "src/components/RebirthTimelinePanel.tsx",
+  "src/components/ResearchCommitmentPanel.tsx",
+  "src/components/SaveTransferPanel.tsx",
   "src/components/StatusBar.tsx",
   "src/components/StoryRecapPanel.tsx",
+  "src/modes/CommitteeMode.tsx",
+  "src/modes/ContentStudioMode.tsx",
+  "src/modes/DailyChallengeMode.tsx",
   "src/audio/bgm.ts",
   "src/audio/sfx.ts",
   "src/data/gameData.ts",
@@ -114,18 +114,24 @@ for (const file of [
   "src/game/branching.ts",
   "src/game/branches.ts",
   "src/game/characters.ts",
+  "src/game/cloudSync.ts",
+  "src/game/committeeMode.ts",
+  "src/game/communityContent.ts",
   "src/game/content.ts",
   "src/game/content2023.ts",
   "src/game/content2024.ts",
   "src/game/content2025.ts",
   "src/game/contentDemo.ts",
+  "src/game/dailyChallenge.ts",
   "src/game/decisionFactory.ts",
   "src/game/engine.ts",
   "src/game/engine.test.ts",
   "src/game/linRoute2025.ts",
   "src/game/linRoute2025.test.ts",
+  "src/game/narrativeMachine.ts",
   "src/game/narrativeSemantics.ts",
   "src/game/narrativeSemantics.test.ts",
+  "src/game/platformModes.ts",
   "src/game/rebirth.ts",
   "src/game/rebirth.test.ts",
   "src/game/rebirthBranches.ts",
@@ -142,11 +148,14 @@ for (const file of [
   "src/game/rebirthTimelineGuards.test.ts",
   "src/game/rebirthTimelineInsights.ts",
   "src/game/rebirthTimelineState.ts",
+  "src/game/researchCommitment.ts",
   "src/game/runtime.ts",
   "src/game/runtime.test.ts",
   "src/game/saveState.ts",
   "src/game/saveState.test.ts",
   "src/game/sceneBuilders.ts",
+  "src/game/sessionEnvelope.ts",
+  "src/game/sessionMachine.ts",
   "src/game/supportingRoutes2025.ts",
   "src/game/supportingRoutes2025.test.ts",
   "src/game/storyArcs.ts",
@@ -163,9 +172,7 @@ for (const file of [
   "tsconfig.app.json",
   ...rasterAssets,
   ".github/workflows/pages.yml",
-]) {
-  requireFile(file);
-}
+]) requireFile(file);
 
 const rasterBudgetBytes = 500 * 1024;
 for (const asset of rasterAssets) {
@@ -175,13 +182,22 @@ for (const asset of rasterAssets) {
   }
 }
 
-requireText("src/App.tsx", ["ImmersiveGameScreen", "Chapter1Spike", "pixivn"]);
+requireText("src/App.tsx", [
+  "ImmersiveGameScreen",
+  "useGameSessionMachine",
+  "ModeSwitcher",
+  "CommitteeMode",
+  "DailyChallengeMode",
+  "ContentStudioMode",
+]);
 const immersiveScreen = requireText("src/app/ImmersiveGameScreen.tsx", [
   "DebatePanel",
   "PixiStage",
   "loadArchiveDrawer",
   "ArchiveDrawer",
   "InvestigationPanel",
+  "ResearchCommitmentPanel",
+  "SaveTransferPanel",
   "canGoBack",
   "跳过已读",
   "记录与档案",
@@ -189,6 +205,44 @@ const immersiveScreen = requireText("src/app/ImmersiveGameScreen.tsx", [
 if (immersiveScreen.includes("RebirthTimelinePanel")) {
   fail("主界面不应同步导入因果回溯面板");
 }
+requireText("src/app/useGameSessionMachine.ts", [
+  "useReducer",
+  "gameSessionReducer",
+  "writeSessionEnvelope",
+  "narrativeFrameFor",
+]);
+requireText("src/game/sessionMachine.ts", [
+  "GameSessionAction",
+  "reduceAdvance",
+  "reduceDecision",
+  "simulate-timeline",
+]);
+requireText("src/game/narrativeMachine.ts", [
+  "NarrativePhase",
+  "narrativeFrameFor",
+  "isDebateNode",
+]);
+requireText("src/game/committeeMode.ts", [
+  "COMMITTEE_EXAMINERS",
+  "buildCommitteeRounds",
+  "evaluateCommittee",
+]);
+requireText("src/game/communityContent.ts", [
+  "rebirth-research-community-pack",
+  "validateCommunityPack",
+  "communityDecisionToResearchDecision",
+]);
+requireText("src/game/dailyChallenge.ts", [
+  "dailyChallengeFor",
+  "currentDailyStreak",
+  "dailyShareText",
+]);
+requireText("src/game/cloudSync.ts", [
+  "AES-GCM",
+  "PBKDF2",
+  "pushCloudSave",
+  "pullCloudSave",
+]);
 requireText("src/components/ArchiveDrawer.tsx", [
   "loadTimelinePanel",
   "RebirthTimelinePanel",
@@ -200,10 +254,8 @@ requireText("src/components/RebirthTimelinePanel.tsx", [
   "timeline-tree",
   "显示全部月份",
 ]);
-const mainEntry = requireText("src/main.tsx", ["createRoot", "rebirth-v2.css"]);
-if (mainEntry.includes("timeline.css")) {
-  fail("时间线样式应由异步回溯组件加载");
-}
+const mainEntry = requireText("src/main.tsx", ["createRoot", "rebirth-v2.css", "platform.css"]);
+if (mainEntry.includes("timeline.css")) fail("时间线样式应由异步回溯组件加载");
 requireText("vite.config.ts", ["react-vendor", "tone"]);
 requireText("src/app/useGameController.ts", [
   "ProceduralBgm",
@@ -263,15 +315,9 @@ requireText("src/data/gameData.ts", [
 ]);
 
 for (const year of ["2023", "2024", "2025"]) {
-  const content = JSON.parse(
-    fs.readFileSync(`src/game/content/${year}.json`, "utf8"),
-  );
-  if (content.year !== year) {
-    fail(`src/game/content/${year}.json 的 year 字段不一致`);
-  }
-  if (content.contentVersion !== 2) {
-    fail(`src/game/content/${year}.json 应使用 contentVersion 2`);
-  }
+  const content = JSON.parse(fs.readFileSync(`src/game/content/${year}.json`, "utf8"));
+  if (content.year !== year) fail(`src/game/content/${year}.json 的 year 字段不一致`);
+  if (content.contentVersion !== 2) fail(`src/game/content/${year}.json 应使用 contentVersion 2`);
   if (!Array.isArray(content.themes) || content.themes.length !== 12) {
     fail(`src/game/content/${year}.json 应包含 12 个主题`);
   }
@@ -284,18 +330,14 @@ const sandbox = { window: {} };
 vm.createContext(sandbox);
 vm.runInContext(fs.readFileSync("data/game-data.js", "utf8"), sandbox);
 const data = sandbox.window.REBIRTH_GAME_DATA;
-if (!data || typeof data !== "object") {
-  fail("data/game-data.js 没有定义 window.REBIRTH_GAME_DATA");
-}
+if (!data || typeof data !== "object") fail("data/game-data.js 没有定义 window.REBIRTH_GAME_DATA");
 
 const years = Object.keys(data).sort();
-if (years.length === 0) {
-  fail("data/game-data.js 没有年份数据");
-}
+if (years.length === 0) fail("data/game-data.js 没有年份数据");
 for (const year of years) {
   if (!Array.isArray(data[year].months) || data[year].months.length !== 12) {
     fail(`data/game-data.js 中的 ${year} 应包含 12 个月`);
   }
 }
 
-console.log(`前端结构校验通过。当前正式入口：2025。往年档案：2023、2024。静态数据年份：${years.join("、")}。`);
+console.log(`前端结构校验通过。模式：年度剧情、投委会、每日挑战、内容工坊。静态数据年份：${years.join("、")}。`);

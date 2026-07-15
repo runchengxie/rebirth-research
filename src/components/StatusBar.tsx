@@ -48,7 +48,42 @@ function relationshipSummary(state: GameState): string {
   return `${CHARACTERS[lead].name}：${STAGES[lead](state)}`;
 }
 
-export function StatusBar({ state }: { state: GameState }) {
+function researchLabel(value: number): string {
+  if (value >= 80) return "框架可托付";
+  if (value >= 60) return "研究稳定可信";
+  if (value >= 40) return "证据链成形";
+  return "推导仍有缺口";
+}
+
+function trustLabel(value: number): string {
+  if (value >= 80) return "团队愿意共同担责";
+  if (value >= 60) return "协作稳定";
+  if (value >= 40) return "正在建立默契";
+  return "仍在观察";
+}
+
+function balanceLabel(value: number): string {
+  if (value >= 75) return "节奏清醒";
+  if (value >= 50) return "尚能维持";
+  if (value >= 30) return "透支开始显形";
+  return "状态接近失控";
+}
+
+function metricValue(
+  value: number,
+  showExactMetrics: boolean,
+  labelFor: (metric: number) => string,
+): string {
+  return showExactMetrics ? `${value}/100` : labelFor(value);
+}
+
+export function StatusBar({
+  state,
+  showExactMetrics = false,
+}: {
+  state: GameState;
+  showExactMetrics?: boolean;
+}) {
   const data = GAME_DATA[state.year];
   const total = data.scenes.length;
   return (
@@ -61,15 +96,15 @@ export function StatusBar({ state }: { state: GameState }) {
       </div>
       <div className="stat">
         <span>研究可信度</span>
-        <strong>{state.researchCredibility}/100</strong>
+        <strong>{metricValue(state.researchCredibility, showExactMetrics, researchLabel)}</strong>
       </div>
       <div className="stat">
         <span>团队信任</span>
-        <strong>{state.teamTrust}/100</strong>
+        <strong>{metricValue(state.teamTrust, showExactMetrics, trustLabel)}</strong>
       </div>
       <div className="stat">
         <span>生活平衡</span>
-        <strong>{state.lifeBalance}/100</strong>
+        <strong>{metricValue(state.lifeBalance, showExactMetrics, balanceLabel)}</strong>
       </div>
     </section>
   );

@@ -19,6 +19,7 @@ for (const file of [
   "src/components/AppErrorBoundary.tsx",
   "src/stability.css",
   "src/platform-polish.css",
+  "src/platform-theme.css",
   "src/settings-polish.css",
   "src/game/communityContent.test.ts",
   "scripts/playwright.config.js",
@@ -40,6 +41,7 @@ requireText("src/App.tsx", [
   'aria-busy="true"',
   "mode-${mode}",
   "platform-polish.css",
+  "platform-theme.css",
 ]);
 requireText("src/components/ArchiveDrawer.tsx", [
   "FOCUSABLE_SELECTOR",
@@ -76,6 +78,12 @@ requireText("src/platform-polish.css", [
   "max-height: calc(100vh - 114px)",
   "--platform-input-border",
 ]);
+requireText("src/platform-theme.css", [
+  ':root[data-theme="dark"]',
+  ".app-shell:not(.mode-story) .platform-mode-switcher",
+  ".studio-preview",
+  "overflow: visible",
+]);
 requireText("src/game/communityContent.ts", [
   "COMMUNITY_PACK_MAX_BYTES",
   "COMMUNITY_PACK_MAX_CASES",
@@ -85,6 +93,7 @@ requireText("src/game/communityContent.ts", [
 ]);
 requireText("scripts/e2e/platform.spec.js", [
   "AxeBuilder",
+  "waitForPageReady",
   "answerCommittee",
   "档案弹窗关闭后恢复焦点",
   "研究平台栏不会遮挡操作按钮",

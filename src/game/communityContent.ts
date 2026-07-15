@@ -7,6 +7,9 @@ import type {
 export const COMMUNITY_PACK_FORMAT = "rebirth-research-community-pack";
 export const COMMUNITY_PACK_VERSION = 1;
 export const COMMUNITY_LIBRARY_KEY = "rebirthCommunityPacks:v1";
+export const COMMUNITY_PACK_MAX_BYTES = 256 * 1024;
+export const COMMUNITY_PACK_MAX_CASES = 20;
+export const COMMUNITY_CASE_MAX_DECISIONS = 8;
 
 export interface CommunityDecision {
   id: string;
@@ -62,6 +65,19 @@ const METHODS: readonly DecisionMethod[] = [
 
 const QUALITIES: readonly DecisionQuality[] = ["sound", "mixed", "reckless"];
 
+const FIELD_LIMITS = {
+  id: 96,
+  title: 120,
+  author: 80,
+  description: 800,
+  context: 2400,
+  futureMemory: 1600,
+  hypothesis: 1600,
+  outcome: 2400,
+  decisionLabel: 160,
+  decisionDescription: 1000,
+} as const;
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
 }
@@ -74,14 +90,36 @@ function bounded(value: unknown, min: number, max: number): value is number {
   return typeof value === "number" && Number.isFinite(value) && value >= min && value <= max;
 }
 
+function validateText(
+  value: unknown,
+  path: string,
+  maxLength: number,
+  errors: string[],
+): value is string {
+  if (!nonEmpty(value)) {
+    errors.push(`${path} 不能为空。`);
+    return false;
+  }
+  if (value.length > maxLength) {
+    errors.push(`${path} 不能超过 ${maxLength} 个字符。`);
+    return false;
+  }
+  return true;
+}
+
 function validateDecision(value: unknown, path: string, errors: string[]): void {
   if (!isRecord(value)) {
     errors.push(`${path} 必须是对象。`);
     return;
   }
-  for (const field of ["id", "label", "description"] as const) {
-    if (!nonEmpty(value[field])) errors.push(`${path}.${field} 不能为空。`);
-  }
+  validateText(value.id, `${path}.id`, FIELD_LIMITS.id, errors);
+  validateText(value.label, `${path}.label`, FIELD_LIMITS.decisionLabel, errors);
+  validateText(
+    value.description,
+    `${path}.description`,
+    FIELD_LIMITS.decisionDescription,
+    errors,
+  );
   if (!METHODS.includes(value.method as DecisionMethod)) errors.push(`${path}.method 无效。`);
   if (!QUALITIES.includes(value.quality as DecisionQuality)) errors.push(`${path}.quality 无效。`);
   for (const [field, max] of [["evidence", 20], ["clarity", 20], ["risk", 20], ["reflection", 15]] as const) {
@@ -95,44 +133,77 @@ function validateCase(value: unknown, index: number, errors: string[]): void {
     errors.push(`${path} 必须是对象。`);
     return;
   }
+  validateText(value.id, `${path}.id`, FIELD_LIMITS.id, errors);
+  validateText(value.title, `${path}.title`, FIELD_LIMITS.title, errors);
+  validateText(value.context, `${path}.context`, FIELD_LIMITS.context, errors);
+  validateText(
+    value.futureMemory,
+    `${path}.futureMemory`,
+    FIELD_LIMITS.futureMemory,
+    errors,
+  );
   for (const field of [
-    "id",
-    "title",
-    "context",
-    "futureMemory",
     "fundamentalHypothesis",
     "quantitativeHypothesis",
     "riskHypothesis",
-    "outcome",
   ] as const) {
-    if (!nonEmpty(value[field])) errors.push(`${path}.${field} 不能为空。`);
+    validateText(value[field], `${path}.${field}`, FIELD_LIMITS.hypothesis, errors);
   }
+  validateText(value.outcome, `${path}.outcome`, FIELD_LIMITS.outcome, errors);
+
   if (!Array.isArray(value.decisions) || value.decisions.length < 2) {
     errors.push(`${path}.decisions 至少需要两个方案。`);
     return;
   }
+  if (value.decisions.length > COMMUNITY_CASE_MAX_DECISIONS) {
+    errors.push(`${path}.decisions 最多允许 ${COMMUNITY_CASE_MAX_DECISIONS} 个方案。`);
+  }
+
+  const decisionIds = new Set<string>();
   value.decisions.forEach((decision, decisionIndex) => {
     validateDecision(decision, `${path}.decisions[${decisionIndex}]`, errors);
+    if (!isRecord(decision) || !nonEmpty(decision.id)) return;
+    if (decisionIds.has(decision.id)) {
+      errors.push(`${path}.decisions 存在重复 id「${decision.id}」。`);
+    }
+    decisionIds.add(decision.id);
   });
 }
 
 export function validateCommunityPack(value: unknown): ContentValidationResult {
   const errors: string[] = [];
   if (!isRecord(value)) return { valid: false, errors: ["内容包必须是 JSON 对象。"] };
-  if (value.format !== COMMUNITY_PACK_FORMAT) errors.push("format 不匹配。") ;
-  if (value.version !== COMMUNITY_PACK_VERSION) errors.push("version 不受支持。") ;
-  for (const field of ["id", "title", "author", "description", "updatedAt"] as const) {
-    if (!nonEmpty(value[field])) errors.push(`${field} 不能为空。`);
+  if (value.format !== COMMUNITY_PACK_FORMAT) errors.push("format 不匹配。");
+  if (value.version !== COMMUNITY_PACK_VERSION) errors.push("version 不受支持。");
+  validateText(value.id, "id", FIELD_LIMITS.id, errors);
+  validateText(value.title, "title", FIELD_LIMITS.title, errors);
+  validateText(value.author, "author", FIELD_LIMITS.author, errors);
+  validateText(value.description, "description", FIELD_LIMITS.description, errors);
+  if (!nonEmpty(value.updatedAt) || Number.isNaN(Date.parse(value.updatedAt))) {
+    errors.push("updatedAt 必须是有效的日期时间。");
   }
+
   if (!Array.isArray(value.cases) || value.cases.length === 0) {
-    errors.push("内容包至少需要一个案例。") ;
+    errors.push("内容包至少需要一个案例。");
   } else {
-    value.cases.forEach((item, index) => validateCase(item, index, errors));
+    if (value.cases.length > COMMUNITY_PACK_MAX_CASES) {
+      errors.push(`内容包最多允许 ${COMMUNITY_PACK_MAX_CASES} 个案例。`);
+    }
+    const caseIds = new Set<string>();
+    value.cases.forEach((item, index) => {
+      validateCase(item, index, errors);
+      if (!isRecord(item) || !nonEmpty(item.id)) return;
+      if (caseIds.has(item.id)) errors.push(`cases 存在重复 id「${item.id}」。`);
+      caseIds.add(item.id);
+    });
   }
   return { valid: errors.length === 0, errors };
 }
 
 export function parseCommunityPack(raw: string): CommunityPack {
+  if (new TextEncoder().encode(raw).byteLength > COMMUNITY_PACK_MAX_BYTES) {
+    throw new Error(`内容包不能超过 ${Math.round(COMMUNITY_PACK_MAX_BYTES / 1024)} KiB。`);
+  }
   const value: unknown = JSON.parse(raw);
   const result = validateCommunityPack(value);
   if (!result.valid) throw new Error(result.errors.join("\n"));
@@ -154,6 +225,9 @@ export function readCommunityPacks(storage: Storage = localStorage): CommunityPa
 export function writeCommunityPack(pack: CommunityPack, storage: Storage = localStorage): void {
   const result = validateCommunityPack(pack);
   if (!result.valid) throw new Error(result.errors.join("\n"));
+  if (new TextEncoder().encode(JSON.stringify(pack)).byteLength > COMMUNITY_PACK_MAX_BYTES) {
+    throw new Error(`内容包不能超过 ${Math.round(COMMUNITY_PACK_MAX_BYTES / 1024)} KiB。`);
+  }
   const packs = readCommunityPacks(storage);
   const next = [...packs.filter((item) => item.id !== pack.id), pack];
   storage.setItem(COMMUNITY_LIBRARY_KEY, JSON.stringify(next));

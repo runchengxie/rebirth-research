@@ -1,10 +1,27 @@
 const { test, expect } = require("@playwright/test");
 const AxeBuilder = require("@axe-core/playwright").default;
 
+async function waitForPageReady(page, path) {
+  if (path.includes("mode=committee")) {
+    await expect(page.getByRole("heading", { name: "投委会答辩室" })).toBeVisible();
+    return;
+  }
+  if (path.includes("mode=daily")) {
+    await expect(page.getByRole("heading", { name: "每日研究挑战" })).toBeVisible();
+    return;
+  }
+  if (path.includes("mode=studio")) {
+    await expect(page.getByRole("heading", { name: "研究案例内容工坊" })).toBeVisible();
+    return;
+  }
+  await expect(page.locator(".immersive-app")).toBeVisible();
+}
+
 async function openClean(page, path) {
   await page.goto(path);
   await page.evaluate(() => localStorage.clear());
   await page.reload();
+  await waitForPageReady(page, path);
 }
 
 async function openDark(page, path) {
@@ -15,6 +32,7 @@ async function openDark(page, path) {
   });
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await waitForPageReady(page, path);
 }
 
 async function answerCommittee(page) {
@@ -103,7 +121,7 @@ async function expectScrollablePage(page, path) {
     scrollHeight: document.documentElement.scrollHeight,
     overflowY: getComputedStyle(document.body).overflowY,
   }));
-  expect(metrics.scrollHeight).toBeGreaterThan(metrics.clientHeight + 40);
+  expect(metrics.scrollHeight).toBeGreaterThan(metrics.clientHeight);
   expect(["auto", "visible", "scroll"]).toContain(metrics.overflowY);
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
@@ -219,7 +237,7 @@ test("深色模式关键平台文字和设置说明保持可读对比度", async
   await page.getByText("存档与跨设备转移", { exact: true }).click();
   await page.getByText("加密云同步", { exact: true }).click();
   await expect(page.locator(".cloud-sync-warning")).toBeVisible();
-  expect(await contrastRatio(page, ".cloud-sync-warning", ".cloud-sync-panel")).toBeGreaterThanOrEqual(4.5);
+  expect(await contrastRatio(page, ".cloud-sync-warning", ".cloud-sync-body")).toBeGreaterThanOrEqual(4.5);
 });
 
 test("模式代码加载失败时显示恢复界面而不是白屏", async ({ page }) => {

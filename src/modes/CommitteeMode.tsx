@@ -83,10 +83,15 @@ function scoreRows(score: CommitteeScore) {
   ] as const;
 }
 
+function casesForRevision(revision: number): CommitteeCase[] {
+  void revision;
+  return [...builtInCases(), ...communityCases()];
+}
+
 export function CommitteeMode() {
   const [libraryRevision, setLibraryRevision] = useState(0);
   const cases = useMemo(
-    () => [...builtInCases(), ...communityCases()],
+    () => casesForRevision(libraryRevision),
     [libraryRevision],
   );
   const [caseId, setCaseId] = useState(cases[0]?.id ?? "");
@@ -121,7 +126,7 @@ export function CommitteeMode() {
 
   const startHearing = () => {
     if (!decision) {
-      setStatus("先选择一项愿意在投委会负责到底的研究方案。") ;
+      setStatus("先选择一项愿意在投委会负责到底的研究方案。");
       return;
     }
     setResponses([]);
@@ -164,7 +169,7 @@ export function CommitteeMode() {
     ].join("\n");
     try {
       await navigator.clipboard.writeText(text);
-      setStatus("答辩摘要已复制。终于有一种会议纪要不会在会后神秘失踪。") ;
+      setStatus("答辩摘要已复制。终于有一种会议纪要不会在会后神秘失踪。");
     } catch {
       setStatus(text);
     }

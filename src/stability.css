@@ -1,0 +1,86 @@
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 10000;
+  padding: 0.7rem 1rem;
+  border: 1px solid currentColor;
+  border-radius: 0.75rem;
+  background: var(--panel, #ffffff);
+  color: var(--text, #171923);
+  font-weight: 700;
+  transform: translateY(-180%);
+  transition: transform 140ms ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.app-main-focus-target {
+  min-height: 100vh;
+  outline: none;
+}
+
+.app-main-focus-target:focus-visible {
+  outline: 3px solid color-mix(in srgb, currentColor 45%, transparent);
+  outline-offset: -3px;
+}
+
+.app-error-boundary {
+  width: min(46rem, calc(100% - 2rem));
+  margin: 8rem auto 2rem;
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+  border-radius: 1.25rem;
+  background: var(--panel, #ffffff);
+  box-shadow: 0 1.5rem 4rem rgb(0 0 0 / 14%);
+}
+
+.app-error-boundary > span {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.65;
+}
+
+.app-error-boundary h1 {
+  margin: 0;
+}
+
+.app-error-boundary details {
+  margin-block: 1rem;
+}
+
+.app-error-boundary code {
+  display: block;
+  margin-top: 0.65rem;
+  padding: 0.85rem;
+  overflow-wrap: anywhere;
+  border-radius: 0.75rem;
+  background: rgb(0 0 0 / 7%);
+}
+
+.app-error-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.app-error-actions button {
+  min-height: 2.75rem;
+  padding-inline: 1rem;
+}
+
+.archive-drawer:focus {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skip-link {
+    transition: none;
+  }
+}

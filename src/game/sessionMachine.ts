@@ -177,6 +177,24 @@ function reduceDecision(
   return { state: nextState, rebirth };
 }
 
+function reduceFork(
+  snapshot: GameSessionSnapshot,
+  anchorId: string,
+): GameSessionSnapshot {
+  const result = forkTimelineAtAnchor(snapshot.rebirth, snapshot.state, anchorId);
+  if (!result.changed) return snapshot;
+  return { state: result.state, rebirth: result.meta };
+}
+
+function reduceResume(
+  snapshot: GameSessionSnapshot,
+  branchId: string,
+): GameSessionSnapshot {
+  const result = resumeTimelineBranch(snapshot.rebirth, snapshot.state, branchId);
+  if (!result.changed) return snapshot;
+  return { state: result.state, rebirth: result.meta };
+}
+
 export function gameSessionReducer(
   snapshot: GameSessionSnapshot,
   action: GameSessionAction,
@@ -207,14 +225,10 @@ export function gameSessionReducer(
       return reduceInvestigation(snapshot, action.nodeId);
     case "make-decision":
       return reduceDecision(snapshot, action.decision);
-    case "fork-timeline": {
-      const result = forkTimelineAtAnchor(snapshot.rebirth, snapshot.state, action.anchorId);
-      return result.changed ? { state: result.state, rebirth: result.meta } : snapshot;
-    }
-    case "resume-timeline": {
-      const result = resumeTimelineBranch(snapshot.rebirth, snapshot.state, action.branchId);
-      return result.changed ? { state: result.state, rebirth: result.meta } : snapshot;
-    }
+    case "fork-timeline":
+      return reduceFork(snapshot, action.anchorId);
+    case "resume-timeline":
+      return reduceResume(snapshot, action.branchId);
     case "simulate-timeline":
       return {
         ...snapshot,

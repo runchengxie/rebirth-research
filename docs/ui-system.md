@@ -38,7 +38,7 @@
 
 ## 平台配色变量
 
-公共变量位于 `src/platform-shell.css`：
+公共变量位于 `src/platform-shell.css`，平台模式在 `src/platform-theme.css` 中再次声明最终值，确保旧基础样式不会覆盖深色主题：
 
 - `--platform-bg`：页面背景
 - `--platform-panel`：普通卡片
@@ -117,7 +117,7 @@ Playwright 会检查投委会正文、每日挑战正文、内容工坊字段标
 - 模式导航只显示名称。
 - 设置弹层变为视口内的固定面板，并为底部模式导航预留空间。
 - 投委会、每日挑战和内容工坊改为单列。
-- 内容工坊左右侧栏取消粘性定位。
+- 内容工坊侧栏取消粘性定位。
 - 云同步表单改为单列。
 
 ### 480px 以下
@@ -128,7 +128,7 @@ Playwright 会检查投委会正文、每日挑战正文、内容工坊字段标
 
 ## 滚动条
 
-平台页面、案例列表、内容工坊侧栏和设置弹层使用细滚动条。滚动条颜色来自 `--platform-border`，不能隐藏滚动条，因为用户需要知道仍有未显示内容。
+平台页面、案例列表、内容工坊本地案例库和设置弹层使用细滚动条。实时预览跟随页面文档滚动，不再制造额外内嵌滚动区。滚动条颜色来自 `--platform-border`，不能隐藏滚动条，因为用户需要知道仍有未显示内容。
 
 ## 浏览器回归
 
@@ -147,6 +147,7 @@ Playwright 会检查投委会正文、每日挑战正文、内容工坊字段标
 - `src/settings-polish.css`：设置基础控件布局
 - `src/platform.css`：平台模式基础结构
 - `src/platform-polish.css`：平台滚动、深色主题和视觉覆盖
+- `src/platform-theme.css`：懒加载后的最终主题 token 和滚动流覆盖
 - `src/App.tsx`：模式类名和平台样式加载顺序
 - `src/components/SaveTransferPanel.tsx`：渐进式存档界面
 - `src/components/CloudSyncPanel.tsx`：渐进式云同步界面

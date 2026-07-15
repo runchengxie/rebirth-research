@@ -1,46 +1,34 @@
 import { lazy, Suspense, useState } from "react";
 import { ImmersiveGameScreen } from "./app/ImmersiveGameScreen";
+import { useGameSessionMachine } from "./app/useGameSessionMachine";
 import {
   canUsePixiStage,
   useGameAudio,
-  useGameSession,
   useSettingsMenu,
   useThemeControl,
 } from "./app/useGameController";
+import { ModeSwitcher } from "./components/ModeSwitcher";
+import {
+  platformModeFromSearch,
+  type PlatformMode,
+} from "./game/platformModes";
 
-const Chapter1Spike = lazy(() =>
-  import("./spike/pixivn/Chapter1Spike").then((module) => ({
-    default: module.Chapter1Spike,
-  })),
+const CommitteeMode = lazy(() =>
+  import("./modes/CommitteeMode").then((module) => ({ default: module.CommitteeMode })),
+);
+const DailyChallengeMode = lazy(() =>
+  import("./modes/DailyChallengeMode").then((module) => ({ default: module.DailyChallengeMode })),
+);
+const ContentStudioMode = lazy(() =>
+  import("./modes/ContentStudioMode").then((module) => ({ default: module.ContentStudioMode })),
 );
 
-export default function App() {
+function StoryMode() {
   const audio = useGameAudio();
-  const session = useGameSession(audio);
+  const session = useGameSessionMachine(audio);
   const settings = useSettingsMenu();
   const themeControl = useThemeControl();
   const [usePixiStage] = useState(canUsePixiStage);
-  const [usePixivnSpike] = useState(
-    () => new URLSearchParams(window.location.search).get("pixivn") === "1",
-  );
-
-  if (usePixivnSpike) {
-    return (
-      <Suspense
-        fallback={
-          <div className="app">
-            <p>加载 Pixi'VN 第一话 spike…</p>
-          </div>
-        }
-      >
-        <Chapter1Spike
-          state={session.state}
-          onDecision={session.makeDecisionWithSound}
-          onFocus={session.selectFocusWithSound}
-        />
-      </Suspense>
-    );
-  }
 
   return (
     <ImmersiveGameScreen
@@ -52,5 +40,31 @@ export default function App() {
       themeControl={themeControl}
       usePixiStage={usePixiStage}
     />
+  );
+}
+
+function ModeContent({ mode }: { mode: PlatformMode }) {
+  if (mode === "committee") return <CommitteeMode />;
+  if (mode === "daily") return <DailyChallengeMode />;
+  if (mode === "studio") return <ContentStudioMode />;
+  return <StoryMode />;
+}
+
+export default function App() {
+  const [mode] = useState(() => platformModeFromSearch(window.location.search));
+  return (
+    <>
+      <ModeSwitcher activeMode={mode} />
+      <Suspense
+        fallback={(
+          <main className="platform-screen platform-loading" role="status">
+            <strong>正在加载研究模式</strong>
+            <p>浏览器在整理档案、会议室和人类制造的各种流程。</p>
+          </main>
+        )}
+      >
+        <ModeContent mode={mode} />
+      </Suspense>
+    </>
   );
 }

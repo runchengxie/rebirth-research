@@ -6,6 +6,7 @@ import { THEMES_2023, makeDecisions2023 } from "../content2023";
 import { THEMES_2024, makeDecisions2024 } from "../content2024";
 import { THEMES_2025, makeDecisions2025 } from "../content2025";
 import { applyVerified2025Timeline, VERIFIED_2025_TIMELINE } from "../verified2025";
+import { completeDecisionSemantics, completeYearThemes } from "../narrativeSemantics";
 import { ContentValidationError, validateYearContent } from "./schema";
 
 const YEARS = [
@@ -29,9 +30,9 @@ const YEARS = [
   },
 ] as const;
 
-describe("正式年份内容层", () => {
+describe("三份版本化年份内容", () => {
   for (const sample of YEARS) {
-    it(`${sample.year} 年包含完整的 12 个月 v2 内容`, () => {
+    it(`${sample.year} 年包含完整的十二个月第二版内容`, () => {
       const content = validateYearContent(sample.raw);
       expect(content.contentVersion).toBe(2);
       expect(content.year).toBe(sample.year);
@@ -48,20 +49,22 @@ describe("正式年份内容层", () => {
         && decision.quality
         && decision.outcomeAlignment
         && Array.isArray(decision.behaviorTags))).toBe(true);
+      const completedThemes = completeYearThemes(content.themes);
       const expectedThemes = sample.year === "2025"
-        ? applyVerified2025Timeline(content.themes)
-        : content.themes;
+        ? applyVerified2025Timeline(completedThemes)
+        : completedThemes;
       expect(sample.themes).toEqual(expectedThemes);
     });
 
     it(`${sample.year} 年加载器按月份返回研究方案并支持循环索引`, () => {
       const content = validateYearContent(sample.raw);
-      expect(sample.makeDecisions(0)).toEqual(content.decisions[0]);
-      expect(sample.makeDecisions(12)).toEqual(content.decisions[0]);
+      const expectedDecisions = content.decisions[0].map(completeDecisionSemantics);
+      expect(sample.makeDecisions(0)).toEqual(expectedDecisions);
+      expect(sample.makeDecisions(12)).toEqual(expectedDecisions);
     });
   }
 
-  it("2025 年核验台账覆盖 12 个月并修正错位事件", () => {
+  it("2025 年核验台账覆盖十二个月并修正错位事件", () => {
     expect(VERIFIED_2025_TIMELINE).toHaveLength(12);
     expect(VERIFIED_2025_TIMELINE.every((anchor) => anchor.sourceIds.length > 0)).toBe(true);
     expect(THEMES_2025[2].historicalPrototype).toContain("继续推进");
@@ -69,7 +72,7 @@ describe("正式年份内容层", () => {
     expect(THEMES_2025[7].publicContext).not.toContain("三中全会");
   });
 
-  it("把追涨错误选项识别为市场追逐，而不是风险管理", () => {
+  it("把追涨错误选项归入市场追逐，避免误判为风险管理", () => {
     const chase = makeDecisions2023(1).find((decision) => decision.id === "2023feb-chase");
     expect(chase?.category).toBe("risk_alert");
     expect(chase?.method).toBe("market_chasing");
@@ -85,7 +88,7 @@ describe("正式年份内容层", () => {
     expect(nonAnalytical.every((decision) => !decision.behaviorTags?.includes("thin_evidence"))).toBe(true);
   });
 
-  it("拒绝缺少业务事实或三方假设的 v2 内容", () => {
+  it("拒绝缺少业务事实或三方假设的第二版内容", () => {
     const missingOutcome = structuredClone(raw2023);
     missingOutcome.themes[0].businessOutcome = "";
     expect(() => validateYearContent(missingOutcome)).toThrow(/businessOutcome/);

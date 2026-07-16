@@ -192,7 +192,7 @@ export function applyResearchCommitment(
   const falsifierMatches = RECOMMENDED_FALSIFIER[method] === commitment.falsifier;
   const note = [
     decision.backgroundNote,
-    `提交前承诺：置信度 ${commitment.confidence}%；失效条件为「${falsifierLabel(commitment.falsifier)}」；投委会自检 ${context.completed}/3。`,
+    `提交前承诺：置信度 ${commitment.confidence}%。失效条件为${falsifierLabel(commitment.falsifier)}。投委会自检 ${context.completed}/3。`,
     commitmentNarrative(context),
   ].filter(Boolean).join(" ");
 

@@ -1,79 +1,81 @@
-# 示范章节 · 一章怎么把三个系统串起来
+# 开发示范章节
 
-这份文档给评审和写手看：一章里，三方竞争假说、知识卡、办公室道具是怎么同时工作的。它不是概念说明，是一段真的能玩到的内容（已落地为 demo 年份）。
+`demo` 是给内容维护者使用的开发样本，用来检查三方观点、知识卡和办公室痕迹能否在同一话中正常工作。它不出现在主菜单和年份选择器中。
 
-## 怎么玩到
+## 打开方式
 
-两种方式：
+使用深链进入：
 
-- 界面里：右上角年份选择器选 `demo`（默认还是 2025，不会一进来就进示范）。
-- 深链：打开 `index.html?year=demo`。
-
-进去后是一整年 12 个月，每月都循环演示这三个系统。下面用「示范 1 月」完整走一遍。
-
-## 节点图（示范 1 月）
-
-```
-[记忆节点]  内心独白：未来记忆（你知道后来推理成本降了，但说不出哪月落地）
-    │
-    ▼
-[竞争假说节点]  三方视角：林/陈/周各说各的，没有标准答案  ← 系统①三方竞争假说
-    │
-    ▼
-[同事节点]  林若宁把材料推过来：公开信息 + 本话引导
-    │
-    ▼
-[决策节点]  选一个研究方向  ← 这里每个选项后面都接系统②和③
-    │
-    ▼ （玩家选「连夜写《低成本推理对应用软件的影响》」）
-    │
-[复盘面板]  ← 结算后一次性呈现
-    ├─ 同事评分反馈（S/A/B/C/D）
-    ├─ 事后复盘（postMortem）
-    ├─ 业务事实结算（businessOutcome，不是股价）  ← 系统①的落点
-    └─ 本月学到 · 产业链交叉验证（林若宁用自己声音教一句）  ← 系统②知识卡
-    │
-[右侧栏同步更新]
-    ├─ 研究室：便签 +1、白板 +1、咖啡 +1  ← 系统③办公室道具
-    └─ 研究札记：多一张「产业链交叉验证」卡
+```text
+?year=demo
 ```
 
-## 三个系统分别由什么驱动
+示范内容共有 12 话，由四组主题循环组成，适合验证系统接线。正式玩家入口当前只展示 2025 年。
 
-### 系统① 三方竞争假说
-- 数据：`MarketTheme.competingHypotheses`（lin / chen / zhou 各一段）。
-- 引擎：`contentDemo.ts` 的 `buildDemoCompetingNode` 把三段拼成一句话，demo 从第 0 月就展示（正式年份从第 2 月起）。
-- 意义：玩家被迫在分歧里表态，而不是等一个标准答案。
+## 一话流程
 
-### 系统② 知识卡
-- 数据：关键决策带 `teaches: KnowledgeCard`（见 `pool0` 的 `demo-a-deep`）。
-- 引擎：`engine.ts` 的 `pickKnowledgeCard` 优先用 `decision.teaches`，存入 `GameState.knowledgeCards`。
-- 呈现：复盘面板的「本月学到」块 + 右侧栏「研究札记」。教学台词是角色口吻，不是弹窗教科书。
+以示范一月为例：
 
-### 系统③ 办公室道具
-- 数据：`engine.ts` 的 `makeDecision` 按决策类别累加 `OfficeState`（deep_research/help_colleague → 便签，deep_research/data_deep_dive/committee_defense → 白板，熬夜类 → 咖啡）。
-- 呈现：右侧栏「研究室」组件，便签/白板/咖啡三个计数 + 第 X/12 月进度。
-- 意义：时间有了可见的痕迹，办公室成了第四位角色。
+```text
+未来记忆
+  ↓
+三位同事分别提出基本面、量价和风控观点
+  ↓
+同事递交公开材料与本话任务
+  ↓
+玩家选择研究方案
+  ↓
+结算评分、业务事实和知识卡
+  ↓
+办公室痕迹与研究档案更新
+```
 
-## 玩家每一步会看到什么
+三位同事的观点在年度剧情界面中显示为三张独立卡片。每张卡只承载一位角色的姓名、方法标签和观点，避免多人台词连成一段。
 
-1. 开场白：顾行之的内心独白，未来记忆 but 没有证据链（埋下「记忆是负债」的钩子）。
-2. 三方视角：林若宁看留存、陈星禾看订单流、周明昭看估值分位。玩家意识到没有唯一正确。
-3. 同事递材料：把公开信息和本话引导抛出来。
-4. 决策：六个选项覆盖深研/访谈/拆数据/风险提示/帮同事/自我照顾，类别差异明显（不是程度差异）。
-5. 复盘：评分 + 业务事实结算（讲生意怎么变，不讲涨跌）+ 同事教的一句知识卡。
-6. 右侧栏：研究室道具 +1、研究札记 +1 张。
+## 三方观点
 
-## 写手照抄清单
+数据位于 `MarketTheme.competingHypotheses`，包含 `lin`、`chen` 和 `zhou` 三个字段。
 
-- 每月主题必须填 `competingHypotheses`（三视角）+ `businessOutcome`（业务事实，不写股价）+ `knownEvent`（未来记忆锚点）。
-- 至少一条决策带 `teaches`，让复盘有东西教。
-- 决策类别要分散，保证办公室三种道具都能被触发。
-- 决策文案用角色的词汇（见 `docs/characters.md`），别写成作者旁白。
-- 想演示「记忆负债」：放一条 evidence/clarity 双低但总分高的选项，引擎会点亮 `parachuted_` 标记，后续相关导师语气转警惕。
+`src/game/contentDemo.ts` 负责构建示范场景。`src/components/DebatePanel.tsx` 从当月主题读取三种假设，并按角色渲染观点卡。档案记录按角色保留三条观点，方便回看时确认每个人说了什么。
 
-## 代码落点速查
+每种观点需要具备独立的证据路径：
 
-- 内容：`src/game/contentDemo.ts`（`THEMES_DEMO` / `makeDecisionsDemo` / `buildDemoChapter`）。
-- 接线：`src/game/content.ts`（`YEAR_THEMES` 加 demo、`buildMonthScene` 早返回、`makeResearchDecisions` 路由）、`src/data/gameData.ts`（加 `"demo"` 年份）、`src/App.tsx`（`bestInitialYear` 保默认 2025）。
-- 呈现：`src/components/StoryRecapPanel.tsx`（复盘四块）、`src/App.tsx` 的 `ResearchNotes` 与 `OfficeWidget`、`src/styles.css` 对应样式。
+- 林若宁检查客户使用、订单、留存和收入质量。
+- 陈星禾检查成交结构、资金持续性、样本和归因。
+- 周明昭检查估值、传导时滞、下行情景和退出条件。
+
+## 知识卡
+
+关键研究方案可以通过 `teaches` 直接携带一张 `KnowledgeCard`。玩家选择该方案后，结算引擎把知识卡写入 `GameState.knowledgeCards`。
+
+知识卡会出现在本话复盘和档案抽屉的研究档案中。卡片文字使用对应角色的语气，并说明当前选择教会了玩家什么方法。
+
+## 办公室痕迹
+
+`GameState.office` 记录便签、白板笔迹、咖啡杯和完成月份。不同研究类别会产生不同痕迹，例如深度研究增加便签与白板笔迹，熬夜类选择增加咖啡杯。
+
+职业模式在档案抽屉的研究室标签中显示这些积累。玩家可以整理物件并触发稳定旗标和后续回调。主舞台不叠加办公室计数装饰。
+
+## 内容维护检查
+
+新增或调整示范内容时确认：
+
+- 每月都有 `knownEvent`、`businessOutcome` 和 `competingHypotheses`。
+- 三种观点各自完整，不依赖另一张卡才能读懂。
+- 研究方案覆盖不同方法与行为后果。
+- 至少有一项方案能够产生知识卡。
+- 业务事实说明生意怎样变化，不使用股价裁定研究质量。
+- 对白使用中文标点，动作与说出口的话分别成段。
+- `?year=demo` 可以完成 12 话，并且不出现在正常年份选择器中。
+
+## 代码位置
+
+- `src/game/contentDemo.ts`：示范主题、研究方案和场景装配。
+- `src/game/contentDemo.test.ts`：示范内容与场景测试。
+- `src/game/sceneBuilders.ts`：年份内容路由。
+- `src/data/gameData.ts`：保留 `demo` 深链数据，同时让 `GAME_YEARS` 只展示 2025。
+- `src/app/ImmersiveGameScreen.tsx`：年度剧情主流程。
+- `src/components/DebatePanel.tsx`：三方观点卡片。
+- `src/components/StoryRecapPanel.tsx`：评分、业务事实和知识卡复盘。
+- `src/components/ArchiveDrawer.tsx`：本话记录、研究档案和研究室入口。
+- `src/components/RebirthPanel.tsx`：研究室物件概览与整理操作。

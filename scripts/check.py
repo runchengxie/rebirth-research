@@ -82,6 +82,10 @@ PYTHON_CHECKS = (
     Check("ty", tuple(_uv_run("ty", "check", "scripts"))),
     Check("pytest", tuple(_uv_run("pytest", "scripts/", "-v"))),
     Check("validate_data", tuple(_uv_run("python", "scripts/validate_data.py"))),
+    Check(
+        "validate_text_quality",
+        tuple(_uv_run("python", "scripts/validate_text_quality.py")),
+    ),
 )
 
 FRONTEND_CHECKS = (

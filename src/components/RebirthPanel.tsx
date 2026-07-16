@@ -141,6 +141,43 @@ export function RebirthFlowPanel({
   );
 }
 
+function OfficeRoomOverview({ state }: { state: GameState }) {
+  const postIts = Math.min(6, state.office.postIts);
+  const whiteboardMarkers = Math.min(6, state.office.whiteboardMarkers);
+  const coffeeCups = Math.min(5, state.office.coffeeCups);
+  return (
+    <section className="office-room-overview" aria-labelledby="office-room-overview-title">
+      <div className="office-room-scene" aria-hidden="true">
+        <div className="office-room-board">
+          {Array.from({ length: whiteboardMarkers }, (_, index) => (
+            <i className="office-room-board-mark" key={`office-board-mark-${index}`} />
+          ))}
+        </div>
+        <div className="office-room-desk">
+          <div className="office-room-notes">
+            {Array.from({ length: postIts }, (_, index) => (
+              <i className="office-room-note" key={`office-note-${index}`} />
+            ))}
+          </div>
+          <div className="office-room-cups">
+            {Array.from({ length: coffeeCups }, (_, index) => (
+              <i className="office-room-cup" key={`office-cup-${index}`} />
+            ))}
+          </div>
+        </div>
+      </div>
+      <div className="office-room-copy">
+        <h4 id="office-room-overview-title">本周目留下的研究痕迹</h4>
+        <dl>
+          <div><dt>便签</dt><dd>{state.office.postIts} 张</dd></div>
+          <div><dt>白板框架</dt><dd>{state.office.whiteboardMarkers} 组</dd></div>
+          <div><dt>咖啡杯</dt><dd>{state.office.coffeeCups} 只</dd></div>
+        </dl>
+      </div>
+    </section>
+  );
+}
+
 export function OfficeHubPanel({
   meta,
   state,
@@ -157,10 +194,11 @@ export function OfficeHubPanel({
       <header className="rebirth-section-head">
         <div>
           <h3>研究室中枢</h3>
-          <p>物件会积累关系、透支和研究过程。它们现在终于有工作，不再只是背景装修。</p>
+          <p>研究过程会在物件上留下痕迹。整理它们，可以发现关系、透支和推理线索。</p>
         </div>
         <b>{discoveries.length} 项发现</b>
       </header>
+      <OfficeRoomOverview state={state} />
       <div className="office-prop-grid">
         {props.map((prop) => (
           <button

@@ -235,7 +235,7 @@ export const LIN_2025_BRANCHES: Branch[] = [
       nodes: [
         line(
           "lin-2025-promise-broken",
-          "桌上没有早餐，只有你上次答应准时下班的便签。林若宁把它压在研报下面：我不是怪你忙。我只是不能每次都听你说，下次会不一样。",
+          "桌上没有早餐，只有你上次答应准时下班的便签。林若宁把它压在研报下面：我知道你忙，可我不能每次都听你说，下次会不一样。",
           "失望",
           "serious",
         ),
@@ -294,7 +294,7 @@ export const LIN_2025_BRANCHES: Branch[] = [
             cl: 17,
             rk: 13,
             rf: 12,
-            note: "她喜欢的从来不是你永远正确，是你肯把每一步补回来。",
+            note: "她喜欢你认真补回每一步，也愿意承认自己的缺口。",
             setsFlags: { lin_rebuilt_evidence: true, lin_professional_honest: true },
           }),
           framework: "lin_ruoning" as const,
@@ -383,7 +383,7 @@ export const LIN_2025_BRANCHES: Branch[] = [
             cl: 12,
             rk: 12,
             rf: 15,
-            note: "慢一点不是退缩，是把喜欢放进真实生活。",
+            note: "放慢脚步，才能把喜欢放进真实生活。",
             setsFlags: { lin_route_slow_burn: true },
           }),
           framework: "lin_ruoning" as const,

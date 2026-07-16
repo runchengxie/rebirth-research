@@ -40,10 +40,10 @@ export const MENTOR_TEACHINGS: Record<MentorId, Partial<Record<DecisionMethod, T
     fundamental_research: { concept: "产业链交叉验证", line: "别只看一个点。把上游、中游、下游的节奏差拆开，超额收益藏在断层里。", learningRef: "金融基础 · 权益估值与产业链验证" },
     field_research: { concept: "一线验证", line: "研报会说漂亮话，但经销商的库存、厂长的语气不会。去一线，比看十篇纪要都值钱。", learningRef: "金融基础 · 尽职调查与一手信息" },
     communication: { concept: "框架翻译", line: "把复杂逻辑讲成人能听懂的故事，是研究员的基本功。客户追问的那两个问题，就是你框架的漏洞。", learningRef: "金融基础 · 投资沟通" },
-    risk_management: { concept: "反身性", line: "当所有人都觉得「这回不一样」，就是风险最大的时候。提醒冷静不是泼冷水，是替团队守住边界。", learningRef: "金融基础 · 行为金融与反身性" },
+    risk_management: { concept: "反身性", line: "当所有人都觉得这回不一样，风险往往已经很高。及时提醒团队冷静，也是在守住风险边界。", learningRef: "金融基础 · 行为金融与反身性" },
     self_management: { concept: "判断节奏", line: "脑子不清亮的时候，任何判断都打折。先把自己救回来，研究不会跑。", learningRef: "金融基础 · 决策卫生" },
     collaboration: { concept: "模型直觉", line: "帮人改模型，也是在练自己的手感。你今天搭的每一根假设，明天都会长回你自己的框架里。", learningRef: "金融基础 · 财务建模" },
-    committee_process: { concept: "假设可视化", line: "投委会要的不是结论，是你怎么想的。把概率和赔率都摆出来，比喊方向有用。", learningRef: "金融基础 · 投资论述" },
+    committee_process: { concept: "假设可视化", line: "投委会需要看清你的推导过程。把概率和赔率都摆出来，比只喊方向有用。", learningRef: "金融基础 · 投资论述" },
     quantitative_research: { concept: "数据诚实", line: "数据不会替你下结论，但会揭穿你的偷懒。先问「这数怎么来的」，再问「说明什么」。", learningRef: "金融基础 · 量化与数据质量" },
   },
   chen_xinghe: {
@@ -51,7 +51,7 @@ export const MENTOR_TEACHINGS: Record<MentorId, Partial<Record<DecisionMethod, T
     field_research: { concept: "信号交叉", line: "一手信息能校准你的因子。别只信回测，去问圈内人信号变没变。", learningRef: "金融基础 · 另类数据与调研" },
     communication: { concept: "信号翻译", line: "把因子讲成人话，是量化员的修行。客户听得懂，才会信你的 Alpha。", learningRef: "金融基础 · 投资沟通" },
     risk_management: { concept: "因子拥挤度", line: "所有人都挤一个方向时，风险溢价趋近零。这时候还冲，是在给前人接盘。", learningRef: "金融基础 · 因子投资与拥挤度" },
-    self_management: { concept: "噪声 vs 信号", line: "连轴转的时候信噪比会塌。休息不是偷懒，是给模型留干净输入。", learningRef: "金融基础 · 决策卫生" },
+    self_management: { concept: "噪声与信号", line: "连轴转会让信噪比下降。充分休息能给模型留出干净输入。", learningRef: "金融基础 · 决策卫生" },
     collaboration: { concept: "交叉验证", line: "量化和基本面打架时，真理通常在中间。你帮我校准的那一下，我也学会了怎么读生意。", learningRef: "金融基础 · 多因子融合" },
     committee_process: { concept: "因子正交", line: "把动量因子的干扰拆掉，你的净 Alpha 才纯。混着讲，等于什么都没说。", learningRef: "金融基础 · Barra 归因" },
     quantitative_research: { concept: "Barra 归因", line: "收益里多少是因子、多少是能力？归因拆不开的，都是运气。", learningRef: "金融基础 · 绩效归因" },
@@ -115,15 +115,7 @@ function makeResearchDecisions(year: string, monthIndex: number): ResearchDecisi
   return [];
 }
 
-function buildCompetingNode(story: StoryArc, theme: MarketTheme, monthIndex: number): SceneNode {
-  const hypotheses = theme.competingHypotheses;
-  const parts: string[] = [];
-  if (hypotheses?.lin) parts.push(`林若宁的基本面说：${hypotheses.lin}`);
-  if (hypotheses?.chen) parts.push(`陈星禾的量价说：${hypotheses.chen}`);
-  if (hypotheses?.zhou) parts.push(`周明昭的风控说：${hypotheses.zhou}`);
-  const body = parts.length > 0
-    ? `${parts.join("，")}。没有哪个是标准答案，你站哪边，哪边就认你，哪边也会在后面盯着你。`
-    : "三种框架摆在你面前，没有哪个是标准答案，你站哪边，哪边就认你，哪边也会在后面盯着你。";
+function buildCompetingNode(story: StoryArc, monthIndex: number): SceneNode {
   return {
     id: `m${monthIndex}-competing`,
     type: "dialogue",
@@ -131,7 +123,7 @@ function buildCompetingNode(story: StoryArc, theme: MarketTheme, monthIndex: num
     speaker: story.speaker,
     role: story.role,
     mood: "认真",
-    text: body,
+    text: "三位同事给出了各自的判断。选择一条证据链，也要留意它暂时解释不了的部分。",
     prompt: "点击继续，进入本月研究选择。",
     pose: "thinking",
     bg: "research-room",
@@ -179,7 +171,7 @@ function competingNodeFor(
   monthIndex: number,
 ): SceneNode | null {
   const enabled = Boolean(state && monthIndex >= 1 && theme.competingHypotheses);
-  return enabled ? buildCompetingNode(story, theme, monthIndex) : null;
+  return enabled ? buildCompetingNode(story, monthIndex) : null;
 }
 
 function buildMemoryNode(story: StoryArc, theme: MarketTheme, monthIndex: number): SceneNode {
@@ -320,7 +312,7 @@ function build2025Prologue(month: string, label: string, theme: MarketTheme): Mo
       speaker: "内心独白",
       role: "只有你知道",
       mood: "警觉",
-      text: `我知道一个具体的事实：${theme.knownEvent ?? "有些事会真的发生，但不是以价格告诉我的方式。"}
+      text: `我知道一个具体的事实：${theme.knownEvent ?? "有些事确实会发生，只是价格不会直接告诉我答案。"}
 但我不能直接喊方向，我得把它翻译成当下能验证的研究假设，再选一个框架去落地。`,
       prompt: "点击继续，把未来记忆压成可以说出口的研究假设。",
       pose: "thinking",
@@ -360,7 +352,7 @@ function build2025Prologue(month: string, label: string, theme: MarketTheme): Mo
       speaker: "陈星禾",
       role: "量化/资金信号研究员",
       mood: "俏皮",
-      text: "陈星禾抱着平板冲进会议室：早盘Barra归因跑完了！AI应用方向的收益里，动量因子贡献了超过六成，基本面因子的贡献还不到两成。换句话说，现在涨的更多是情绪溢价和拥挤交易，不是业绩验证。你们的基本面故事还没被市场真正定价。",
+      text: "陈星禾抱着平板冲进会议室：早盘 Barra 归因跑完了！AI 应用方向的收益里，动量因子贡献了超过六成，基本面因子的贡献还不到两成。换句话说，现在涨的更多是情绪溢价和拥挤交易，业绩还没有得到验证。你们的基本面故事还没被市场真正定价。",
       pose: "excited",
       bg: "research-room",
       bgm: "morning-loop",
@@ -373,7 +365,7 @@ function build2025Prologue(month: string, label: string, theme: MarketTheme): Mo
       speaker: "陈星禾",
       role: "资金信号研究员",
       mood: "高涨",
-      text: "她点开大单流向分布：我只信成交量和订单簿。AI方向的盘口厚度在收窄但大单净买还在流入，这是典型的「量在价先、但供给也在积聚」的信号。短期内动量还能跑，但Alpha衰减速度比上周快了一倍。如果你要做研究推荐，最好等成交结构重新确认。",
+      text: "她点开大单流向分布：我只信成交量和订单簿。AI 方向的盘口厚度在收窄，但大单净买还在流入。这说明成交量先动，供给也在积聚。短期内动量还能跑，但 Alpha 衰减速度比上周快了一倍。如果你要做研究推荐，最好等成交结构重新确认。",
       pose: "focused",
       bg: "research-room",
       bgm: "morning-loop",
@@ -422,7 +414,7 @@ function build2025Prologue(month: string, label: string, theme: MarketTheme): Mo
       speaker: "陈星禾",
       role: "资金信号研究员",
       mood: "俏皮",
-      text: "陈星禾把平板转向你：我负责盯信号。大单流向、因子拥挤度、Alpha衰减速度，这三个指标如果同时变脸，我就拉警报。在那之前，你只管做你的研究。量比价诚实，信我。",
+      text: "陈星禾把平板转向你：我负责盯信号。大单流向、因子拥挤度、Alpha 衰减速度，这三个指标如果同时变脸，我就拉警报。在那之前，你只管做你的研究。量比价诚实，信我。",
       pose: "excited",
       bg: "briefing-room",
       bgm: "morning-loop",
@@ -457,7 +449,7 @@ function build2025Prologue(month: string, label: string, theme: MarketTheme): Mo
       briefTitle: "第一次研究会议：三个框架，四条路径",
       briefs: [
         { characterId: "lin_ruoning", label: "基本面", text: "先把产业链拆成三层：硬件、平台、应用。每层有自己的受益逻辑和验证节奏。不要被概念带走。" },
-        { characterId: "chen_xinghe", label: "量化信号", text: "Barra归因显示动量因子主导。大单流向还在净买，但盘口厚度在收窄。量比价诚实，但信号在衰减。" },
+        { characterId: "chen_xinghe", label: "量化信号", text: "Barra 归因显示动量因子主导。大单流向还在净买，但盘口厚度在收窄。量比价诚实，但信号在衰减。" },
         { characterId: "zhou_mingzhao", label: "宏观风控", text: "三个框架重叠的地方最安全。如果事件只是脉冲而没有业绩接力，估值和拥挤度会在月末反噬。" },
       ],
     },

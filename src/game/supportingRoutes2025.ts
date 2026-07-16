@@ -161,7 +161,7 @@ const CHEN_ROUTES: Branch[] = [
             cl: 16,
             rk: 10,
             rf: 14,
-            note: "她要的不是永远共振，是偏离之后还愿意一起重新归因。",
+            note: "她看重的是偏离之后，你们还愿意一起重新归因。",
             setsFlags: { chen_route_committed: true },
           }),
           framework: "chen_xinghe" as const,
@@ -316,7 +316,7 @@ const ZHOU_ROUTES: Branch[] = [
         line(
           "zhou-2025-private-boundary",
           "zhou_mingzhao",
-          "周明昭把白板擦到只剩一条回撤线：我以前见过一个很聪明的人，每次都能解释为什么这次可以破例。最后输掉的不是一笔仓位，是所有人再相信他的能力。她停了一下：所以我也会观察，你怎么对待答应过的边界。",
+          "周明昭把白板擦到只剩一条回撤线：我以前见过一个很聪明的人，每次都能解释为什么这次可以破例。最后，他失去了所有人的信任。她停了一下：所以我也会观察，你怎么对待答应过的边界。",
           "坦白",
         ),
       ],

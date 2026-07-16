@@ -1,7 +1,8 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { GAME_YEARS } from "../data/gameData";
 import { CHARACTERS } from "../game/content";
-import type { CharacterId, CompetingHypotheses, GameState, SceneNode } from "../types";
+import type { CharacterProfile, SceneNode } from "../types";
+import { DebatePanel } from "../components/DebatePanel";
 import { DecisionCard } from "../components/DecisionCard";
 import { EndingPanel } from "../components/EndingPanel";
 import { FocusSelector } from "../components/FocusSelector";
@@ -15,6 +16,7 @@ import {
   createDefaultResearchCommitment,
 } from "../game/researchCommitment";
 import { experiencePolicy } from "../game/experienceMode";
+import { isDebateNode } from "../game/narrativeMachine";
 import { recordPlaytestEvent } from "../game/playtestTelemetry";
 import { writeSessionEnvelope } from "../game/sessionEnvelope";
 import { stakeholderPressureFor } from "../game/stakeholderPressure";
@@ -44,12 +46,6 @@ interface ImmersiveGameScreenProps {
   usePixiStage: boolean;
 }
 
-interface DebateItem {
-  characterId: CharacterId;
-  label: string;
-  text: string;
-}
-
 function readExactMetricPreference(): boolean {
   try {
     return localStorage.getItem("rebirthShowExactMetrics") === "1";
@@ -69,104 +65,37 @@ function StaticStage({ color }: { color: string }) {
   return <div className={`pixi-stage pixi-stage-fallback immersive-static character-${color}`} aria-hidden="true" />;
 }
 
-function OfficeMemoryLayer({ state }: { state: GameState }) {
-  const postIts = Math.min(6, state.office.postIts);
-  const whiteboardMarks = Math.min(7, state.office.whiteboardMarkers);
-  const coffeeCups = Math.min(6, state.office.coffeeCups);
-  if (postIts + whiteboardMarks + coffeeCups === 0) return null;
-
-  return (
-    <div className="office-memory-layer" aria-hidden="true">
-      <div className="office-postits">
-        {Array.from({ length: postIts }, (_, index) => <span className="office-postit" key={`postit-${index}`} />)}
-      </div>
-      <div className="office-whiteboard">
-        {Array.from({ length: whiteboardMarks }, (_, index) => <span key={`mark-${index}`} />)}
-      </div>
-      <div className="office-coffee">
-        {Array.from({ length: coffeeCups }, (_, index) => <span key={`coffee-${index}`} />)}
-      </div>
-    </div>
-  );
-}
-
-function StageArt({
-  session,
+export function StageArt({
+  activeCharacter,
+  activePose,
+  sceneBackground,
   showDebate,
   usePixiStage,
 }: {
-  session: GameSession;
+  activeCharacter: CharacterProfile;
+  activePose: string;
+  sceneBackground: string;
   showDebate: boolean;
   usePixiStage: boolean;
 }) {
-  const view = buildSceneView(session);
   let artwork;
   if (showDebate) {
-    artwork = <div className={`debate-stage debate-stage-${view.sceneBackground}`} aria-hidden="true" />;
+    artwork = <div className={`debate-stage debate-stage-${sceneBackground}`} aria-hidden="true" />;
   } else if (!usePixiStage) {
-    artwork = <StaticStage color={view.activeCharacter.color} />;
+    artwork = <StaticStage color={activeCharacter.color} />;
   } else {
     artwork = (
-      <Suspense fallback={<StaticStage color={view.activeCharacter.color} />}>
+      <Suspense fallback={<StaticStage color={activeCharacter.color} />}>
         <PixiStage
-          activeCharacter={view.activeCharacter}
-          activePose={view.scenePose}
-          backgroundId={view.sceneBackground}
+          activeCharacter={activeCharacter}
+          activePose={activePose}
+          backgroundId={sceneBackground}
         />
       </Suspense>
     );
   }
 
-  return (
-    <>
-      {artwork}
-      <OfficeMemoryLayer state={session.state} />
-    </>
-  );
-}
-
-function debateItems(hypotheses: CompetingHypotheses | undefined): DebateItem[] {
-  if (!hypotheses) return [];
-  const items: DebateItem[] = [];
-  if (hypotheses.lin) {
-    items.push({ characterId: "lin_ruoning", label: "基本面", text: hypotheses.lin });
-  }
-  if (hypotheses.chen) {
-    items.push({ characterId: "chen_xinghe", label: "量价", text: hypotheses.chen });
-  }
-  if (hypotheses.zhou) {
-    items.push({ characterId: "zhou_mingzhao", label: "风控", text: hypotheses.zhou });
-  }
-  return items;
-}
-
-function DebatePanel({ hypotheses }: { hypotheses: CompetingHypotheses | undefined }) {
-  const items = debateItems(hypotheses);
-  return (
-    <div className="debate-panel" aria-label="三种研究观点">
-      <div className="debate-intro">
-        <strong>观点交锋</strong>
-        <span>同一段未来记忆，被三种方法拆成了三条证据链。</span>
-      </div>
-      <div className="debate-grid">
-        {items.map((item) => {
-          const character = CHARACTERS[item.characterId];
-          return (
-            <article className={`debate-card ${character.color}`} key={item.characterId}>
-              <header>
-                <span>{character.name}</span>
-                <strong>{item.label}</strong>
-              </header>
-              <p>{item.text}</p>
-            </article>
-          );
-        })}
-      </div>
-      <p className="debate-conclusion">
-        每套框架都有证据，也都有盲区。你要选择一条证据链，并为它忽略的部分负责。
-      </p>
-    </div>
-  );
+  return artwork;
 }
 
 function ResearchBriefs({ node }: { node: SceneNode }) {
@@ -380,7 +309,7 @@ function SettingsPopover({
           <small className="metric-mode-note">
             {policy.id === "romance"
               ? "剧情模式会协助处理职业细节，当前存档的体验模式在新游戏时确定。"
-              : "叙事指标隐藏精确关系与职业数值；精确指标用于攻略、调试和复盘。"}
+              : "叙事指标隐藏精确关系与职业数值。精确指标用于攻略、调试和复盘。"}
           </small>
           <SaveTransferPanel year={session.state.year} />
         </div>
@@ -395,8 +324,7 @@ export function ImmersiveGameScreen(props: ImmersiveGameScreenProps) {
   const [archiveOpen, setArchiveOpen] = useState(false);
   const [showExactMetrics, setShowExactMetrics] = useState(readExactMetricPreference);
   const policy = experiencePolicy(session.rebirth.experienceMode);
-  const isDebate = policy.showResearchBriefs
-    && session.sceneNode.id.endsWith("-competing")
+  const isDebate = isDebateNode(session.sceneNode)
     && Boolean(session.scene.theme.competingHypotheses);
   const headerCopy = useMemo(() => {
     if (session.state.finished) return { name: "年度复盘", role: `${session.state.year} 年研究结局` };
@@ -481,7 +409,13 @@ export function ImmersiveGameScreen(props: ImmersiveGameScreenProps) {
       />
       <section className="immersive-workspace" aria-label="剧情舞台与操作区">
         <div className="immersive-stage" aria-hidden="true">
-          <StageArt session={session} showDebate={isDebate} usePixiStage={usePixiStage} />
+          <StageArt
+            activeCharacter={view.activeCharacter}
+            activePose={view.scenePose}
+            sceneBackground={view.sceneBackground}
+            showDebate={isDebate}
+            usePixiStage={usePixiStage}
+          />
         </div>
         <div className="immersive-stage-meta">
           {isDebate ? (
@@ -499,7 +433,11 @@ export function ImmersiveGameScreen(props: ImmersiveGameScreenProps) {
           <span>{view.sceneMood}</span>
         </div>
         <section className={`interaction-panel ${session.state.finished ? "ending-mode" : view.isDecision ? "decision-mode" : "dialogue-mode"}`}>
-          <div className="interaction-scroll">
+          <div
+            aria-label={isDebate ? "观点内容" : view.isDecision ? "选择内容" : "对白内容"}
+            className="interaction-scroll"
+            tabIndex={0}
+          >
             <div className="speaker-row">
               <span className="speaker-name">{headerCopy.name}</span>
               <span className="speaker-role">{headerCopy.role}</span>
@@ -544,7 +482,7 @@ export function ImmersiveGameScreen(props: ImmersiveGameScreenProps) {
               onPointerEnter={() => void loadArchiveDrawer()}
               onClick={() => setArchiveOpen(true)}
             >
-              {policy.id === "romance" ? "剧情回顾" : "记录与档案"}
+              {policy.id === "romance" ? "剧情回顾" : "档案与研究室"}
             </button>
             <button
               className="primary-action"

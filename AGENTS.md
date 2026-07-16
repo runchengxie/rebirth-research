@@ -13,12 +13,14 @@
 - `src/main.tsx`：前端入口、存档恢复和全局样式加载顺序
 - `src/App.tsx`：主菜单、顶层模式路由、懒加载、跳过导航和错误恢复边界
 - `src/components/StartMenu.tsx`：继续游戏、新游戏体验选择、挑战中心和创作入口
-- `src/app/useGameSessionMachine.ts`：默认剧情的 reducer hook、持久化和界面适配
-- `src/game/sessionMachine.ts`：单周目与跨周目状态的原子行动 reducer
+- `src/app/useGameSessionMachine.ts`：默认剧情的 React 状态管理、持久化和界面适配
+- `src/game/sessionMachine.ts`：单周目与跨周目状态的原子行动归并
 - `src/game/experienceMode.ts`：剧情模式与职业模式的界面策略和结算适配
 - `src/app/useGameController.ts`：音频、主题、设置和旧兼容类型
 - `src/app/ImmersiveGameScreen.tsx`：主游戏的单视口页面，档案抽屉按需加载
+- `src/components/DebatePanel.tsx`：按角色分开的三方观点卡片
 - `src/components/ArchiveDrawer.tsx`：档案、研究室、焦点限制和时间线入口
+- `src/components/RebirthPanel.tsx`：研究室物件概览、整理操作和跨周目档案
 - `src/components/AppErrorBoundary.tsx`：顶层运行时恢复界面
 - `src/modes/CommitteeMode.tsx`：独立投委会
 - `src/modes/DailyChallengeMode.tsx`：每日研究挑战
@@ -32,15 +34,17 @@
 
 ## 当前功能事实
 
-- 正式年份为 2023、2024、2025，每年 12 话。
-- `demo` 只通过 `?year=demo` 深链访问，不出现在年份选择器。
+- 当前正式入口只有 2025 年，共 12 话。`GAME_YEARS` 只包含 `2025`。
+- 2023、2024 作为往年档案保留，可通过 `?year=2023` 和 `?year=2024` 深链访问。
+- `demo` 是开发示范内容，只通过 `?year=demo` 深链访问。往年档案和 `demo` 都不出现在年份选择器。
 - 无参数访问先进入主菜单。年度剧情、投委会、每日挑战和内容工坊从主菜单进入，旧年份和原型深链仍直接打开年度剧情。
+- 主菜单顶部使用 `assets/key-art.webp`。封面只负责营造氛围，必要信息和操作入口都放在独立的实色区域中。
 - 年度剧情分为剧情模式与职业模式。剧情模式隐藏调查、日程、研究承诺和职业指标，由系统采用稳健研究承诺并缓和隐藏的疲劳与生活惩罚。职业模式保留完整投研与回溯压力。
 - 新游戏使用 `?mode=story&play=romance&new=1` 或 `?mode=story&play=career&new=1`。`play` 只决定新存档体验，已有存档以 `RebirthMetaState.experienceMode` 为准。
 - 月度结算依据研究方案、多维评分和编写好的业务事实。运行时不读取真实月度涨跌幅。
 - `src/data/gameData.ts` 中的 `themeReturn` 当前固定为 0，行业轮动和风格因子为空。
 - 游戏按年份保存 `GameState` 和跨周目元状态。关键月会保存回溯锚点，重新开始会暂停当前时间线并创建新路线。
-- 结算前可以返回当前话的上一段对白。结算后只通过记录抽屉回看，不撤销数值和旗标。
+- 结算前可以返回当前话的上一段对白。结算后只通过档案抽屉回看，不撤销数值和旗标。
 - 背景音乐和提示音使用 Web Audio API。关键对白可以使用 Web Speech API 调用系统中文语音。
 - `?pixivn=1` 会动态加载第一话 Pixi'VN 原型。默认线路不会挂载该原型。
 - 赵承宇是量化组同级同事，走友情和搭档路线，不进入导师关系路线和研究图鉴。
@@ -66,7 +70,8 @@
 - 条件分支和赵承宇搭档线：`src/game/branches.ts`
 - 场景装配、知识卡和年份路由：`src/game/sceneBuilders.ts`
 - 各年份主题与研究方案：`src/game/content/*.json`
-- 2025 年补充业务事实和分歧假设：`src/game/content2025.ts`
+- 2025 年主题、业务事实和分歧假设：`src/game/content/2025.json`
+- 2025 年加载与核验事件叠加：`src/game/content2025.ts` 和 `src/game/verified2025.ts`
 - 数值结算和旗标：`src/game/engine.ts`
 - 剧情推进、回看和初始状态：`src/game/runtime.ts`
 - 原子游戏行动：`src/game/sessionMachine.ts`
@@ -119,6 +124,21 @@ uv run python scripts/check.py
 
 联合检查使用 ty 作为阻塞 Python 类型检查。`--all` 仅作为旧命令的兼容参数保留。需要缩小范围时可以使用 `--python`、`--frontend` 或 `--e2e`。
 
+复杂度检查分为两层：
+
+- Ruff 的 C901 规则把 Python 圈复杂度上限设为 15。
+- ESLint 的 `complexity` 规则把 `src/` 下 TypeScript 与 TSX 的圈复杂度上限设为 15。`lint:ci` 以零警告运行，因此超限会阻塞提交。
+- `scripts/dev/maintainability_metrics.py` 统计 Python 长行、长函数、大文件和 C901 忽略项。`scripts/test_maintainability_metrics.py` 将当前值与 `DEFAULT_RATCHET_BUDGETS` 对照，防止指标变差。
+
+查看当前可维护性指标或单独执行棘轮检查：
+
+```bash
+uv run python scripts/dev/maintainability_metrics.py
+uv run python scripts/dev/maintainability_metrics.py --ratchet
+```
+
+基线只能在确认代码结构已经改善后收紧。不要为了让检查通过而放宽预算或添加 C901 忽略项。
+
 需要逐项排查时运行：
 
 ```bash
@@ -128,6 +148,7 @@ uv run python -m compileall scripts
 uv run pytest scripts/ -v
 uv run ty check scripts
 uv run python scripts/validate_data.py
+uv run python scripts/validate_text_quality.py
 node scripts/validate_frontend.js
 node scripts/validate_stability.js
 npm run lint:ci
@@ -149,11 +170,12 @@ npm run test:e2e
 - 原子状态转换：为 `src/game/sessionMachine.ts` 增加或更新对应测试
 - 年份内容和 JSON 校验：`src/game/content/content.test.ts`
 - 社区内容包格式和安全边界：`src/game/communityContent.test.ts`
-- 正式年份与示范线路：`src/data/gameData.test.ts`
-- 主菜单、用户旅程、体验模式、焦点、深色对比度和无障碍：`scripts/e2e/platform.spec.js`
+- 2025 正式入口、往年档案与示范线路：`src/data/gameData.test.ts`
+- 主菜单、封面布局、用户旅程、体验模式、焦点、深色对比度、窄屏溢出和无障碍：`scripts/e2e/platform.spec.js`
 - Python 数据生成：`scripts/test_build_data.py`
 - 静态数据校验：`scripts/test_validate_data.py`
 - 文档风格：`scripts/test_docs_style.py`
+- 中文说明、游戏台词、重复标点和多人台词拼接：`scripts/validate_text_quality.py` 与 `scripts/test_validate_text_quality.py`
 
 Vitest 不得收集 `scripts/e2e/`。浏览器测试使用 `scripts/playwright.config.js`。修复缺陷时，先加入能复现问题的测试，再改实现。测试名称应说明业务行为。
 
@@ -177,5 +199,6 @@ Vitest 不得收集 `scripts/e2e/`。浏览器测试使用 `scripts/playwright.c
 - 离线包由 `scripts/package.ps1` 生成。
 - 第三方音频只有在授权明确时才能加入仓库，并在相关说明文档中记录来源和授权。
 - 角色图片和背景图片放在 `assets/vn/`，新增资源后同步更新舞台组件和 `scripts/validate_frontend.js`。
+- 主菜单封面位于 `assets/key-art.webp`，只在主菜单顶部使用。
 - 舞台位图使用 WebP，单个发布资源不得超过 500 KiB。角色立绘需要保留透明通道。
 - 核心页面运行时不能依赖作者本机路径、本地 Python 环境或项目自建外部服务。可选 GitHub API 功能必须在离线时明确降级。

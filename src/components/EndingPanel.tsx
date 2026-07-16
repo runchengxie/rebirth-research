@@ -112,7 +112,7 @@ function special2025Ending(
     return {
       leadId: "zhou_mingzhao",
       title: "真相结局·未来也要接受审计",
-      copy: "你承认未来记忆受到事后叙事污染，也展示了全年档案、失败样本和可持续边界。你没有证明自己永远正确。你证明了知道结果的人仍愿意让记忆接受证据、反例和复算。投研部把这套审计方法写进下一年的研究流程。",
+      copy: "你承认未来记忆受到事后叙事污染，也展示了全年档案、失败样本和可持续边界。即使知道结果，你仍愿意让记忆接受证据、反例和复算。投研部把这套审计方法写进下一年的研究流程。",
     };
   }
   const candidates = [lin2025Ending(state), chen2025Ending(state), zhou2025Ending(state)]
@@ -128,7 +128,7 @@ function partnerEnding({ partner, experienceMode }: EndingContext): EndingCopy |
   if (experienceMode === "romance" || !partner) return null;
   return {
     title: "最佳搭档线：框架与数据的好拍档",
-    copy: "你没和谁谈恋爱。你和赵承宇是投研部里最合拍的一对好搭档——一个把假设钉进框架，一个把框架接进数据和回测。平时互相兜底、出手一起扛，这一年组合里回撤最可控、落地最稳的几笔，都写着你们俩的名字。",
+    copy: "你没和谁谈恋爱。你和赵承宇是投研部里最合拍的一对好搭档。一个把假设钉进框架，一个把框架接进数据和回测。平时互相兜底，出手一起扛。这一年组合里回撤最可控、落地最稳的几笔，都写着你们俩的名字。",
   };
 }
 
@@ -145,7 +145,7 @@ function relationshipEnding({
     if (leadRelation >= AFFINITY_TRUE) {
       return {
         title: `心动结局·${lead.name}把以后也留给了你`,
-        copy: `你没有用一份完美结论换取${lead.name}的认可。你一次次听懂她没有说完的话，也认真回应了彼此的边界。十二个月以后，她愿意把“下一次见面”写成没有截止日期的约定。`,
+        copy: `你靠一次次认真回应，赢得了${lead.name}的认可。你听懂了她没有说完的话，也尊重彼此的边界。十二个月以后，她愿意把下一次见面写成没有截止日期的约定。`,
       };
     }
     if (leadRelation >= AFFINITY_GATE) {
@@ -161,7 +161,7 @@ function relationshipEnding({
   if (trueEnding) {
     return {
       title: `真结局·心动线：${lead.name}的认可`,
-      copy: `你不仅把研究可信度推到行业前沿，和${lead.name}的关系也走到了最深处。这一年的研究札记里，最值得存档的不是研报，是你们一起验证过的信任。`,
+      copy: `你把研究可信度推到行业前沿，和${lead.name}的关系也走到了最深处。这一年的研究札记里，你们一起验证过的信任最值得存档。`,
     };
   }
 
@@ -203,19 +203,19 @@ function routeEnding({
     if (!state.flags.route_relation || leadRelation < AFFINITY_GATE) return null;
     return {
       title: `心动支线·被${lead.name}记住的人`,
-      copy: "你没有把每一次靠近都变成一道考题。那些认真听过的话和没有越过的边界，最终替你说出了答案。",
+      copy: "你认真听完彼此的话，也尊重每一条边界。这些相处的细节最终替你说出了答案。",
     };
   }
   if (state.flags.route_research && state.researchCredibility >= 70) {
     return {
       title: "研究宗师线：深度即壁垒",
-      copy: "这一年你几乎把所有夜晚都押在了深度研究上。圈内开始用你的框架命名现象——当研究本身成了招牌，捷径反而成了最远的路。",
+      copy: "这一年你几乎把所有夜晚都押在了深度研究上。圈内开始用你的框架命名现象。研究本身成了招牌，所谓捷径反而更远。",
     };
   }
   if (state.flags.route_relation && leadRelation >= AFFINITY_GATE) {
     return {
       title: `圈子线：自己人·${lead.name}的人脉网`,
-      copy: "你不是单打独斗的研究员。那些顺手帮的忙、那些闭门路演的席位，最终织成了一张只属于「自己人」的网。",
+      copy: "你身边已经有了可靠的同伴。那些顺手帮的忙和闭门路演的席位，最终织成了一张互相支持的关系网。",
     };
   }
   if (state.flags.route_balanced && state.lifeBalance >= 60) {
@@ -237,7 +237,7 @@ function fallbackEnding({ state, lead, experienceMode }: EndingContext): EndingC
   if (experienceMode === "romance") {
     return {
       title: "未完结局·尚未说出口的心动",
-      copy: `你和${lead.name}还没有走到明确的答案，但这一年留下的并不是失败。下一次，你可以更诚实地回应，也可以更耐心地听完。`,
+      copy: `你和${lead.name}还没有走到明确的答案，这一年依然留下了值得珍惜的片段。下一次，你可以更诚实地回应，也可以更耐心地听完。`,
     };
   }
   if (state.fatigue >= 85) {

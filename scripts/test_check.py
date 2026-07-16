@@ -27,6 +27,7 @@ def test_local_check_inventory_covers_all_quality_layers() -> None:
         ("uv", "run", "ty", "check", "scripts"),
         ("uv", "run", "pytest", "scripts/", "-v"),
         ("uv", "run", "python", "scripts/validate_data.py"),
+        ("uv", "run", "python", "scripts/validate_text_quality.py"),
     }
     assert _commands(check.FRONTEND_CHECKS) >= {
         ("npm", "run", "lint:ci"),

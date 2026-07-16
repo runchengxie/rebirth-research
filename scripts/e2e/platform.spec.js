@@ -57,6 +57,16 @@ async function advanceToDecision(page) {
   await expect(page.locator(".immersive-decision-panel")).toBeVisible();
 }
 
+async function advanceToDebate(page) {
+  for (let index = 0; index < 8; index += 1) {
+    if (await page.locator(".debate-panel").count()) return;
+    const advance = page.locator(".primary-action");
+    await expect(advance).toBeEnabled();
+    await advance.click();
+  }
+  await expect(page.locator(".debate-panel")).toBeVisible();
+}
+
 async function expectNoSeriousAccessibilityViolations(page) {
   const result = await new AxeBuilder({ page })
     .disableRules(["color-contrast"])
@@ -209,6 +219,54 @@ test("剧情模式只让玩家处理人物回应", async ({ page }) => {
   await expect(page.locator(".investigation-panel")).toHaveCount(0);
 });
 
+test("剧情模式把三位同事的观点放进独立对话框", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openClean(page, "/?mode=story&play=romance&new=1&staticStage=1");
+  await advanceToDecision(page);
+  await page.locator(".immersive-decision-panel .option").first().click();
+  await page.locator(".primary-action").click();
+  await advanceToDebate(page);
+
+  const cards = page.locator(".debate-card");
+  await expect(cards).toHaveCount(3);
+  await expect(page.locator('[data-character="lin_ruoning"]')).toContainText("林若宁");
+  await expect(page.locator('[data-character="chen_xinghe"]')).toContainText("陈星禾");
+  await expect(page.locator('[data-character="zhou_mingzhao"]')).toContainText("周明昭");
+  await expect(page.locator(".immersive-dialogue-copy")).toHaveCount(0);
+
+  const boxes = await cards.evaluateAll((elements) => elements.map((element) => {
+    const box = element.getBoundingClientRect();
+    return { top: box.top, bottom: box.bottom };
+  }));
+  expect(boxes[1].top).toBeGreaterThanOrEqual(boxes[0].bottom - 1);
+  expect(boxes[2].top).toBeGreaterThanOrEqual(boxes[1].bottom - 1);
+  const overflow = await page.evaluate(() =>
+    document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(1);
+  await expectReadableContrast(page, [
+    ["浅色角色姓名", ".debate-card h3", ".debate-card"],
+    ["浅色角色方法", ".debate-card header div span", ".debate-card"],
+    ["浅色观点正文", ".debate-card > p", ".debate-card"],
+  ]);
+  await page.locator(".debate-card").nth(2).scrollIntoViewIfNeeded();
+  await expect(page.locator(".debate-card").nth(2)).toBeInViewport();
+  await page.locator(".debate-conclusion").scrollIntoViewIfNeeded();
+  await expect(page.locator(".debate-conclusion")).toBeInViewport();
+  await expectNoSeriousAccessibilityViolations(page);
+
+  await page.evaluate(() => document.documentElement.setAttribute("data-theme", "dark"));
+  await expectReadableContrast(page, [
+    ["深色角色姓名", ".debate-card h3", ".debate-card"],
+    ["深色角色方法", ".debate-card header div span", ".debate-card"],
+    ["深色观点正文", ".debate-card > p", ".debate-card"],
+  ]);
+
+  await page.getByRole("button", { name: "剧情回顾" }).click();
+  await expect(page.locator(".dialogue-history-debate article")).toHaveCount(3);
+  await expect(page.getByRole("tab", { name: "研究室" })).toHaveCount(0);
+  await expectNoSeriousAccessibilityViolations(page);
+});
+
 test("键盘可以跳过导航，并在档案弹窗关闭后恢复焦点", async ({ page }) => {
   await openClean(page, "/?staticStage=1");
 
@@ -217,7 +275,7 @@ test("键盘可以跳过导航，并在档案弹窗关闭后恢复焦点", async
   await page.keyboard.press("Enter");
   await expect(page.locator("#main-content")).toBeFocused();
 
-  const archiveButton = page.getByRole("button", { name: "记录与档案" });
+  const archiveButton = page.getByRole("button", { name: "档案与研究室" });
   await archiveButton.focus();
   await archiveButton.click();
   await expect(page.getByRole("dialog")).toBeVisible();
@@ -226,6 +284,38 @@ test("键盘可以跳过导航，并在档案弹窗关闭后恢复焦点", async
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).toBeHidden();
   await expect(archiveButton).toBeFocused();
+});
+
+test("研究室物件集中在档案抽屉，不覆盖剧情主舞台", async ({ page }) => {
+  await openClean(page, "/?mode=story&play=career&new=1&staticStage=1");
+
+  await expect(page.locator(".office-memory-layer")).toHaveCount(0);
+  await advanceToDecision(page);
+  await page.locator(".immersive-decision-panel .option").first().click();
+  await page.getByRole("button", { name: "档案与研究室" }).click();
+  await page.getByRole("tab", { name: "研究室" }).click();
+  const overview = page.locator(".office-room-overview");
+  await expect(overview).toBeVisible();
+  await expect(overview.getByRole("heading", { name: "本周目留下的研究痕迹" })).toBeVisible();
+  await expect(overview.getByText("便签", { exact: true })).toBeVisible();
+  await expect(overview.getByText("白板框架", { exact: true })).toBeVisible();
+  await expect(overview.getByText("咖啡杯", { exact: true })).toBeVisible();
+  await expect(overview.locator(".office-room-note")).not.toHaveCount(0);
+  await expect(overview.locator(".office-room-board-mark")).not.toHaveCount(0);
+  await expect(overview.locator(".office-room-cup")).not.toHaveCount(0);
+  await expectReadableContrast(page, [
+    ["浅色研究痕迹标题", ".office-room-copy h4", ".office-room-copy"],
+    ["浅色研究痕迹名称", ".office-room-copy dt", ".office-room-copy"],
+    ["浅色研究痕迹数量", ".office-room-copy dd", ".office-room-copy"],
+  ]);
+  await expectNoSeriousAccessibilityViolations(page);
+
+  await page.evaluate(() => document.documentElement.setAttribute("data-theme", "dark"));
+  await expectReadableContrast(page, [
+    ["深色研究痕迹标题", ".office-room-copy h4", ".office-room-copy"],
+    ["深色研究痕迹名称", ".office-room-copy dt", ".office-room-copy"],
+    ["深色研究痕迹数量", ".office-room-copy dd", ".office-room-copy"],
+  ]);
 });
 
 test("年度剧情的主菜单入口不会遮挡操作按钮", async ({ page }) => {
@@ -376,7 +466,7 @@ test("深色模式关键平台文字和设置说明保持可读对比度", async
   expect(await contrastRatio(page, ".cloud-sync-warning", ".cloud-sync-body")).toBeGreaterThanOrEqual(4.5);
 });
 
-test("模式代码加载失败时显示恢复界面而不是白屏", async ({ page }) => {
+test("模式代码加载失败时显示可恢复界面", async ({ page }) => {
   await page.route("**/src/modes/CommitteeMode.tsx*", (route) => route.abort());
   await page.goto("/?mode=committee");
 

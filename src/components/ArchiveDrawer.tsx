@@ -1,7 +1,9 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { CHARACTERS } from "../game/content";
+import { isDebateNode } from "../game/narrativeMachine";
 import type { MachineGameSession as GameSession } from "../app/useGameSessionMachine";
 import type { ExperienceMode } from "../types";
+import { DebateHistory } from "./DebatePanel";
 import { EndingPanel } from "./EndingPanel";
 import { OfficeHubPanel, RebirthArchiveSection } from "./RebirthPanel";
 
@@ -42,12 +44,17 @@ function DialogueHistory({
       <ol className="dialogue-history">
         {nodes.map((node) => (
           <li key={node.id}>
-            <span>{node.type === "dialogue"
-              ? node.speaker
+            <span>{isDebateNode(node)
+              ? "观点交锋"
+              : node.type === "dialogue" ? node.speaker
               : experienceMode === "romance" ? "你的选择" : "研究选择"}</span>
-            <p style={{ whiteSpace: "pre-line" }}>{node.id.endsWith("-competing")
-              ? "三位同事围绕同一事实给出基本面、量价和风控三种假设。"
-              : node.type === "dialogue" ? node.text : node.decisionPrompt || node.text}</p>
+            {isDebateNode(node) ? (
+              <DebateHistory hypotheses={session.scene.theme.competingHypotheses} />
+            ) : (
+              <p style={{ whiteSpace: "pre-line" }}>
+                {node.type === "dialogue" ? node.text : node.decisionPrompt || node.text}
+              </p>
+            )}
           </li>
         ))}
       </ol>
@@ -254,7 +261,7 @@ export function ArchiveDrawer({
   const [tab, setTab] = useState<ArchiveTab>("log");
   const experienceMode = session.rebirth.experienceMode;
   const archiveTabs = archiveTabsFor(experienceMode);
-  const dialogRef = useRef<HTMLElement | null>(null);
+  const dialogRef = useRef<HTMLDivElement | null>(null);
   const closeRef = useRef<HTMLButtonElement | null>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const onCloseRef = useRef(onClose);
@@ -317,7 +324,7 @@ export function ArchiveDrawer({
 
   return (
     <div className="archive-backdrop" role="presentation" onMouseDown={onClose}>
-      <aside
+      <div
         aria-labelledby="archive-dialog-title"
         aria-modal="true"
         className="archive-drawer"
@@ -352,7 +359,7 @@ export function ArchiveDrawer({
             tab={tab}
           />
         </div>
-      </aside>
+      </div>
     </div>
   );
 }

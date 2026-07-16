@@ -25,6 +25,7 @@ function forbidText(path, forbidden) {
 for (const file of [
   "src/components/AppErrorBoundary.tsx",
   "src/components/BackToMenu.tsx",
+  "src/components/DebatePanel.tsx",
   "src/components/StartMenu.tsx",
   "src/start-menu.css",
   "src/stability.css",
@@ -36,6 +37,8 @@ for (const file of [
   "scripts/check.py",
   "scripts/e2e/platform.spec.js",
   "scripts/test_check.py",
+  "scripts/test_validate_text_quality.py",
+  "scripts/validate_text_quality.py",
   "vitest.config.ts",
   "docs/stability-and-accessibility.md",
   "docs/ui-system.md",
@@ -73,6 +76,13 @@ requireText("src/components/ArchiveDrawer.tsx", [
   'event.key !== "Tab"',
   'aria-modal="true"',
   'role="tablist"',
+  "DebateHistory",
+  "研究室",
+]);
+requireText("src/components/DebatePanel.tsx", [
+  '<ul className="debate-grid">',
+  "<li",
+  "data-character",
 ]);
 requireText("src/components/SaveTransferPanel.tsx", [
   "settings-disclosure",
@@ -131,12 +141,14 @@ requireText("scripts/e2e/platform.spec.js", [
   "主菜单把两种年度体验与独立玩法分开",
   "主菜单封面在桌面与窄屏保持清晰层级",
   "剧情模式只让玩家处理人物回应",
+  "剧情模式把三位同事的观点放进独立对话框",
+  "研究室物件集中在档案抽屉",
   "档案弹窗关闭后恢复焦点",
   "主菜单入口不会遮挡操作按钮",
   "都可以滚动到底部",
   "深色模式关键平台文字",
   "内容工坊保存的案例会进入投委会案例库",
-  "模式代码加载失败时显示恢复界面",
+  "模式代码加载失败时显示可恢复界面",
 ]);
 requireText("scripts/check.py", [
   "PYTHON_CHECKS",
@@ -144,6 +156,7 @@ requireText("scripts/check.py", [
   "BROWSER_CHECKS",
   'Check("validate_stability", ("npm", "run", "validate:stability"))',
   'Check("validate_bundle", ("npm", "run", "validate:bundle"))',
+  '"validate_text_quality"',
   '("npm", "run", "test:e2e")',
 ]);
 requireText(".github/workflows/pages.yml", [

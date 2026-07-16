@@ -10,7 +10,7 @@ import {
 } from "./narrativeSemantics";
 
 describe("年份叙事包", () => {
-  it("三个正式年份使用不同的剧情节拍", () => {
+  it("三份版本化年份内容使用不同的剧情节拍", () => {
     const ids = ["2023", "2024", "2025"].map((year) => YEAR_NARRATIVE_PROFILES[year].id);
     expect(new Set(ids).size).toBe(3);
   });
@@ -21,6 +21,8 @@ describe("年份叙事包", () => {
     expect(scene2023.nodes[0].id).toBe("m2-colleague");
     expect(scene2025.nodes[0].id).toBe("m2-memory");
     expect(scene2025.nodes[1].id).toBe("m2-competing");
+    expect(scene2025.nodes[1].text).toContain("选择一条证据链");
+    expect(scene2025.nodes[1].text).not.toMatch(/林若宁.*陈星禾.*周明昭/);
   });
 });
 

@@ -186,6 +186,151 @@
   gap: 13px;
 }
 
+.office-room-overview {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.25fr) minmax(180px, 0.75fr);
+  min-height: 164px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: var(--surface);
+}
+
+.office-room-scene {
+  position: relative;
+  min-height: 164px;
+  overflow: hidden;
+  border-right: 1px solid var(--line);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--lavender) 12%, var(--surface-strong)) 0 70%, transparent 70%),
+    var(--surface-strong);
+}
+
+.office-room-board {
+  position: absolute;
+  top: 17px;
+  right: 10%;
+  display: grid;
+  gap: 7px;
+  width: 48%;
+  min-height: 70px;
+  padding: 12px;
+  border: 4px solid color-mix(in srgb, var(--muted) 34%, var(--surface));
+  border-radius: 3px;
+  background: color-mix(in srgb, #eff8f6 86%, var(--surface));
+  box-shadow: 0 5px 15px rgba(26, 17, 35, 0.12);
+}
+
+.office-room-board-mark {
+  display: block;
+  width: 78%;
+  height: 2px;
+  border-radius: 999px;
+  background: #65759c;
+  transform: rotate(-2deg);
+}
+
+.office-room-board-mark:nth-child(even) {
+  width: 58%;
+  margin-left: 25%;
+  background: #a65a80;
+  transform: rotate(3deg);
+}
+
+.office-room-desk {
+  position: absolute;
+  right: 4%;
+  bottom: 0;
+  left: 4%;
+  height: 43%;
+  border-top: 8px solid color-mix(in srgb, #6d4d3e 72%, var(--surface));
+  background: linear-gradient(180deg, #8c6855, #604538);
+  box-shadow: 0 -5px 16px rgba(26, 17, 35, 0.16);
+}
+
+.office-room-notes {
+  position: absolute;
+  top: 10px;
+  left: 9%;
+  display: flex;
+  max-width: 56%;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.office-room-note {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border-radius: 1px 1px 4px;
+  background: #ffe17d;
+  box-shadow: 0 2px 4px rgba(48, 31, 11, 0.18);
+  transform: rotate(-4deg);
+}
+
+.office-room-note:nth-child(even) {
+  background: #ffc4dc;
+  transform: rotate(4deg);
+}
+
+.office-room-cups {
+  position: absolute;
+  right: 8%;
+  bottom: 12px;
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.office-room-cup {
+  display: block;
+  width: 15px;
+  height: 13px;
+  border: 2px solid #eee1d8;
+  border-top: 0;
+  border-radius: 0 0 5px 5px;
+}
+
+.office-room-copy {
+  display: grid;
+  align-content: center;
+  gap: 12px;
+  padding: 16px;
+}
+
+.office-room-copy h4 {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.office-room-copy dl {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+}
+
+.office-room-copy dl div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--line);
+}
+
+.office-room-copy dt {
+  color: var(--ink);
+  font-size: 11px;
+  opacity: 0.82;
+}
+
+.office-room-copy dd {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 900;
+}
+
 .office-prop-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -271,6 +416,15 @@
   .primary-action {
     justify-self: stretch;
     min-width: 0;
+  }
+
+  .office-room-overview {
+    grid-template-columns: 1fr;
+  }
+
+  .office-room-scene {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
   }
 
   .office-prop-grid {

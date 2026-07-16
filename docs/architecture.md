@@ -28,7 +28,9 @@
   │
   └── 浏览器本地存储
         ├── 按年份保存完整 GameState
-        └── 按年份保存 RebirthMetaState 与时间线
+        ├── 按年份保存 RebirthMetaState 与时间线
+        ├── 保存投委会、每日挑战和社区案例记录
+        └── 保存原子会话存档
 ```
 
 构建产物位于 `dist/`，可以部署到 GitHub Pages，也可以通过离线分享包直接打开。
@@ -41,11 +43,14 @@
 
 - `src/App.tsx`：顶层组合，负责主菜单、目标路由、懒加载和 Pixi'VN 原型入口切换
 - `src/components/StartMenu.tsx`：继续游戏、新游戏体验、挑战中心和内容工坊入口
+- `assets/key-art.webp` 与 `src/start-menu.css`：主菜单封面和响应式布局
 - `src/game/platformModes.ts`：查询参数解析、兼容深链和主菜单 URL 生成
 - `src/app/useGameSessionMachine.ts`：年份深链、存档恢复、场景推进和原子状态行动
 - `src/app/useGameController.ts`：主题、音频、设置菜单和舞台能力检测
 - `src/app/ImmersiveGameScreen.tsx`：单视口舞台、对白、观点卡和研究选择，按需加载档案抽屉
+- `src/components/DebatePanel.tsx`：把三方假设分别渲染为角色观点卡
 - `src/components/ArchiveDrawer.tsx`：记录、研究档案、研究室和异步回溯入口
+- `src/components/RebirthPanel.tsx`：研究室物件概览、整理操作和跨周目档案
 - `src/components/RebirthTimelinePanel.tsx`：树状时间线、关键月详情和反事实推演
 - `src/immersive.css`：主流程布局和响应式约束
 
@@ -76,14 +81,14 @@
 
 `src/game/content/schema.ts` 强制校验 `contentVersion: 2`、12 个月度主题、12 组研究方案、完整业务事实、三方假设、研究方法、执行质量、结果方向、效果字段、角色编号和重复编号。
 
-2023、2024、2025 的正式 JSON 都直接保存 `knownEvent`、`businessOutcome` 和 `competingHypotheses`。三个年份加载器只负责校验、循环索引和兼容性语义补全，页面直接从 `MarketTheme.competingHypotheses` 生成三张观点卡。
+2023、2024、2025 的三份版本化 JSON 都直接保存 `knownEvent`、`businessOutcome` 和 `competingHypotheses`。三个年份加载器只负责校验、循环索引和兼容性语义补全，页面直接从 `MarketTheme.competingHypotheses` 生成三张观点卡。
 
 
 ### 内容语义与年份叙事包
 
 研究方案把旧版 `category`、实际研究方法、执行质量和业务结果方向分开记录。评分、知识卡和新路线统计读取方法与质量字段，避免错误选项借用正面方法类别获得奖励。
 
-三个正式年份共享渲染器，但使用不同的叙事节拍：2023 从市场现场切入，2024 从证据整理切入，2025 从未来记忆与观点交锋切入。正式内容的事实与假设全部来自版本化 JSON。补全函数只保留给旧内容和运行时兼容。
+三份年份内容共享渲染器，但使用不同的叙事节拍：2023 从市场现场切入，2024 从证据整理切入，2025 从未来记忆与观点交锋切入。当前正式入口只展示 2025，2023 和 2024 作为往年档案保留。事实与假设来自版本化 JSON，2025 还会叠加 `verified2025.ts` 中经过核对的月度事件锚点。补全函数只服务旧内容和运行时兼容。
 
 ### 场景装配
 
@@ -127,7 +132,9 @@
 
 读取存档时会先创建当前版本的初始状态，再合并可用字段。关系、旗标、类别计数、知识卡和研究室状态分别处理，旧存档缺少字段时使用当前默认值。年份、月份和剧情位置不合法时放弃该存档。剧情位置以稳定节点 id 为主，数字索引只作为旧存档迁移和运行时缓存。
 
-每次状态变化都会写回当前年份，并与跨周目状态一起写入原子 session envelope。切换年份时优先恢复该年份存档，重新开始则保留当前体验模式并创建当前年份的新状态。
+每次状态变化都会写回当前年份，并与跨周目状态一起写入原子会话存档。切换年份时优先恢复该年份存档，重新开始则保留当前体验模式并创建当前年份的新状态。
+
+设置菜单可以把单周目状态、跨周目状态和原子会话存档打包为 JSON 或分享码。可选云同步由 `src/game/cloudSync.ts` 在浏览器内加密，再调用玩家自己的私密 GitHub Gist。项目没有自建账号或存档服务器，访问令牌与同步口令不写入持久化存储。
 
 ### 跨周目状态与时间线
 
@@ -149,7 +156,7 @@
 
 `vite.config.ts` 把 React 运行库拆成稳定的 `react-vendor` 缓存块。档案抽屉通过动态导入加载，因果回溯面板在抽屉内再次动态导入。`src/timeline.css` 由回溯组件导入，因此不会进入首屏 CSS。
 
-`scripts/validate_bundle_size.mjs` 在生产构建后检查：单个 JavaScript chunk 不超过 500000 bytes、首屏入口不超过 150000 bytes、档案和回溯异步面板各不超过 25000 bytes、时间线异步样式不超过 20000 bytes。
+`scripts/validate_bundle_size.mjs` 在生产构建后检查：单个 JavaScript 代码块不超过 500000 字节，首屏入口不超过 150000 字节，档案和回溯异步面板各不超过 25000 字节，时间线异步样式不超过 20000 字节。
 
 ### 结算引擎
 
@@ -185,7 +192,7 @@
 | 静态股票选项数据 | `data/` | 独立数据包，当前不接入 React | `validate_data.py` |
 | 市场复盘生成结果 | `market-review-*.json` | 独立研究工具输出，当前不接入 React | `test_build_data.py` |
 
-`src/data/gameData.ts` 为每个正式年份和 `demo` 创建 12 个月场景。当前市场快照由剧情主题派生，收益字段为 0，行业和风格数据为空。
+`src/data/gameData.ts` 为 2023、2024、2025 和 `demo` 创建 12 个月场景。`GAME_YEARS` 当前只包含 2025。2023、2024 和 `demo` 只能通过深链打开。当前市场快照由剧情主题派生，收益字段为 0，行业和风格数据为空。
 
 `data/YYYY.json`、`data/game-data.js` 和 `data/manifest.json` 当前只由校验脚本和前端结构检查读取。
 
@@ -195,7 +202,11 @@
 
 `src/components/PixiStage.tsx` 统一加载背景和四位角色的透明立绘。角色资源使用 WebP，舞台负责姿势映射、缩放、底部锚点、色调和阴影。系统要求减少动态效果时，舞台不创建漂浮星点。`src/app/useGameController.ts` 会先检测 WebGL，失败时页面使用同一批 WebP 资源组成静态舞台。
 
+便签、白板、咖啡杯、档案柜和研究捷径板集中显示在档案抽屉的研究室标签中。主舞台不根据计数叠加办公室物件，避免人物背景与状态提示争夺视觉注意力。
+
 `scripts/validate_frontend.js` 对发布位图执行 500 KiB 单文件预算检查。`vite.config.ts` 把 Pixi'VN 原型间接使用的 Tone.js 拆成独立异步块，避免单个 JavaScript 产物超过 Vite 的默认提醒阈值。
+
+主菜单封面使用 `assets/key-art.webp`。`StartMenu` 在桌面端把文案与封面分栏，840px 以下改为上下排列。图片带固定宽高并优先加载，模式卡片继续使用实色背景。
 
 可用查询参数：
 
@@ -224,14 +235,24 @@
 - `src/game/content/content.test.ts`：年份 JSON 和加载器
 - `src/game/runtime.test.ts`：剧情游标、回看和跨月流程
 - `src/game/engine.test.ts`：评分、状态变化、关系、旗标、分支和结局
+- `src/components/DebatePanel.test.tsx`：三方观点数据、角色卡和档案回看
+- `src/components/RebirthPanel.test.tsx`：研究室物件概览和视觉形状
+- `src/app/ImmersiveGameScreen.test.tsx`：主舞台不叠加研究室物件
 - `src/game/rebirthTimeline.test.ts`：锚点、事件、分叉、恢复、推演和迁移
 - `src/game/rebirthTimelineGuards.test.ts`：内容版本与分支数量边界
-- `src/data/gameData.test.ts`：正式年份和 `demo` 深链约束
+- `src/data/gameData.test.ts`：2025 正式入口、往年档案和 `demo` 深链约束
 - `scripts/test_build_data.py`：市场复盘生成器
 - `scripts/test_validate_data.py`：静态股票选项数据
 - `scripts/test_docs_style.py`：说明文档风格
+- `scripts/validate_text_quality.py`：说明文档与游戏台词的机械文本检查
 - `scripts/e2e/platform.spec.js`：主菜单、关键旅程、体验模式、焦点、深色对比度和 axe 检查
 - `scripts/validate_frontend.js`：入口、依赖、关键文件、资源和静态数据
+
+复杂度和可维护性由两套规则共同约束：
+
+- Ruff C901 与 ESLint `complexity` 都把圈复杂度上限设为 15。
+- `scripts/dev/maintainability_metrics.py` 统计 Python 长行、长函数、大文件和 C901 忽略项。
+- `scripts/test_maintainability_metrics.py` 在本地 Pytest 中核对当前基线与棘轮预算，指标增加时阻止检查通过。
 
 `npm run check` 与 `uv run python scripts/check.py` 指向同一套完整本地检查，覆盖 Python、前端静态检查、Vitest、生产构建、包体预算和 Chromium 回归。按范围排查时使用 `scripts/check.py --python`、`--frontend` 或 `--e2e`。
 
@@ -252,7 +273,8 @@
 | 新增条件分支 | `src/game/branches.ts` |
 | 调整场景顺序和研究方案路由 | `src/game/sceneBuilders.ts` |
 | 修改年份主题和研究方案 | `src/game/content/*.json` |
-| 修改 2025 年业务事实和分歧假设 | `src/game/content2025.ts` |
+| 修改 2025 年主题、业务事实和分歧假设 | `src/game/content/2025.json` |
+| 修改 2025 年核验事件锚点 | `src/game/verified2025.ts` 和 `docs/2025-source-ledger.md` |
 | 修改评分和状态结算 | `src/game/engine.ts` |
 | 修改剧情推进和回看 | `src/game/runtime.ts` |
 | 修改因果回溯、分叉和推演 | `src/game/rebirthTimeline*.ts` |
@@ -261,6 +283,8 @@
 | 修改体验模式策略 | `src/game/experienceMode.ts` |
 | 修改主菜单和 URL 入口 | `src/components/StartMenu.tsx`、`src/game/platformModes.ts` |
 | 修改主页面展示 | `src/app/ImmersiveGameScreen.tsx` |
+| 修改三方观点卡 | `src/components/DebatePanel.tsx` |
+| 修改研究室物件概览 | `src/components/RebirthPanel.tsx` 和 `src/components/ArchiveDrawer.tsx` |
 | 修改单视口布局 | `src/immersive.css` |
 | 修改角色立绘和姿势映射 | `src/components/PixiStage.tsx` |
 | 修改顶层入口和原型切换 | `src/App.tsx` |

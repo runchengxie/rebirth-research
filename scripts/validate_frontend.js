@@ -89,6 +89,7 @@ for (const file of [
   "src/App.tsx",
   "src/app/GameScreen.tsx",
   "src/app/ImmersiveGameScreen.tsx",
+  "src/app/ImmersiveGameScreen.test.tsx",
   "src/app/useGameController.ts",
   "src/app/useGameSessionMachine.ts",
   "src/types.ts",
@@ -103,10 +104,14 @@ for (const file of [
   "src/components/PixiStage.tsx",
   "src/components/ArchiveDrawer.tsx",
   "src/components/CloudSyncPanel.tsx",
+  "src/components/DebatePanel.tsx",
+  "src/components/DebatePanel.test.tsx",
   "src/components/EndingPanel.tsx",
   "src/components/InvestigationPanel.tsx",
   "src/components/BackToMenu.tsx",
   "src/components/StartMenu.tsx",
+  "src/components/RebirthPanel.tsx",
+  "src/components/RebirthPanel.test.tsx",
   "src/components/RebirthTimelinePanel.tsx",
   "src/components/ResearchCommitmentPanel.tsx",
   "src/components/SaveTransferPanel.tsx",
@@ -130,6 +135,8 @@ for (const file of [
   "src/game/content2024.ts",
   "src/game/content2025.ts",
   "src/game/contentDemo.ts",
+  "src/game/dialogueText.ts",
+  "src/game/dialogueText.test.ts",
   "src/game/dailyChallenge.ts",
   "src/game/decisionFactory.ts",
   "src/game/engine.ts",
@@ -246,7 +253,7 @@ const immersiveScreen = requireText("src/app/ImmersiveGameScreen.tsx", [
   "SaveTransferPanel",
   "canGoBack",
   "跳过已读",
-  "记录与档案",
+  "档案与研究室",
 ]);
 if (immersiveScreen.includes("RebirthTimelinePanel")) {
   fail("主界面不应同步导入因果回溯面板");
@@ -267,6 +274,15 @@ requireText("src/game/narrativeMachine.ts", [
   "NarrativePhase",
   "narrativeFrameFor",
   "isDebateNode",
+]);
+requireText("src/components/DebatePanel.tsx", [
+  "debate-card",
+  "data-character",
+  "观点交锋",
+]);
+requireText("src/components/RebirthPanel.tsx", [
+  "office-room-overview",
+  "本周目留下的研究痕迹",
 ]);
 requireText("src/game/committeeMode.ts", [
   "COMMITTEE_EXAMINERS",

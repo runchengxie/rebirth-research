@@ -178,7 +178,7 @@ export function CloudSyncPanel({ year }: { year: string }) {
           </button>
         </div>
         <small className="cloud-sync-warning">
-          GitHub token 仅存在于当前输入框；同步口令无法找回。Gist 文件即使被看到，也只包含加密密文。
+          GitHub 访问令牌仅存在于当前输入框。同步口令无法找回。Gist 文件即使被看到，也只包含加密密文。
         </small>
         {status ? <p className="save-transfer-status" role="status">{status}</p> : null}
       </div>

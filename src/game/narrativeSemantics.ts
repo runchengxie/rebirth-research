@@ -7,6 +7,7 @@ import type {
   OutcomeAlignment,
   ResearchDecision,
 } from "../types";
+import { polishMixedText } from "./dialogueText";
 
 export const CONTENT_REVISION = "content-system-v2";
 
@@ -96,6 +97,24 @@ export function decisionBehaviorTags(decision: ResearchDecision): DecisionBehavi
 export function completeDecisionSemantics(decision: ResearchDecision): ResearchDecision {
   return {
     ...decision,
+    label: polishMixedText(decision.label),
+    description: polishMixedText(decision.description),
+    ...(decision.backgroundNote === undefined
+      ? {}
+      : { backgroundNote: polishMixedText(decision.backgroundNote) }),
+    ...(decision.businessAngle === undefined
+      ? {}
+      : { businessAngle: polishMixedText(decision.businessAngle) }),
+    ...(decision.teaches === undefined
+      ? {}
+      : { teaches: {
+        ...decision.teaches,
+        concept: polishMixedText(decision.teaches.concept),
+        mentorLine: polishMixedText(decision.teaches.mentorLine),
+        ...(decision.teaches.learningRef === undefined
+          ? {}
+          : { learningRef: polishMixedText(decision.teaches.learningRef) }),
+      } }),
     method: decisionMethod(decision),
     quality: decisionQuality(decision),
     outcomeAlignment: decisionOutcomeAlignment(decision),
@@ -116,16 +135,45 @@ function businessFactFrom(theme: MarketTheme): string {
 }
 
 export function completeYearThemes(themes: MarketTheme[]): MarketTheme[] {
-  return themes.map((theme) => ({
-    ...theme,
-    knownEvent: theme.knownEvent ?? theme.protagonistMemory,
-    businessOutcome: theme.businessOutcome ?? businessFactFrom(theme),
-    competingHypotheses: theme.competingHypotheses ?? {
-      lin: `围绕“${theme.title}”，把收入、订单、利润率和现金流拆成可验证链条。`,
-      chen: `跟踪“${theme.title}”相关成交结构、拥挤度与信号持续性，警惕一次性脉冲。`,
-      zhou: `为“${theme.title}”建立估值、传导时滞和下行情景，先写清错误边界。`,
-    },
-  }));
+  return themes.map((theme) => {
+    const polished: MarketTheme = {
+      ...theme,
+      title: polishMixedText(theme.title),
+      publicContext: polishMixedText(theme.publicContext),
+      protagonistMemory: polishMixedText(theme.protagonistMemory),
+      gameHook: polishMixedText(theme.gameHook),
+      historicalPrototype: theme.historicalPrototype === undefined
+        ? undefined
+        : polishMixedText(theme.historicalPrototype),
+      knownEvent: theme.knownEvent === undefined ? undefined : polishMixedText(theme.knownEvent),
+      businessOutcome: theme.businessOutcome === undefined
+        ? undefined
+        : polishMixedText(theme.businessOutcome),
+      competingHypotheses: theme.competingHypotheses === undefined
+        ? undefined
+        : {
+          lin: theme.competingHypotheses.lin === undefined
+            ? undefined
+            : polishMixedText(theme.competingHypotheses.lin),
+          chen: theme.competingHypotheses.chen === undefined
+            ? undefined
+            : polishMixedText(theme.competingHypotheses.chen),
+          zhou: theme.competingHypotheses.zhou === undefined
+            ? undefined
+            : polishMixedText(theme.competingHypotheses.zhou),
+        },
+    };
+    return {
+      ...polished,
+      knownEvent: polished.knownEvent ?? polished.protagonistMemory,
+      businessOutcome: polished.businessOutcome ?? businessFactFrom(polished),
+      competingHypotheses: polished.competingHypotheses ?? {
+        lin: `围绕${polished.title}，把收入、订单、利润率和现金流拆成可验证链条。`,
+        chen: `跟踪${polished.title}相关的成交结构、拥挤度与信号持续性，警惕一次性脉冲。`,
+        zhou: `为${polished.title}建立估值、传导时滞和下行情景，先写清错误边界。`,
+      },
+    };
+  });
 }
 
 export type SceneBeatKey =

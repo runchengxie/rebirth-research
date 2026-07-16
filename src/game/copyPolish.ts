@@ -1,35 +1,8 @@
 import type { MarketTheme } from "../types";
 import { BRANCHES } from "./branches";
 import { THEMES_2025 } from "./content2025";
+import { polishMixedText } from "./dialogueText";
 import { STORY_ARCS, YEAR_ARC_LINES, YEAR_ARC_MISSIONS } from "./storyArcs";
-
-const MIXED_TERMS = [
-  "DeepSeek-R1",
-  "AI Agent",
-  "SaaS",
-  "ARR",
-  "ToC",
-  "ToB",
-  "Barra",
-  "Alpha",
-  "IPO",
-  "AI",
-] as const;
-
-function escapeRegExp(value: string): string {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-function polishMixedText(text: string): string {
-  let polished = text;
-  for (const term of MIXED_TERMS) {
-    const escaped = escapeRegExp(term);
-    polished = polished
-      .replace(new RegExp(`([\\u3400-\\u9fff])(${escaped})`, "g"), "$1 $2")
-      .replace(new RegExp(`(${escaped})([\\u3400-\\u9fff])`, "g"), "$1 $2");
-  }
-  return polished.replace(/[ \t]{2,}/g, " ");
-}
 
 function polishThemeInPlace(theme: MarketTheme): void {
   theme.title = polishMixedText(theme.title);

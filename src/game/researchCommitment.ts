@@ -57,18 +57,26 @@ const RECOMMENDED_FALSIFIER: Partial<Record<DecisionMethod, FalsifierId>> = {
   self_management: "timing",
 };
 
-export function createAssistedResearchCommitment(
-  decision: ResearchDecision,
+export function createSteadyResearchCommitment(
+  falsifier: FalsifierId = "business",
 ): ResearchCommitment {
   return {
     confidence: 70,
-    falsifier: RECOMMENDED_FALSIFIER[decisionMethod(decision)] ?? "business",
+    falsifier,
     reviewChecks: {
       evidence: true,
       counterexample: true,
       exit: true,
     },
   };
+}
+
+export function createAssistedResearchCommitment(
+  decision: ResearchDecision,
+): ResearchCommitment {
+  return createSteadyResearchCommitment(
+    RECOMMENDED_FALSIFIER[decisionMethod(decision)] ?? "business",
+  );
 }
 
 interface CommitmentContext {

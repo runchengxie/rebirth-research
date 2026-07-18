@@ -85,6 +85,69 @@
   line-height: 1.55;
 }
 
+.research-assist {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.3rem 0.8rem;
+  align-items: center;
+  padding: 0.8rem;
+  border: 1px solid color-mix(in srgb, var(--research-accent) 30%, var(--research-border));
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--research-surface) 82%, var(--research-accent) 18%);
+}
+
+.research-assist > span,
+.research-assist > strong,
+.research-assist > p {
+  grid-column: 1;
+}
+
+.research-assist > span {
+  color: var(--research-muted);
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+}
+
+.research-assist > p {
+  margin: 0;
+  color: var(--research-muted);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.research-assist > button {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  min-height: 40px;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--research-accent);
+  border-radius: 10px;
+  color: var(--research-text);
+  background: var(--research-control-surface);
+}
+
+.research-assist > button[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--research-control-surface) 78%, var(--research-accent) 22%);
+}
+
+.research-commitment-manual {
+  padding: 0.75rem;
+  border: 1px solid var(--research-border);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--research-surface) 94%, transparent);
+}
+
+.research-commitment-manual summary {
+  cursor: pointer;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.research-commitment-manual[open] {
+  display: grid;
+  gap: 0.9rem;
+}
+
 .research-commitment fieldset {
   min-width: 0;
   margin: 0;
@@ -252,6 +315,16 @@
 
   .research-commitment {
     padding: 0.8rem;
+  }
+
+  .research-assist {
+    grid-template-columns: 1fr;
+  }
+
+  .research-assist > button {
+    grid-column: 1;
+    grid-row: auto;
+    width: 100%;
   }
 
   .save-transfer-actions button {

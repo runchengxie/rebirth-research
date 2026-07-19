@@ -109,6 +109,9 @@ uv sync --only-dev
 npm run check
 ```
 
+仓库没有质量 CI。每个 clone 应执行一次 `npm run hooks:install`，将版本化的
+`.githooks/pre-push` 设为 Git hooks 目录。之后每次 push 会自动运行同一套完整检查。
+
 `npm run check` 会通过 `scripts/check.py` 依次运行 Python、前端和 Chromium 浏览器回归。首次运行浏览器测试前需要下载 Chromium：
 
 ```bash

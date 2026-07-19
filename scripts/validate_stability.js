@@ -159,6 +159,11 @@ requireText("scripts/check.py", [
   '"validate_text_quality"',
   '("npm", "run", "test:e2e")',
 ]);
+requireText(".githooks/pre-push", [
+  "set -euo pipefail",
+  "git rev-parse --show-toplevel",
+  "npm run check",
+]);
 requireText(".github/workflows/pages.yml", [
   "name: Deploy Pages",
   "branches: [main]",

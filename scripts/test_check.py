@@ -71,11 +71,16 @@ def test_package_and_pages_workflow_keep_quality_local() -> None:
     dev_dependencies = package_json["devDependencies"]
 
     assert scripts["check"] == "uv run python scripts/check.py"
+    assert scripts["hooks:install"] == "git config core.hooksPath .githooks"
     assert scripts["build"] == "tsc -b && vite build"
     assert scripts["build:pages"] == "vite build"
     assert scripts["e2e:prepare"] == "playwright install chromium"
     assert dev_dependencies["@playwright/test"] == "1.55.0"
     assert dev_dependencies["@axe-core/playwright"] == "4.10.2"
+
+    pre_push = ROOT / ".githooks" / "pre-push"
+    assert pre_push.stat().st_mode & 0o111
+    assert "npm run check" in pre_push.read_text(encoding="utf-8")
 
     workflow = (ROOT / ".github/workflows/pages.yml").read_text(encoding="utf-8")
     assert "pull_request:" not in workflow

@@ -67,6 +67,12 @@ npm run build
 npm run check
 ```
 
+仓库提供同一套检查的 pre-push hook。每个 clone 初始化一次：
+
+```bash
+npm run hooks:install
+```
+
 Python 工具、测试、数据更新和发布流程见 [`docs/maintenance.md`](docs/maintenance.md)。
 
 ## 文档

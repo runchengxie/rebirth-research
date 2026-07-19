@@ -142,6 +142,16 @@ export REBIRTH_INSTRUMENTS_FILE=/path/to/a_share_instruments_latest.parquet
 npm run check
 ```
 
+每个 clone 初始化一次版本化的 pre-push hook：
+
+```bash
+npm run hooks:install
+```
+
+该命令把 `core.hooksPath` 设为 `.githooks`。之后每次 push 都会先运行
+`npm run check`。检查失败时 Git 会中止 push。hook 不安装依赖，首次使用前仍需完成
+`npm ci`、`uv sync --only-dev` 和 `npm run e2e:prepare`。
+
 这是提交前的单一入口。它通过 `scripts/check.py` 依次运行 Python、前端和浏览器三组阻塞检查。生产构建和包体预算归在前端分组中。
 
 Python 分组包括 Ruff 规则与格式、编译、ty、Pytest、静态数据校验和文本质量检查。前端分组包括：
@@ -258,7 +268,7 @@ Pages 任务执行：
 3. 上传 `dist/` Pages 产物。
 4. 部署 GitHub Pages。
 
-Actions 不运行 TypeScript 检查、lint、单元测试、Python 检查、契约校验、包体预算或 Playwright。维护者应在推送前运行 `npm run check`。本地 Playwright 失败诊断写入 `test-results/`。
+Actions 不运行 TypeScript 检查、lint、单元测试、Python 检查、契约校验、包体预算或 Playwright。维护者应安装版本化的 pre-push hook。它会在推送前运行 `npm run check`。本地 Playwright 失败诊断写入 `test-results/`。
 
 发布后检查：
 

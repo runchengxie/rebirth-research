@@ -60,7 +60,10 @@ test("职业方案先解释代价并确认，再生成一次结算", async ({ pa
   await expect(page.locator(".interaction-actions .primary-action")).toBeDisabled();
 
   const confirm = option.getByRole("button", { name: "确认提交本月判断" });
-  await confirm.dblclick();
+  await confirm.evaluate((element) => {
+    element.click();
+    element.click();
+  });
   await expect(page.locator(".decision-result")).toBeVisible();
   await expect(page.locator(".career-causal-recap article")).toHaveCount(3);
 

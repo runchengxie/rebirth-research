@@ -9,6 +9,7 @@ import "./research-ux.css";
 import "./career-guidance.css";
 import "./debate-glossary.css";
 import "./career-responsive.css";
+import "./career-score.css";
 import "./platform-shell.css";
 import "./settings-polish.css";
 import "./stability.css";

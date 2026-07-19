@@ -47,10 +47,16 @@ export function ResearchCommitmentPanel({
   const falsifierLabel = FALSIFIER_OPTIONS.find((option) => option.id === commitment.falsifier)?.label;
 
   useEffect(() => {
-    const applyOpeningGuide = () => applySteadyTemplate("opening-guide");
+    const applyOpeningGuide = () => {
+      onChange(createSteadyResearchCommitment(commitment.falsifier));
+      recordPlaytestEvent("research_assist_apply", {
+        source: "opening-guide",
+        falsifier: commitment.falsifier,
+      });
+    };
     window.addEventListener("rebirth:apply-steady-commitment", applyOpeningGuide);
     return () => window.removeEventListener("rebirth:apply-steady-commitment", applyOpeningGuide);
-  });
+  }, [commitment.falsifier, onChange]);
 
   return (
     <section className="research-commitment" aria-label="提交前研究承诺">

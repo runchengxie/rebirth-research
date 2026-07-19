@@ -1,0 +1,40 @@
+.career-score-breakdown {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  margin: 0;
+  padding: 0 10px 10px;
+}
+
+.career-score-breakdown > div {
+  display: grid;
+  gap: 2px;
+  padding: 7px 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.career-score-breakdown dt {
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.career-score-breakdown dd {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.career-score-breakdown .score-reasoning,
+.career-score-breakdown .score-total {
+  grid-column: span 2;
+  border-color: color-mix(in srgb, var(--blue) 42%, var(--line));
+}
+
+@media (max-width: 480px) {
+  .career-score-breakdown {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

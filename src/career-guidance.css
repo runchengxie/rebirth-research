@@ -1,0 +1,333 @@
+.immersive-app .status-band.career-status {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.career-guidance-summary {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+  gap: 8px 14px;
+  align-items: center;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface-strong) 88%, var(--blue) 12%);
+}
+
+.career-guidance-summary > div {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.career-guidance-summary span,
+.focus-onboarding span,
+.career-option-schedule span,
+.decision-confirmation > span,
+.career-causal-recap article > span {
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.career-guidance-summary strong {
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.career-guidance-summary small {
+  max-width: 30ch;
+  color: var(--muted);
+  font-size: 0.72rem;
+  line-height: 1.4;
+  text-align: right;
+}
+
+.focus-choice-section {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.focus-choice-section .focus-grid {
+  margin-bottom: 0;
+}
+
+.focus-onboarding {
+  display: grid;
+  gap: 3px;
+  padding: 9px 11px;
+  border: 1px solid color-mix(in srgb, var(--blue) 34%, var(--line));
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--surface-strong) 88%, var(--blue) 12%);
+}
+
+.focus-onboarding strong {
+  font-size: 0.86rem;
+}
+
+.focus-onboarding p,
+.focus-additional p,
+.rebirth-additional-nodes > p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+.focus-additional,
+.career-glossary,
+.career-full-recap {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-strong);
+}
+
+.focus-additional > summary,
+.career-glossary > summary,
+.career-full-recap > summary {
+  cursor: pointer;
+  padding: 8px 10px;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.focus-additional[open] > summary,
+.career-glossary[open] > summary,
+.career-full-recap[open] > summary {
+  color: var(--pink);
+}
+
+.focus-additional .focus-grid {
+  padding: 0 8px 8px;
+}
+
+.rebirth-additional-nodes > summary,
+.rebirth-locked-nodes > summary {
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.rebirth-additional-nodes > p {
+  padding: 4px 0 8px;
+}
+
+.immersive-decision-panel .career-option {
+  --method-accent: var(--blue);
+
+  display: block;
+  padding: 0;
+  overflow: hidden;
+  border-color: color-mix(in srgb, var(--method-accent) 48%, var(--line));
+}
+
+.immersive-decision-panel .career-option.method-field,
+.immersive-decision-panel .career-option.method-collaboration {
+  --method-accent: var(--lavender);
+}
+
+.immersive-decision-panel .career-option.method-risk,
+.immersive-decision-panel .career-option.method-committee {
+  --method-accent: var(--gold);
+}
+
+.immersive-decision-panel .career-option.method-self {
+  --method-accent: var(--green);
+}
+
+.immersive-decision-panel .career-option.method-chasing {
+  --method-accent: var(--red);
+}
+
+.career-option-main {
+  width: 100%;
+  display: grid;
+  gap: 7px;
+  padding: 11px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+}
+
+.career-option-main:hover,
+.career-option-main:focus-visible {
+  background: color-mix(in srgb, var(--surface-strong) 88%, var(--method-accent) 12%);
+}
+
+.career-option-logic,
+.decision-confirmation dl,
+.career-glossary dl {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+}
+
+.career-option-logic > div,
+.decision-confirmation dl > div,
+.career-glossary dl > div {
+  display: grid;
+  grid-template-columns: minmax(72px, auto) minmax(0, 1fr);
+  gap: 8px;
+  align-items: baseline;
+}
+
+.career-option-logic dt,
+.decision-confirmation dt,
+.career-glossary dt {
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.career-option-logic dd,
+.decision-confirmation dd,
+.career-glossary dd {
+  margin: 0;
+  font-size: 0.74rem;
+  line-height: 1.45;
+}
+
+.career-option-schedule {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
+  padding-top: 6px;
+  border-top: 1px solid var(--line);
+}
+
+.career-option-schedule strong {
+  color: var(--method-accent);
+  font-size: 0.78rem;
+}
+
+.career-term {
+  padding: 0 2px;
+  border-bottom: 1px dashed var(--method-accent, var(--pink));
+  color: inherit;
+  text-decoration: none;
+}
+
+.career-term:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}
+
+.career-glossary {
+  margin: 0 10px 10px;
+}
+
+.career-glossary dl {
+  padding: 0 10px 10px;
+}
+
+.decision-confirmation {
+  display: grid;
+  gap: 8px;
+  margin: 0 10px 10px;
+  padding: 10px;
+  border: 1px solid color-mix(in srgb, var(--method-accent) 52%, var(--line));
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--surface-strong) 90%, var(--method-accent) 10%);
+}
+
+.decision-confirmation > strong {
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+.decision-confirmation > small {
+  color: var(--muted);
+  font-size: 0.74rem;
+  line-height: 1.45;
+}
+
+.decision-confirmation > .secondary-action {
+  min-height: 36px;
+  width: fit-content;
+}
+
+.decision-confirmation-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.decision-confirmation-actions button {
+  min-height: 38px;
+}
+
+.career-causal-recap {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.career-causal-recap article {
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--surface-strong);
+}
+
+.career-causal-recap article:nth-child(1) {
+  border-color: color-mix(in srgb, var(--green) 48%, var(--line));
+}
+
+.career-causal-recap article:nth-child(2) {
+  border-color: color-mix(in srgb, var(--gold) 48%, var(--line));
+}
+
+.career-causal-recap article:nth-child(3) {
+  border-color: color-mix(in srgb, var(--blue) 48%, var(--line));
+}
+
+.career-causal-recap p,
+.career-full-recap p {
+  margin: 4px 0 0;
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+.career-full-recap {
+  margin-top: 8px;
+}
+
+.career-full-recap > p {
+  padding: 0 10px;
+}
+
+.career-full-recap > p:last-child {
+  padding-bottom: 10px;
+}
+
+@media (max-width: 760px) {
+  .career-guidance-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .career-guidance-summary small {
+    max-width: none;
+    text-align: left;
+  }
+
+  .career-causal-recap {
+    grid-template-columns: 1fr;
+  }
+
+  .decision-confirmation-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .decision-confirmation-actions .primary-action,
+  .decision-confirmation-actions .secondary-action {
+    width: 100%;
+    justify-self: stretch;
+  }
+}

@@ -1,9 +1,12 @@
+import { glossaryTermsIn } from "../game/careerGuidance";
 import { CHARACTERS } from "../game/content";
+import { recordPlaytestEvent } from "../game/playtestTelemetry";
 import type { CompetingHypotheses } from "../types";
 import { debateItems } from "./debateItems";
 
 export function DebatePanel({ hypotheses }: { hypotheses: CompetingHypotheses | undefined }) {
   const items = debateItems(hypotheses);
+  const terms = glossaryTermsIn(...items.map((item) => item.text));
   return (
     <section className="debate-panel" aria-label="三位同事的观点交锋">
       <header className="debate-intro">
@@ -34,6 +37,26 @@ export function DebatePanel({ hypotheses }: { hypotheses: CompetingHypotheses | 
           );
         })}
       </ul>
+      {terms.length > 0 ? (
+        <details
+          className="debate-glossary"
+          onToggle={(event) => {
+            if (event.currentTarget.open) {
+              recordPlaytestEvent("debate_glossary_expand", { termCount: terms.length });
+            }
+          }}
+        >
+          <summary>本话术语（{terms.length}）</summary>
+          <dl>
+            {terms.map((term) => (
+              <div key={term.id}>
+                <dt>{term.label}</dt>
+                <dd>{term.explanation}</dd>
+              </div>
+            ))}
+          </dl>
+        </details>
+      ) : null}
       <p className="debate-conclusion">
         每套框架都有证据和盲区。选择一条证据链，也要留意它暂时解释不了的部分。
       </p>

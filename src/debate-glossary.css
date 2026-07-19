@@ -1,0 +1,43 @@
+.debate-glossary {
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--surface-strong);
+}
+
+.debate-glossary > summary {
+  cursor: pointer;
+  padding: 8px 10px;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.debate-glossary[open] > summary {
+  color: var(--pink);
+}
+
+.debate-glossary dl {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding: 0 10px 10px;
+}
+
+.debate-glossary dl > div {
+  display: grid;
+  grid-template-columns: minmax(84px, auto) minmax(0, 1fr);
+  gap: 8px;
+}
+
+.debate-glossary dt {
+  color: var(--ink);
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.debate-glossary dd {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.74rem;
+  line-height: 1.45;
+}

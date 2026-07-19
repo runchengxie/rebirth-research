@@ -1,3 +1,4 @@
+import { recordPlaytestEvent } from "../game/playtestTelemetry";
 import type { GameState } from "../types";
 import {
   currentInvestigation,
@@ -10,6 +11,12 @@ import {
   type InvestigationNodeView,
   type RebirthMetaState,
 } from "../game/rebirth";
+
+const OPENING_INVESTIGATION_IDS = new Set<InvestigationNodeId>([
+  "public_materials",
+  "cio_calls",
+  "risk_review",
+]);
 
 function InvestigationNode({
   node,
@@ -53,6 +60,19 @@ function InvestigationNodes({
   );
 }
 
+function recordExpansion(
+  kind: "additional" | "locked",
+  meta: RebirthMetaState,
+  state: GameState,
+): void {
+  recordPlaytestEvent("investigation_expand", {
+    kind,
+    year: state.year,
+    month: state.monthIndex + 1,
+    cycle: meta.cycle,
+  });
+}
+
 export function InvestigationPanel({
   meta,
   state,
@@ -70,6 +90,13 @@ export function InvestigationPanel({
   const nodes = investigationNodeViews(meta, state);
   const availableNodes = nodes.filter((node) => !node.lockedReason);
   const lockedNodes = nodes.filter((node) => Boolean(node.lockedReason));
+  const guidedOpening = meta.cycle === 1 && state.monthIndex === 0;
+  const primaryNodes = guidedOpening
+    ? availableNodes.filter((node) => node.completed || OPENING_INVESTIGATION_IDS.has(node.id))
+    : availableNodes;
+  const additionalNodes = guidedOpening
+    ? availableNodes.filter((node) => !primaryNodes.includes(node))
+    : [];
   const clues = investigationClues(meta, state);
 
   return (
@@ -94,13 +121,33 @@ export function InvestigationPanel({
       ) : null}
 
       <div className="rebirth-unlocks" role="note">
-        <span>当前可执行</span>
-        <p>先处理眼前能验证的线索。需要前置条件或记忆钥匙的节点已暂时收起。</p>
+        <span>{guidedOpening ? "先选一条验证路径" : "当前可执行"}</span>
+        <p>{guidedOpening
+          ? "公开材料、企业访谈和风险反例分别代表事实、需求与边界。第一次调查先理解三种证据，不必规划完整网络。"
+          : "先处理眼前能验证的线索。需要前置条件或记忆钥匙的节点已暂时收起。"}</p>
       </div>
-      <InvestigationNodes nodes={availableNodes} onInvestigate={onInvestigate} />
+      <InvestigationNodes nodes={primaryNodes} onInvestigate={onInvestigate} />
+
+      {additionalNodes.length > 0 ? (
+        <details
+          className="rebirth-unlocks rebirth-additional-nodes"
+          onToggle={(event) => {
+            if (event.currentTarget.open) recordExpansion("additional", meta, state);
+          }}
+        >
+          <summary>查看进阶调查（{additionalNodes.length}）</summary>
+          <p>这些节点仍然可以选择，只是第一话不要求你一次理解所有研究路径。</p>
+          <InvestigationNodes nodes={additionalNodes} onInvestigate={onInvestigate} />
+        </details>
+      ) : null}
 
       {lockedNodes.length > 0 ? (
-        <details className="rebirth-unlocks rebirth-locked-nodes">
+        <details
+          className="rebirth-unlocks rebirth-locked-nodes"
+          onToggle={(event) => {
+            if (event.currentTarget.open) recordExpansion("locked", meta, state);
+          }}
+        >
           <summary>查看待解锁节点（{lockedNodes.length}）</summary>
           <InvestigationNodes nodes={lockedNodes} onInvestigate={onInvestigate} />
         </details>

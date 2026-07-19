@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { recordPlaytestEvent } from "../game/playtestTelemetry";
 import {
   CONFIDENCE_OPTIONS,
   FALSIFIER_OPTIONS,
@@ -33,9 +35,28 @@ export function ResearchCommitmentPanel({
       },
     });
   };
+  const applySteadyTemplate = (source: "button" | "opening-guide") => {
+    onChange(createSteadyResearchCommitment(commitment.falsifier));
+    recordPlaytestEvent("research_assist_apply", {
+      source,
+      falsifier: commitment.falsifier,
+    });
+  };
   const fullyReviewed = completedReviewCount(commitment) === REVIEW_CHECK_OPTIONS.length;
   const steadyTemplateActive = commitment.confidence === 70 && fullyReviewed;
   const falsifierLabel = FALSIFIER_OPTIONS.find((option) => option.id === commitment.falsifier)?.label;
+
+  useEffect(() => {
+    const applyOpeningGuide = () => {
+      onChange(createSteadyResearchCommitment(commitment.falsifier));
+      recordPlaytestEvent("research_assist_apply", {
+        source: "opening-guide",
+        falsifier: commitment.falsifier,
+      });
+    };
+    window.addEventListener("rebirth:apply-steady-commitment", applyOpeningGuide);
+    return () => window.removeEventListener("rebirth:apply-steady-commitment", applyOpeningGuide);
+  }, [commitment.falsifier, onChange]);
 
   return (
     <section className="research-commitment" aria-label="提交前研究承诺">
@@ -55,13 +76,18 @@ export function ResearchCommitmentPanel({
           aria-pressed={steadyTemplateActive}
           className="secondary-action"
           type="button"
-          onClick={() => onChange(createSteadyResearchCommitment(commitment.falsifier))}
+          onClick={() => applySteadyTemplate("button")}
         >
           {steadyTemplateActive ? "稳健模板已采用" : "采用稳健模板"}
         </button>
       </aside>
 
-      <details className="research-commitment-manual">
+      <details
+        className="research-commitment-manual"
+        onToggle={(event) => {
+          if (event.currentTarget.open) recordPlaytestEvent("research_commitment_manual_expand", {});
+        }}
+      >
         <summary>手动调整研究承诺</summary>
         <fieldset className="commitment-confidence">
           <legend>判断置信度</legend>

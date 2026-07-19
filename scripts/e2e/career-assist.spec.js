@@ -31,14 +31,11 @@ test("职业模式优先展示可执行调查节点", async ({ page }) => {
   await expect(lockedNodes.locator(".rebirth-node").first()).toBeVisible();
 });
 
-test("研究助理用一次操作完成稳健承诺", async ({ page }) => {
+test("第一话由研究助理自动完成稳健承诺", async ({ page }) => {
   await openCareerDecision(page);
 
   const commitment = page.locator(".research-commitment");
-  const templateButton = commitment.getByRole("button", { name: "采用稳健模板" });
   await expect(commitment.locator(".research-commitment-manual")).not.toHaveAttribute("open", "");
-  await templateButton.click();
-
   await expect(commitment.getByRole("button", { name: "稳健模板已采用" }))
     .toHaveAttribute("aria-pressed", "true");
   await expect(commitment.locator(".commitment-warning"))

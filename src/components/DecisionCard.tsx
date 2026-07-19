@@ -99,6 +99,7 @@ export function DecisionCard({
   const [confirming, setConfirming] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const mountedAt = useRef(performance.now());
+  const submittingRef = useRef(false);
 
   useEffect(() => {
     const closeOtherPreviews = (event: Event) => {
@@ -155,7 +156,8 @@ export function DecisionCard({
   };
 
   const confirm = () => {
-    if (submitting) return;
+    if (submittingRef.current) return;
+    submittingRef.current = true;
     setSubmitting(true);
     recordPlaytestEvent("decision_confirm", {
       year: state.year,

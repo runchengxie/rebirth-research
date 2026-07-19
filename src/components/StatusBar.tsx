@@ -1,4 +1,5 @@
 import { GAME_DATA } from "../data/gameData";
+import { monthlyCareerGuidance } from "../game/careerGuidance";
 import { CHARACTERS } from "../game/content";
 import type { ExperienceMode, GameState, MentorId } from "../types";
 
@@ -106,8 +107,20 @@ export function StatusBar({
       </section>
     );
   }
+  const guidance = monthlyCareerGuidance(state.year, state.monthIndex);
   return (
-    <section className="status-band" aria-label="角色状态">
+    <section className="status-band career-status" aria-label="职业状态与本月目标">
+      <div className="career-guidance-summary">
+        <div>
+          <span>本月目标</span>
+          <strong>{guidance.goal}</strong>
+        </div>
+        <div>
+          <span>当前主要风险</span>
+          <strong>{guidance.risk}</strong>
+        </div>
+        <small>{guidance.question}</small>
+      </div>
       <div className="stat">
         <span>当前话数 · {relationshipSummary(state)}</span>
         <strong>

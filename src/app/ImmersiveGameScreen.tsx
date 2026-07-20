@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { GAME_YEARS } from "../data/gameData";
 import { CHARACTERS } from "../game/content";
 import type { CharacterProfile, ExperienceMode, ResearchDecision, SceneNode } from "../types";
@@ -11,9 +11,10 @@ import { ResearchCommitmentPanel } from "../components/ResearchCommitmentPanel";
 import { SaveTransferPanel } from "../components/SaveTransferPanel";
 import { StatusBar } from "../components/StatusBar";
 import { StoryRecapPanel } from "../components/StoryRecapPanel";
+import { GlossaryDetails, GlossaryText } from "../components/GlossaryNotes";
 import { completedReviewCount, createDefaultResearchCommitment, FALSIFIER_OPTIONS, type ResearchCommitment } from "../game/researchCommitment";
 import { experiencePolicy } from "../game/experienceMode";
-import { decisionPresentation, glossaryTermsIn, type GlossaryTerm } from "../game/careerGuidance";
+import { decisionPresentation, glossaryTermsIn } from "../game/careerGuidance";
 import { focusById } from "../game/engine";
 import { currentInvestigation, isInvestigationActive } from "../game/rebirth";
 import { isDebateNode } from "../game/narrativeMachine";
@@ -70,31 +71,6 @@ function plainLanguageLeadFor(sceneNodeId: string): string | null {
   return OPENING_PLAIN_LANGUAGE_LEADS[sceneNodeId] ?? null;
 }
 
-function escapeRegExp(value: string): string {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-function GlossaryText({ text, terms }: { text: string; terms: GlossaryTerm[] }) {
-  if (terms.length === 0) return text;
-  const aliases = terms.flatMap((term) => [term.label, ...term.aliases]).sort((left, right) => right.length - left.length);
-  const pattern = new RegExp(`(${aliases.map(escapeRegExp).join("|")})`, "gi");
-  const termByAlias = new Map<string, GlossaryTerm>();
-  for (const term of terms) {
-    for (const alias of [term.label, ...term.aliases]) {
-      termByAlias.set(alias.toLocaleLowerCase("zh-CN"), term);
-    }
-  }
-  return text.split(pattern).map((part, index): ReactNode => {
-    const term = termByAlias.get(part.toLocaleLowerCase("zh-CN"));
-    if (!term) return part;
-    return (
-      <abbr className="career-term" key={`${term.id}-${index}`} title={term.explanation}>
-        {part}
-      </abbr>
-    );
-  });
-}
-
 function DialogueCopy({ experienceMode, prompt, sceneNodeId, text }: { experienceMode: ExperienceMode; prompt: string; sceneNodeId: string; text: string }) {
   const terms = glossaryTermsIn(text);
   const plainLanguageLead = plainLanguageLeadFor(sceneNodeId);
@@ -111,34 +87,14 @@ function DialogueCopy({ experienceMode, prompt, sceneNodeId, text }: { experienc
       <p style={{ whiteSpace: "pre-line" }}>
         <GlossaryText text={text} terms={terms} />
       </p>
-      {terms.length > 0 ? (
-        <details
-          className="debate-glossary dialogue-glossary"
-          onToggle={(event) => {
-            if (event.currentTarget.open) {
-              recordPlaytestEvent("dialogue_glossary_expand", {
-                experienceMode,
-                sceneNodeId,
-                termCount: terms.length,
-              });
-            }
-          }}
-        >
-          <summary>本段术语（{terms.length}）</summary>
-          <dl>
-            {terms.map((term) => (
-              <div key={term.id}>
-                <dt>{term.label}</dt>
-                <dd>
-                  {term.explanation}
-                  <br />
-                  <small>本话作用：{term.relevance}</small>
-                </dd>
-              </div>
-            ))}
-          </dl>
-        </details>
-      ) : null}
+      <GlossaryDetails
+        className="debate-glossary dialogue-glossary"
+        showRelevance
+        summaryLabel="本段术语"
+        telemetryEvent="dialogue_glossary_expand"
+        telemetryPayload={{ experienceMode, sceneNodeId }}
+        terms={terms}
+      />
       <small>{prompt}</small>
     </div>
   );
@@ -358,10 +314,61 @@ function ConfirmStep({
   );
 }
 
+// R1 观点步骤：三方研究线索、本话术语、研究承诺与方案草案。
+function ViewpointStep({
+  session,
+  commitment,
+  draftDecision,
+  onCommitmentChange,
+  onDraft,
+}: {
+  session: GameSession;
+  commitment: ResearchCommitment;
+  draftDecision: ResearchDecision | null;
+  onCommitmentChange: (next: ResearchCommitment) => void;
+  onDraft: (decision: ResearchDecision) => void;
+}) {
+  const view = buildSceneView(session);
+  return (
+    <div className="decision-step-body">
+      {view.decisionNode ? <ResearchBriefs node={view.decisionNode} /> : null}
+      <GlossaryDetails
+        className="debate-glossary dialogue-glossary"
+        showRelevance
+        summaryLabel="本话术语"
+        telemetryEvent="dialogue_glossary_expand"
+        telemetryPayload={{
+          experienceMode: session.rebirth.experienceMode,
+          sceneNodeId: session.sceneNode.id,
+        }}
+        terms={glossaryTermsIn(
+          view.decisionNode?.decisionPrompt,
+          ...(view.decisionNode?.briefs ?? []).map((brief) => brief.text),
+          ...view.topDecisions.flatMap((decision) => [decision.label, decision.description]),
+        )}
+      />
+      <ResearchCommitmentPanel commitment={commitment} onChange={onCommitmentChange} />
+      <div className="options">
+        {view.topDecisions.map((decision, index) => (
+          <DecisionCard
+            decision={decision}
+            draftMode
+            draftSelected={draftDecision?.id === decision.id}
+            experienceMode={session.rebirth.experienceMode}
+            index={index}
+            key={decision.id}
+            state={session.state}
+            onChoose={onDraft}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // 路线图 R1：窄屏职业模式的步骤器。步骤状态只存在 React 局部状态里，
 // 草案（draftDecision）在最终确认前不会触发结算。
 function DecisionStepper({ session, commitment, onCommitmentChange, submitDecision }: DecisionFlowProps) {
-  const view = buildSceneView(session);
   const investigationActive = isInvestigationActive(session.rebirth, session.state);
   const steps = useMemo(() => {
     const ids: DecisionStepId[] = investigationActive
@@ -462,24 +469,13 @@ function DecisionStepper({ session, commitment, onCommitmentChange, submitDecisi
       ) : null}
 
       {step.id === "viewpoint" ? (
-        <div className="decision-step-body">
-          {view.decisionNode ? <ResearchBriefs node={view.decisionNode} /> : null}
-          <ResearchCommitmentPanel commitment={commitment} onChange={onCommitmentChange} />
-          <div className="options">
-            {view.topDecisions.map((decision, index) => (
-              <DecisionCard
-                decision={decision}
-                draftMode
-                draftSelected={draftDecision?.id === decision.id}
-                experienceMode={session.rebirth.experienceMode}
-                index={index}
-                key={decision.id}
-                state={session.state}
-                onChoose={setDraftDecision}
-              />
-            ))}
-          </div>
-        </div>
+        <ViewpointStep
+          commitment={commitment}
+          draftDecision={draftDecision}
+          session={session}
+          onCommitmentChange={onCommitmentChange}
+          onDraft={setDraftDecision}
+        />
       ) : null}
 
       {step.id === "confirm" ? (

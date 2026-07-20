@@ -424,6 +424,19 @@ test("深色年度剧情的压力卡和研究承诺文字保持清晰", async ({
     ["自检标签", ".commitment-review-checks label strong", ".commitment-review-checks label"],
     ["自检说明", ".commitment-review-checks label small", ".commitment-review-checks label"],
   ]);
+
+  // 深色评分拆解保持可读（路线图 R2.14）。
+  const option = page.locator(".career-option").first();
+  await option.locator(".career-option-main").click();
+  await option.getByRole("button", { name: "确认提交本月判断" }).click();
+  const fullRecap = page.locator(".career-full-recap");
+  await fullRecap.locator("summary").click();
+  await expect(fullRecap.locator(".career-score-breakdown")).toBeVisible();
+  await expectReadableContrast(page, [
+    ["评分维度名", ".career-score-breakdown dt", ".career-full-recap"],
+    ["评分数值", ".career-score-breakdown dd", ".career-full-recap"],
+    ["评分总分", ".career-score-breakdown .score-total dd", ".career-full-recap"],
+  ]);
 });
 
 test("深色投委会的研究承诺表单保持清晰", async ({ page }) => {

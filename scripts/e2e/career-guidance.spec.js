@@ -146,6 +146,13 @@ test("窄屏关键月按步骤完成决策并只结算一次", async ({ page }) 
       }),
     )
     .toBe(1);
+
+  // 390 窄屏下评分拆解仍可展开（路线图 R2.14）。
+  const fullRecap = page.locator(".career-full-recap");
+  await fullRecap.locator("summary").click();
+  await expect(fullRecap.locator(".career-score-breakdown")).toBeVisible();
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(1);
 });
 
 test("窄屏普通月自动跳过调查步骤", async ({ page }) => {

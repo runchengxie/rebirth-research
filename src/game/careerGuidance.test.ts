@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { FOCUS_ACTIONS } from "./content";
+import { buildMonthScene } from "./sceneBuilders";
 import type { ResearchDecision, RoundResult } from "../types";
 import {
+  CAREER_GLOSSARY,
   careerRecap,
   decisionPresentation,
   glossaryTermsIn,
@@ -129,5 +131,53 @@ describe("职业模式理解层", () => {
     expect(recap.strength).toContain("证据");
     expect(recap.risk).toContain("工作节奏");
     expect(recap.consequence).toContain("疲劳");
+  });
+});
+
+describe("术语词典质量（路线图 R2.7）", () => {
+  it("显示名与别名在词典内全局唯一，命中后不会重复显示同一概念", () => {
+    const seen = new Map<string, string>();
+    for (const term of CAREER_GLOSSARY) {
+      for (const alias of [term.label, ...term.aliases]) {
+        const key = alias.toLocaleLowerCase("zh-CN");
+        const owner = seen.get(key);
+        expect(owner === undefined || owner === term.id, `别名 ${alias} 同时属于 ${owner} 和 ${term.id}`).toBe(true);
+        seen.set(key, term.id);
+      }
+    }
+  });
+
+  it("解释保持中性：只说明概念，不暗示推荐、高分或正确方案", () => {
+    for (const term of CAREER_GLOSSARY) {
+      expect(term.explanation.length).toBeGreaterThan(8);
+      expect(term.relevance.length).toBeGreaterThan(0);
+      for (const banned of ["推荐", "高分", "正确方案", "好感", "选它"]) {
+        expect(term.explanation, `${term.id} 的解释包含诱导词 ${banned}`).not.toContain(banned);
+        expect(term.relevance, `${term.id} 的作用说明包含诱导词 ${banned}`).not.toContain(banned);
+      }
+    }
+  });
+
+  it("2025 全年方案文本中的首批术语都能被词典命中", () => {
+    const texts: string[] = [];
+    for (let monthIndex = 0; monthIndex < 12; monthIndex += 1) {
+      const scene = buildMonthScene(monthIndex, "2025");
+      for (const node of scene.nodes) {
+        for (const decision of node.decisions ?? []) {
+          texts.push(decision.label, decision.description);
+        }
+      }
+    }
+    const source = texts.join("\n");
+    // 首批要求覆盖的概念（路线图 R2.2）在 2025 文本中出现时必须可解释。
+    for (const requiredId of ["arr", "barra", "alpha-decay", "factor-crowding", "order-flow", "valuation-percentile", "dcf"]) {
+      const term = CAREER_GLOSSARY.find((item) => item.id === requiredId);
+      expect(term, `词典缺少首批术语 ${requiredId}`).toBeDefined();
+      if (!term) continue;
+      const appears = [term.label, ...term.aliases].some((alias) => source.includes(alias));
+      if (appears) {
+        expect(glossaryTermsIn(source).map((item) => item.id)).toContain(requiredId);
+      }
+    }
   });
 });

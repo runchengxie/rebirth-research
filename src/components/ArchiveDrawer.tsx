@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { CHARACTERS } from "../game/content";
+import { methodSummaryFor } from "../game/methodArchive";
 import { isDebateNode } from "../game/narrativeMachine";
 import type { MachineGameSession as GameSession } from "../app/useGameSessionMachine";
 import type { ExperienceMode } from "../types";
@@ -112,6 +113,11 @@ function ResearchArchive({
       <RelationSummary session={session} experienceMode={experienceMode} />
       <section className="archive-section">
         <h3>{experienceMode === "romance" ? "回忆札记" : "研究札记"}</h3>
+        {experienceMode === "career" ? (
+          <p className="archive-feedback-note">
+            月度评分复盘的是研究方法本身；独立投委会的答辩分只属于那间会议室的练习；人物关系只改变剧情走向。三套反馈互不折算。
+          </p>
+        ) : null}
         {session.state.history.length === 0 ? (
           <p className="archive-empty">
             {experienceMode === "romance"
@@ -125,6 +131,9 @@ function ResearchArchive({
                 <span>{item.label}</span>
                 <strong>{item.selected.label}</strong>
                 <small>{item.outcome.title}</small>
+                {experienceMode === "career" ? (
+                  <small className="archive-method-line">{methodSummaryFor(item)}</small>
+                ) : null}
               </li>
             ))}
           </ul>
@@ -140,6 +149,7 @@ function ResearchArchive({
               <li className={CHARACTERS[card.mentorId].color} key={card.id}>
                 <strong>{card.concept}</strong>
                 <span>{CHARACTERS[card.mentorId].name}：{card.mentorLine}</span>
+                {card.learningRef ? <small className="archive-learning-ref">{card.learningRef}</small> : null}
               </li>
             ))}
           </ul>

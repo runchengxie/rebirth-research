@@ -1,13 +1,13 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CHARACTERS } from "../game/content";
 import {
   decisionPresentation,
   glossaryTermsIn,
-  type GlossaryTerm,
 } from "../game/careerGuidance";
 import { focusById } from "../game/engine";
 import { recordPlaytestEvent } from "../game/playtestTelemetry";
 import type { ExperienceMode, GameState, ResearchDecision } from "../types";
+import { GlossaryDetails, GlossaryText } from "./GlossaryNotes";
 
 const CATEGORY_COLORS: Record<string, string> = {
   deep_research: "#4b8fe8",
@@ -19,33 +19,6 @@ const CATEGORY_COLORS: Record<string, string> = {
   committee_defense: "#e07050",
   data_deep_dive: "#4ba0d8",
 };
-
-function escapeRegExp(value: string): string {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-function GlossaryText({ text, terms }: { text: string; terms: GlossaryTerm[] }) {
-  if (terms.length === 0) return text;
-  const aliases = terms
-    .flatMap((term) => [term.label, ...term.aliases])
-    .sort((left, right) => right.length - left.length);
-  const pattern = new RegExp(`(${aliases.map(escapeRegExp).join("|")})`, "gi");
-  const termByAlias = new Map<string, GlossaryTerm>();
-  for (const term of terms) {
-    for (const alias of [term.label, ...term.aliases]) {
-      termByAlias.set(alias.toLocaleLowerCase("zh-CN"), term);
-    }
-  }
-  return text.split(pattern).map((part, index): ReactNode => {
-    const term = termByAlias.get(part.toLocaleLowerCase("zh-CN"));
-    if (!term) return part;
-    return (
-      <abbr className="career-term" key={`${term.id}-${index}`} title={term.explanation}>
-        {part}
-      </abbr>
-    );
-  });
-}
 
 function RomanceDecision({
   decision,
@@ -285,31 +258,17 @@ export function DecisionCard({
         </div>
       </button>
 
-      {terms.length > 0 ? (
-        <details
-          className="career-glossary"
-          onToggle={(event) => {
-            if (event.currentTarget.open) {
-              recordPlaytestEvent("glossary_expand", {
-                year: state.year,
-                month: state.monthIndex + 1,
-                decisionId: decision.id,
-                termCount: terms.length,
-              });
-            }
-          }}
-        >
-          <summary>本选项术语（{terms.length}）</summary>
-          <dl>
-            {terms.map((term) => (
-              <div key={term.id}>
-                <dt>{term.label}</dt>
-                <dd>{term.explanation}</dd>
-              </div>
-            ))}
-          </dl>
-        </details>
-      ) : null}
+      <GlossaryDetails
+        className="career-glossary"
+        summaryLabel="本选项术语"
+        telemetryEvent="glossary_expand"
+        telemetryPayload={{
+          year: state.year,
+          month: state.monthIndex + 1,
+          decisionId: decision.id,
+        }}
+        terms={terms}
+      />
 
       {confirming && !draftMode ? (
         <DecisionConfirmation

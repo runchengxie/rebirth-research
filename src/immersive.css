@@ -831,6 +831,32 @@ body,
   font-size: 13px;
 }
 
+/* 方法档案摘要与三套反馈说明（路线图 R2.15–R2.17）。 */
+.archive-feedback-note {
+  margin: 0 0 8px;
+  padding: 7px 9px;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.archive-method-line {
+  display: block;
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px dashed var(--line);
+}
+
+.archive-learning-ref {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 10.5px;
+  line-height: 1.45;
+}
+
 .archive-relations {
   display: grid;
   gap: 8px;

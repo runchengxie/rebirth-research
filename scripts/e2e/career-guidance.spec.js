@@ -307,3 +307,30 @@ test("职业方案先解释代价并确认，再生成一次结算", async ({ pa
     )
     .toBe(1);
 });
+
+// 行情×剧情缝合：历史级行情月在决策前有即景对白，组织压力换成真实行情。
+test("2024 大跌月在决策前插入行情即景并把压力换成客户来电", async ({ page }) => {
+  await page.goto("/?year=2024&play=career&new=1&staticStage=1");
+  await page.evaluate(() => localStorage.clear());
+  await page.reload();
+  await expect(page.locator(".immersive-app")).toBeVisible();
+
+  let sawPulseDialogue = false;
+  for (let index = 0; index < 10; index += 1) {
+    if (await page.locator(".immersive-decision-panel").count()) break;
+    const speaker = (await page.locator(".speaker-row").textContent()) ?? "";
+    if (speaker.includes("办公区即景")) {
+      sawPulseDialogue = true;
+      await expect(page.locator(".immersive-dialogue-copy")).toContainText("6.29%");
+    }
+    const advance = page.locator(".primary-action");
+    await expect(advance).toBeEnabled();
+    await advance.click();
+  }
+  expect(sawPulseDialogue, "2024 年一月应在决策前出现行情即景对白").toBe(true);
+
+  await expect(page.locator(".immersive-decision-panel")).toBeVisible();
+  const pressure = page.locator(".stakeholder-pressure");
+  await expect(pressure).toContainText("基金经理");
+  await expect(pressure).toContainText("雪球敲入");
+});

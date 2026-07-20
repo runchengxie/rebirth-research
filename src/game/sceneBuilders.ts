@@ -24,6 +24,7 @@ import {
   type StoryArc,
 } from "./storyArcs";
 import { BRANCHES } from "./branches";
+import { marketPulseFor } from "./marketPulse";
 import { makeDecisions2025 } from "./content2025";
 import { makeDecisions2023 } from "./content2023";
 import { makeDecisions2024 } from "./content2024";
@@ -250,6 +251,31 @@ function optionalNode(node: SceneNode | null): SceneNode[] {
   return node ? [node] : [];
 }
 
+// 行情×剧情缝合：历史级行情月在研究选择前插入一段办公室即景，
+// 让真实涨跌先通过众生相到达玩家，而非只出现在结算复盘里。
+function marketPulseNodeFor(
+  story: StoryArc,
+  year: string,
+  monthIndex: number,
+): SceneNode | null {
+  const pulse = marketPulseFor(year, monthIndex);
+  if (!pulse) return null;
+  return {
+    id: `m${monthIndex}-market-pulse`,
+    type: "dialogue",
+    characterId: story.characterId,
+    speaker: "办公区即景",
+    role: "真实行情",
+    mood: pulse.direction === "surge" ? "躁动" : "紧绷",
+    text: pulse.dialogue,
+    prompt: "点击继续，回到你自己的研究节奏。",
+    pose: "thinking",
+    bg: "research-room",
+    bgm: "morning-loop",
+    voiceCue: "silent",
+  };
+}
+
 export function buildMonthScene(
   monthIndex: number,
   year?: string,
@@ -286,7 +312,10 @@ export function buildMonthScene(
     afterMemory: branch.afterMemory,
     affinity: optionalNode(affinityNodeFor(state, story.characterId, monthIndex)),
     colleague: [buildColleagueNode(story, theme, arcLine, monthIndex)],
-    beforeDecision: branch.beforeDecision,
+    beforeDecision: [
+      ...optionalNode(marketPulseNodeFor(story, actualYear, monthIndex)),
+      ...branch.beforeDecision,
+    ],
     decision: [decisionNode],
   };
   const nodes = sceneProfileFor(actualYear).beats.flatMap((beat) => nodeGroups[beat]);

@@ -1,3 +1,5 @@
+import { marketPulseFor } from "./marketPulse";
+
 export interface StakeholderPressure {
   source: string;
   title: string;
@@ -84,6 +86,11 @@ export function stakeholderPressureFor(
   year: string,
   monthIndex: number,
 ): StakeholderPressure {
+  // 行情×剧情缝合：历史级行情月的组织压力来自真实行情本身，
+  // 大涨月是催加仓的组合端，大跌月是打爆的客户电话。
+  const pulse = marketPulseFor(year, monthIndex);
+  if (pulse) return pulse.pressure;
+
   if (year === "2025") {
     return PRESSURES_2025[monthIndex % PRESSURES_2025.length];
   }

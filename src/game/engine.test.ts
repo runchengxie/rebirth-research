@@ -400,13 +400,15 @@ describe("关系值与分支系统", () => {
   });
 
   it("仅在剧情角色关系值达到门槛时注入亲密时刻节点", () => {
-    const flat = buildMonthScene(0, "2024"); // 未传入关系状态时有三个节点
-    expect(flat.nodes).toHaveLength(3);
+    // 2024 年一月是行情脉冲月（跌幅越过阈值），基础节点为
+    // 记忆、同事、行情即景和决策四个。
+    const flat = buildMonthScene(0, "2024");
+    expect(flat.nodes).toHaveLength(4);
     const warm = buildMonthScene(0, "2024", {
       ...createInitialState("2024"),
       relations: { lin_ruoning: 70, chen_xinghe: 10, zhou_mingzhao: 10, zhao_chengyu: 10 },
     });
-    expect(warm.nodes).toHaveLength(4);
+    expect(warm.nodes).toHaveLength(5);
     const inserted = warm.nodes.find((n) => n.id === "m0-affinity");
     expect(inserted).toBeDefined();
     expect(inserted!.characterId).toBe("lin_ruoning");

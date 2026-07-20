@@ -83,18 +83,79 @@ function RomanceDecision({
   );
 }
 
+function DecisionConfirmation({
+  decision,
+  presentation,
+  currentFocusLabel,
+  recommendationMatched,
+  submitting,
+  onApplyRecommendedFocus,
+  onCancel,
+  onConfirm,
+}: {
+  decision: ResearchDecision;
+  presentation: ReturnType<typeof decisionPresentation>;
+  currentFocusLabel: string;
+  recommendationMatched: boolean;
+  submitting: boolean;
+  onApplyRecommendedFocus: () => void;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  return (
+    <section className="decision-confirmation" aria-label={`${decision.label}提交确认`}>
+      <span>提交前确认</span>
+      <strong>{presentation.claim}</strong>
+      <dl>
+        <div>
+          <dt>当前日程</dt>
+          <dd>{currentFocusLabel}</dd>
+        </div>
+        <div>
+          <dt>推荐日程</dt>
+          <dd>{presentation.recommendedFocusLabel}</dd>
+        </div>
+        <div>
+          <dt>最大风险</dt>
+          <dd>{presentation.tradeoff}</dd>
+        </div>
+      </dl>
+      {!recommendationMatched ? (
+        <button className="secondary-action" disabled={submitting} type="button" onClick={onApplyRecommendedFocus}>
+          采用推荐日程
+        </button>
+      ) : (
+        <small>当前日程已经符合这套研究方法的推荐节奏。</small>
+      )}
+      <div className="decision-confirmation-actions">
+        <button className="secondary-action" disabled={submitting} type="button" onClick={onCancel}>
+          返回比较
+        </button>
+        <button className="primary-action" disabled={submitting} type="button" onClick={onConfirm}>
+          {submitting ? "正在提交" : "确认提交本月判断"}
+        </button>
+      </div>
+    </section>
+  );
+}
+
 export function DecisionCard({
   decision,
   experienceMode = "career",
   index,
   state,
   onChoose,
+  draftMode = false,
+  draftSelected = false,
 }: {
   decision: ResearchDecision;
   experienceMode?: ExperienceMode;
   index: number;
   state: GameState;
+  // 桌面纵向流程里 onChoose 触发结算；窄屏步骤器（draftMode）里只记录草案。
   onChoose: (decision: ResearchDecision) => void;
+  draftMode?: boolean;
+  draftSelected?: boolean;
 }) {
   const [confirming, setConfirming] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -127,6 +188,17 @@ export function DecisionCard({
   const currentFocus = focusById(state.focusId);
   const terms = glossaryTermsIn(decision.label, decision.description);
   const recommendationMatched = state.focusId === presentation.recommendedFocusId;
+
+  const draft = () => {
+    recordPlaytestEvent("decision_draft", {
+      year: state.year,
+      month: state.monthIndex + 1,
+      decisionId: decision.id,
+      currentFocusId: state.focusId,
+      recommendedFocusId: presentation.recommendedFocusId,
+    });
+    onChoose(decision);
+  };
 
   const preview = () => {
     if (confirming) return;
@@ -173,8 +245,14 @@ export function DecisionCard({
   };
 
   return (
-    <article className={`option career-option method-${presentation.tone} ${confirming ? "is-confirming" : ""}`}>
-      <button className="career-option-main" disabled={state.locked || submitting} type="button" onClick={preview}>
+    <article className={`option career-option method-${presentation.tone} ${confirming ? "is-confirming" : ""} ${draftSelected ? "is-draft-selected" : ""}`}>
+      <button
+        aria-pressed={draftMode ? draftSelected : undefined}
+        className="career-option-main"
+        disabled={state.locked || submitting}
+        type="button"
+        onClick={draftMode ? draft : preview}
+      >
         <div className="option-kicker">
           <span style={{ borderColor: CATEGORY_COLORS[decision.category] || "#aaa" }}>选项 {optionLetter}</span>
           <span>{presentation.icon} {presentation.methodLabel}</span>
@@ -233,52 +311,24 @@ export function DecisionCard({
         </details>
       ) : null}
 
-      {confirming ? (
-        <section className="decision-confirmation" aria-label={`${decision.label}提交确认`}>
-          <span>提交前确认</span>
-          <strong>{presentation.claim}</strong>
-          <dl>
-            <div>
-              <dt>当前日程</dt>
-              <dd>{currentFocus.label}</dd>
-            </div>
-            <div>
-              <dt>推荐日程</dt>
-              <dd>{presentation.recommendedFocusLabel}</dd>
-            </div>
-            <div>
-              <dt>最大风险</dt>
-              <dd>{presentation.tradeoff}</dd>
-            </div>
-          </dl>
-          {!recommendationMatched ? (
-            <button className="secondary-action" disabled={submitting} type="button" onClick={applyRecommendedFocus}>
-              采用推荐日程
-            </button>
-          ) : (
-            <small>当前日程已经符合这套研究方法的推荐节奏。</small>
-          )}
-          <div className="decision-confirmation-actions">
-            <button
-              className="secondary-action"
-              disabled={submitting}
-              type="button"
-              onClick={() => {
-                setConfirming(false);
-                recordPlaytestEvent("decision_preview_cancel", {
-                  year: state.year,
-                  month: state.monthIndex + 1,
-                  decisionId: decision.id,
-                });
-              }}
-            >
-              返回比较
-            </button>
-            <button className="primary-action" disabled={submitting} type="button" onClick={confirm}>
-              {submitting ? "正在提交" : "确认提交本月判断"}
-            </button>
-          </div>
-        </section>
+      {confirming && !draftMode ? (
+        <DecisionConfirmation
+          currentFocusLabel={currentFocus.label}
+          decision={decision}
+          presentation={presentation}
+          recommendationMatched={recommendationMatched}
+          submitting={submitting}
+          onApplyRecommendedFocus={applyRecommendedFocus}
+          onCancel={() => {
+            setConfirming(false);
+            recordPlaytestEvent("decision_preview_cancel", {
+              year: state.year,
+              month: state.monthIndex + 1,
+              decisionId: decision.id,
+            });
+          }}
+          onConfirm={confirm}
+        />
       ) : null}
     </article>
   );

@@ -216,7 +216,14 @@ test("剧情模式只让玩家处理人物回应", async ({ page }) => {
   await expect(page.locator(".romance-assist-note")).toBeVisible();
   await expect(page.locator(".stakeholder-pressure")).toHaveCount(0);
   await expect(page.locator(".research-commitment")).toHaveCount(0);
-  await expect(page.locator(".investigation-panel")).toHaveCount(0);
+  await expect(page.locator(".rebirth-investigation")).toHaveCount(0);
+  await expect(page.locator(".career-guidance-summary")).toHaveCount(0);
+
+  // 提交决策后，剧情模式也不渲染精确评分拆解。
+  await page.locator(".immersive-decision-panel .option").first().click();
+  await expect(page.locator(".story-recap")).toBeVisible();
+  await expect(page.locator(".career-full-recap")).toHaveCount(0);
+  await expect(page.locator(".career-score-breakdown")).toHaveCount(0);
 });
 
 test("剧情模式把三位同事的观点放进独立对话框", async ({ page }) => {
